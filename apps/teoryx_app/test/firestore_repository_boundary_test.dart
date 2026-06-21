@@ -1,0 +1,128 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:teoryx_app/core/data/firestore/firestore_collection_paths.dart';
+import 'package:teoryx_app/features/lesson/data/models/firestore_course_model.dart';
+import 'package:teoryx_app/features/lesson/data/models/firestore_published_lesson_model.dart';
+import 'package:teoryx_app/features/lesson/data/repositories/mock_course_repository.dart';
+import 'package:teoryx_app/features/lesson/data/repositories/mock_lesson_repository.dart';
+import 'package:teoryx_app/features/lesson/domain/repositories/course_repository.dart';
+import 'package:teoryx_app/features/lesson/domain/repositories/lesson_repository.dart';
+import 'package:teoryx_app/features/student/data/models/firestore_student_profile_model.dart';
+import 'package:teoryx_app/features/student/data/repositories/mock_student_repository.dart';
+import 'package:teoryx_app/features/student/domain/repositories/student_repository.dart';
+
+void main() {
+  test('Firestore collection paths stay tenant scoped where required', () {
+    expect(
+      FirestoreCollectionPaths.school('school-demo'),
+      'schools/school-demo',
+    );
+    expect(
+      FirestoreCollectionPaths.student(
+        schoolId: 'school-demo',
+        studentId: 'student-001',
+      ),
+      'schools/school-demo/students/student-001',
+    );
+    expect(
+      FirestoreCollectionPaths.course(
+        schoolId: 'school-demo',
+        courseId: 'grade-4-math',
+      ),
+      'schools/school-demo/courses/grade-4-math',
+    );
+    expect(
+      FirestoreCollectionPaths.studentProgress(
+        schoolId: 'school-demo',
+        studentId: 'student-001',
+      ),
+      'schools/school-demo/studentProgress/student-001',
+    );
+    expect(
+      FirestoreCollectionPaths.publishedLessonContent,
+      'publishedLessonContent',
+    );
+  });
+
+  test('mock repositories satisfy repository contracts by default', () async {
+    const StudentRepository studentRepository = MockStudentRepository();
+    const CourseRepository courseRepository = MockCourseRepository();
+    const LessonRepository lessonRepository = MockLessonRepository();
+
+    final student = studentRepository.getCurrentStudent();
+    final courses = courseRepository.getAvailableCourses('en');
+    final lessons = lessonRepository.getLessonsForCourse('grade-4-math', 'en');
+
+    expect(student.schoolId, 'school-demo');
+    expect(courses, isNotEmpty);
+    expect(lessons, isNotEmpty);
+    expect(
+      await studentRepository.getStudentProfile(
+        schoolId: 'missing-school',
+        studentId: 'missing-student',
+      ),
+      isNull,
+    );
+  });
+
+  test('Firestore mappers create domain read models', () {
+    final student = FirestoreStudentProfileModel.fromFirestore(
+      id: 'student-001',
+      schoolId: 'school-demo',
+      data: const {
+        'firstName': 'Sofia',
+        'gradeLevelName': 'Grade 4',
+        'subjectName': 'Math',
+        'preferredLanguage': 'en',
+      },
+    ).toEntity();
+
+    final course = FirestoreCourseModel.fromFirestore(
+      id: 'grade-4-math',
+      data: const {
+        'curriculumId': 'ca-common-core',
+        'gradeLevelId': 'grade-4',
+        'gradeLevelName': 'Grade 4',
+        'subjectId': 'math',
+        'subjectName': 'Math',
+        'title': 'Grade 4 Math',
+      },
+    ).toEntity();
+
+    final lesson = FirestorePublishedLessonModel.fromFirestore(
+      id: 'fractions-whole',
+      data: const {
+        'schoolId': 'school-demo',
+        'courseId': 'grade-4-math',
+        'curriculumId': 'ca-common-core',
+        'gradeLevelId': 'grade-4',
+        'subjectId': 'math',
+        'standardId': 'ccss-math-4-nf-a-1',
+        'standardCode': 'CCSS.MATH.4.NF.A.1',
+        'language': 'en',
+        'title': 'Fractions as Parts of a Whole',
+        'bigIdea': 'Fractions describe equal parts.',
+        'essentialQuestion': 'How do fractions describe a whole?',
+        'learningObjectiveId': 'lo-fractions-whole',
+        'learningObjective': 'Understand fractions as equal parts.',
+        'lessonContent': 'A whole can be divided into equal parts.',
+        'guidedPractice': 'Name one fourth.',
+        'independentPractice': 'Draw a fraction.',
+        'summary': 'Fractions name equal parts.',
+        'steps': [
+          {
+            'id': 'step-1',
+            'order': 1,
+            'type': 'story',
+            'title': 'A whole pizza',
+            'body': 'Start with one whole.',
+          },
+        ],
+      },
+    ).toEntity();
+
+    expect(student.firstName, 'Sofia');
+    expect(course.title, 'Grade 4 Math');
+    expect(lesson.learningObjective.id, 'lo-fractions-whole');
+    expect(lesson.steps.single.title, 'A whole pizza');
+  });
+}

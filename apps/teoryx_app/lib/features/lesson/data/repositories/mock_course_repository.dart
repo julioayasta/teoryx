@@ -1,14 +1,17 @@
 import '../../domain/entities/course.dart';
+import '../../domain/repositories/course_repository.dart';
 
-class MockCourseRepository {
+class MockCourseRepository implements CourseRepository {
   const MockCourseRepository();
 
+  @override
   List<Course> getEnrolledCourses(String languageCode) {
     return getAvailableCourses(
       languageCode,
     ).where((course) => course.id == 'grade-4-math').toList();
   }
 
+  @override
   List<Course> getAvailableCourses(String languageCode) {
     final isSpanish = languageCode == 'es';
 
@@ -52,12 +55,14 @@ class MockCourseRepository {
     ];
   }
 
+  @override
   List<Course> getCoursesForGrade(String gradeLevelId, String languageCode) {
     return getAvailableCourses(
       languageCode,
     ).where((course) => course.gradeLevelId == gradeLevelId).toList();
   }
 
+  @override
   Course getCourseById(String courseId, String languageCode) {
     return getAvailableCourses(languageCode).firstWhere(
       (course) => course.id == courseId,

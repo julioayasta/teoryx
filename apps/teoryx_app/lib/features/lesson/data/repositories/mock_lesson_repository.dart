@@ -1,10 +1,12 @@
 import '../../domain/entities/learning_objective.dart';
 import '../../domain/entities/lesson.dart';
 import '../../domain/entities/lesson_step.dart';
+import '../../domain/repositories/lesson_repository.dart';
 
-class MockLessonRepository {
+class MockLessonRepository implements LessonRepository {
   const MockLessonRepository();
 
+  @override
   List<Lesson> getAvailableLessons([String languageCode = 'en']) {
     if (languageCode == 'es') {
       return _spanishLessons;
@@ -13,6 +15,7 @@ class MockLessonRepository {
     return _englishLessons;
   }
 
+  @override
   List<Lesson> getLessonsForCourse(String courseId, String languageCode) {
     final lessons = getAvailableLessons(languageCode);
 
@@ -30,6 +33,7 @@ class MockLessonRepository {
         .toList();
   }
 
+  @override
   Lesson getLessonById(String lessonId, String languageCode) {
     return getAvailableLessons(languageCode).firstWhere(
       (lesson) => lesson.id == lessonId,
