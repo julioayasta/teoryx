@@ -33,10 +33,16 @@ void main() {
     expect(find.text('Two Tables, Two Pizzas'), findsOneWidget);
     expect(find.byTooltip('Student Dashboard'), findsOneWidget);
 
+    await tester.drag(find.byType(ListView), const Offset(0, -1200));
+    await tester.pumpAndSettle();
+    expect(find.text('Start Assessment'), findsOneWidget);
+
     await tester.tap(find.byTooltip('Student Dashboard'));
     await tester.pumpAndSettle();
     expect(find.text('Hello, Sofia'), findsWidgets);
 
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('New Course from Catalog'));
     await tester.pumpAndSettle();
     expect(find.text('Choose Grade'), findsOneWidget);
@@ -74,5 +80,30 @@ void main() {
 
     expect(find.text('Fracciones como partes de un entero'), findsWidgets);
     expect(find.text('Te perdiste la leccion de pizza'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('Iniciar evaluacion'),
+      500,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Iniciar evaluacion'));
+    await tester.pumpAndSettle();
+    expect(find.text('Evaluacion de fracciones'), findsOneWidget);
+
+    await tester.drag(find.byType(ListView), const Offset(0, -1000));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('La carga de archivos estara disponible pronto'),
+      findsOneWidget,
+    );
+
+    await tester.ensureVisible(find.text('Enviar evaluacion'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Enviar evaluacion'));
+    await tester.pumpAndSettle();
+    expect(find.text('Resultados'), findsWidgets);
+    expect(find.text('Puntaje autocalificado'), findsOneWidget);
+    expect(find.text('Revision pendiente'), findsWidgets);
+    expect(find.text('67%'), findsOneWidget);
   });
 }

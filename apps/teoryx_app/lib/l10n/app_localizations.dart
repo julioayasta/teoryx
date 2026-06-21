@@ -553,6 +553,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expected Answer'**
   String get lessonStepExpectedAnswerLabel;
+
+  /// No description provided for @startAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Assessment'**
+  String get startAssessment;
+
+  /// No description provided for @assessmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assessment'**
+  String get assessmentTitle;
+
+  /// No description provided for @assessmentIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer each question. Multiple choice and true/false are auto-graded; written work and document work may need review.'**
+  String get assessmentIntro;
+
+  /// No description provided for @submitAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Assessment'**
+  String get submitAssessment;
+
+  /// No description provided for @writtenResponseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your explanation here.'**
+  String get writtenResponseHint;
+
+  /// No description provided for @uploadComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload feature coming soon'**
+  String get uploadComingSoon;
+
+  /// No description provided for @mockDocumentAttached.
+  ///
+  /// In en, this message translates to:
+  /// **'Mock document attached'**
+  String get mockDocumentAttached;
+
+  /// No description provided for @markDocumentAttached.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark document attached'**
+  String get markDocumentAttached;
+
+  /// No description provided for @resultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get resultsTitle;
+
+  /// No description provided for @backToLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Lesson'**
+  String get backToLesson;
+
+  /// No description provided for @backToAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Assessment'**
+  String get backToAssessment;
+
+  /// No description provided for @autoGradedScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-graded score'**
+  String get autoGradedScore;
+
+  /// No description provided for @finalScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Final score'**
+  String get finalScore;
+
+  /// No description provided for @pendingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending review'**
+  String get pendingReview;
+
+  /// No description provided for @correctAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct answers'**
+  String get correctAnswers;
+
+  /// No description provided for @incorrectAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect answers'**
+  String get incorrectAnswers;
+
+  /// No description provided for @pendingReviewItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending review items'**
+  String get pendingReviewItems;
+
+  /// No description provided for @masteryLevelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery level'**
+  String get masteryLevelLabel;
+
+  /// No description provided for @returnToDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Dashboard'**
+  String get returnToDashboard;
+
+  /// No description provided for @masteryNotStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not started'**
+  String get masteryNotStarted;
+
+  /// No description provided for @masteryInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get masteryInProgress;
+
+  /// No description provided for @masteryDeveloping.
+  ///
+  /// In en, this message translates to:
+  /// **'Developing'**
+  String get masteryDeveloping;
+
+  /// No description provided for @masteryProficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Proficient'**
+  String get masteryProficient;
+
+  /// No description provided for @masteryMastered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastered'**
+  String get masteryMastered;
+
+  /// No description provided for @lastAssessmentScoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Assessment Score:'**
+  String get lastAssessmentScoreLabel;
+
+  /// No description provided for @masteryStateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery:'**
+  String get masteryStateLabel;
+
+  /// No description provided for @pendingReviewNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Review:'**
+  String get pendingReviewNotice;
 }
 
 class _AppLocalizationsDelegate

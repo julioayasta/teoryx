@@ -247,4 +247,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lessonStepExpectedAnswerLabel => 'Expected Answer';
+
+  @override
+  String get startAssessment => 'Start Assessment';
+
+  @override
+  String get assessmentTitle => 'Assessment';
+
+  @override
+  String get assessmentIntro =>
+      'Answer each question. Multiple choice and true/false are auto-graded; written work and document work may need review.';
+
+  @override
+  String get submitAssessment => 'Submit Assessment';
+
+  @override
+  String get writtenResponseHint => 'Write your explanation here.';
+
+  @override
+  String get uploadComingSoon => 'Upload feature coming soon';
+
+  @override
+  String get mockDocumentAttached => 'Mock document attached';
+
+  @override
+  String get markDocumentAttached => 'Mark document attached';
+
+  @override
+  String get resultsTitle => 'Results';
+
+  @override
+  String get backToLesson => 'Back to Lesson';
+
+  @override
+  String get backToAssessment => 'Back to Assessment';
+
+  @override
+  String get autoGradedScore => 'Auto-graded score';
+
+  @override
+  String get finalScore => 'Final score';
+
+  @override
+  String get pendingReview => 'Pending review';
+
+  @override
+  String get correctAnswers => 'Correct answers';
+
+  @override
+  String get incorrectAnswers => 'Incorrect answers';
+
+  @override
+  String get pendingReviewItems => 'Pending review items';
+
+  @override
+  String get masteryLevelLabel => 'Mastery level';
+
+  @override
+  String get returnToDashboard => 'Return to Dashboard';
+
+  @override
+  String get masteryNotStarted => 'Not started';
+
+  @override
+  String get masteryInProgress => 'In progress';
+
+  @override
+  String get masteryDeveloping => 'Developing';
+
+  @override
+  String get masteryProficient => 'Proficient';
+
+  @override
+  String get masteryMastered => 'Mastered';
+
+  @override
+  String get lastAssessmentScoreLabel => 'Last Assessment Score:';
+
+  @override
+  String get masteryStateLabel => 'Mastery:';
+
+  @override
+  String get pendingReviewNotice => 'Review:';
 }

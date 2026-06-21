@@ -7,4 +7,6 @@ class RouteNames {
   static const courseList = 'course-list';
   static const lessonList = 'lesson-list';
   static const lessonDetail = 'lesson-detail';
+  static const assessment = 'assessment';
+  static const assessmentResults = 'assessment-results';
 }

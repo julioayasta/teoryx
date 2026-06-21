@@ -247,4 +247,87 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get lessonStepExpectedAnswerLabel => 'Respuesta esperada';
+
+  @override
+  String get startAssessment => 'Iniciar evaluacion';
+
+  @override
+  String get assessmentTitle => 'Evaluacion';
+
+  @override
+  String get assessmentIntro =>
+      'Responde cada pregunta. Opcion multiple y verdadero/falso se califican automaticamente; respuestas escritas y documentos pueden requerir revision.';
+
+  @override
+  String get submitAssessment => 'Enviar evaluacion';
+
+  @override
+  String get writtenResponseHint => 'Escribe tu explicacion aqui.';
+
+  @override
+  String get uploadComingSoon =>
+      'La carga de archivos estara disponible pronto';
+
+  @override
+  String get mockDocumentAttached => 'Documento mock adjuntado';
+
+  @override
+  String get markDocumentAttached => 'Marcar documento adjunto';
+
+  @override
+  String get resultsTitle => 'Resultados';
+
+  @override
+  String get backToLesson => 'Volver a la leccion';
+
+  @override
+  String get backToAssessment => 'Volver a la evaluacion';
+
+  @override
+  String get autoGradedScore => 'Puntaje autocalificado';
+
+  @override
+  String get finalScore => 'Puntaje final';
+
+  @override
+  String get pendingReview => 'Revision pendiente';
+
+  @override
+  String get correctAnswers => 'Respuestas correctas';
+
+  @override
+  String get incorrectAnswers => 'Respuestas incorrectas';
+
+  @override
+  String get pendingReviewItems => 'Elementos pendientes de revision';
+
+  @override
+  String get masteryLevelLabel => 'Nivel de dominio';
+
+  @override
+  String get returnToDashboard => 'Volver al panel';
+
+  @override
+  String get masteryNotStarted => 'No iniciado';
+
+  @override
+  String get masteryInProgress => 'En progreso';
+
+  @override
+  String get masteryDeveloping => 'En desarrollo';
+
+  @override
+  String get masteryProficient => 'Competente';
+
+  @override
+  String get masteryMastered => 'Dominado';
+
+  @override
+  String get lastAssessmentScoreLabel => 'Ultimo puntaje:';
+
+  @override
+  String get masteryStateLabel => 'Dominio:';
+
+  @override
+  String get pendingReviewNotice => 'Revision:';
 }

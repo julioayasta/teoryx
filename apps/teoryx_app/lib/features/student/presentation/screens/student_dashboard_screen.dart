@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/routing/route_names.dart';
 import '../../../../features/lesson/data/repositories/mock_course_repository.dart';
+import '../../../../features/progress/data/repositories/mock_progress_repository.dart';
+import '../../../../features/progress/domain/entities/student_progress.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_shell.dart';
@@ -13,12 +15,16 @@ class StudentDashboardScreen extends StatelessWidget {
 
   static const _studentRepository = MockStudentRepository();
   static const _courseRepository = MockCourseRepository();
+  static const _progressRepository = MockProgressRepository();
 
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
     final student = _studentRepository.getCurrentStudent();
     final enrolledCourses = _courseRepository.getEnrolledCourses(languageCode);
+    final currentProgress = _progressRepository.getCurrentProgress(
+      languageCode,
+    );
 
     return AppScaffold(
       breadcrumbs: [AppBreadcrumb(label: context.l10n.dashboardTitle)],
@@ -82,21 +88,23 @@ class StudentDashboardScreen extends StatelessWidget {
                         style: context.textTheme.labelLarge,
                       ),
                       const SizedBox(height: 4),
-                      Text(context.l10n.currentLessonComparingFractions),
+                      Text(currentProgress.currentLessonTitle),
                       const SizedBox(height: 12),
                       Text(
                         context.l10n.progressLabel,
                         style: context.textTheme.labelLarge,
                       ),
                       const SizedBox(height: 4),
-                      Text(context.l10n.lessonProgressTwoOfEight),
+                      Text(currentProgress.lessonProgressLabel),
+                      const SizedBox(height: 12),
+                      _ProgressDetails(progress: currentProgress),
                       const SizedBox(height: 16),
                       FilledButton.icon(
                         onPressed: () => context.goNamed(
                           RouteNames.lessonDetail,
                           pathParameters: {
-                            'courseId': course.id,
-                            'lessonId': 'comparing-fractions',
+                            'courseId': currentProgress.courseId,
+                            'lessonId': currentProgress.lessonId,
                           },
                         ),
                         icon: const Icon(Icons.arrow_forward),
@@ -147,6 +155,61 @@ class StudentDashboardScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ProgressDetails extends StatelessWidget {
+  const _ProgressDetails({required this.progress});
+
+  final StudentProgress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        _ProgressChip(
+          label: context.l10n.masteryStateLabel,
+          value: _masteryLabel(context, progress.masteryLevel),
+        ),
+        if (progress.lastAssessmentScorePercentage != null)
+          _ProgressChip(
+            label: context.l10n.lastAssessmentScoreLabel,
+            value: '${progress.lastAssessmentScorePercentage}%',
+          ),
+        if (progress.hasPendingReview)
+          _ProgressChip(
+            label: context.l10n.pendingReviewNotice,
+            value: context.l10n.pendingReview,
+          ),
+      ],
+    );
+  }
+
+  String _masteryLabel(BuildContext context, MasteryLevel masteryLevel) {
+    return switch (masteryLevel) {
+      MasteryLevel.notStarted => context.l10n.masteryNotStarted,
+      MasteryLevel.inProgress => context.l10n.masteryInProgress,
+      MasteryLevel.developing => context.l10n.masteryDeveloping,
+      MasteryLevel.proficient => context.l10n.masteryProficient,
+      MasteryLevel.mastered => context.l10n.masteryMastered,
+    };
+  }
+}
+
+class _ProgressChip extends StatelessWidget {
+  const _ProgressChip({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      label: Text('$label $value'),
+      side: BorderSide(color: context.colorScheme.outlineVariant),
     );
   }
 }

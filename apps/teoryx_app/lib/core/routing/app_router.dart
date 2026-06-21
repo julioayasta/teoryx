@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 
+import '../../features/assessment/presentation/screens/assessment_results_screen.dart';
+import '../../features/assessment/presentation/screens/assessment_screen.dart';
 import '../../features/lesson/presentation/screens/lesson_detail_screen.dart';
 import '../../features/lesson/presentation/screens/lesson_list_screen.dart';
 import '../../features/lesson/presentation/screens/course_list_screen.dart';
@@ -52,6 +54,27 @@ class AppRouter {
           final courseId = state.pathParameters['courseId']!;
           final lessonId = state.pathParameters['lessonId']!;
           return LessonDetailScreen(courseId: courseId, lessonId: lessonId);
+        },
+      ),
+      GoRoute(
+        path: '/courses/:courseId/lessons/:lessonId/assessment',
+        name: RouteNames.assessment,
+        builder: (context, state) {
+          final courseId = state.pathParameters['courseId']!;
+          final lessonId = state.pathParameters['lessonId']!;
+          return AssessmentScreen(courseId: courseId, lessonId: lessonId);
+        },
+      ),
+      GoRoute(
+        path: '/courses/:courseId/lessons/:lessonId/assessment/results',
+        name: RouteNames.assessmentResults,
+        builder: (context, state) {
+          final courseId = state.pathParameters['courseId']!;
+          final lessonId = state.pathParameters['lessonId']!;
+          return AssessmentResultsScreen(
+            courseId: courseId,
+            lessonId: lessonId,
+          );
         },
       ),
     ],

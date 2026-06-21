@@ -78,6 +78,15 @@ class LessonDetailScreen extends StatelessWidget {
           const SizedBox(height: 20),
           for (final step in steps) GuidedLessonStepCard(step: step),
           const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: () => context.goNamed(
+              RouteNames.assessment,
+              pathParameters: {'courseId': courseId, 'lessonId': lesson.id},
+            ),
+            icon: const Icon(Icons.assignment_outlined),
+            label: Text(context.l10n.startAssessment),
+          ),
+          const SizedBox(height: 12),
           LearningDetailsSection(lesson: lesson),
           const SizedBox(height: 80),
         ],
