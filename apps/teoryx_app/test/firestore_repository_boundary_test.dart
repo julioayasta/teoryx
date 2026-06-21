@@ -6,6 +6,7 @@ import 'package:teoryx_app/features/lesson/data/repositories/mock_course_reposit
 import 'package:teoryx_app/features/lesson/data/repositories/mock_lesson_repository.dart';
 import 'package:teoryx_app/features/lesson/domain/repositories/course_repository.dart';
 import 'package:teoryx_app/features/lesson/domain/repositories/lesson_repository.dart';
+import 'package:teoryx_app/features/school/data/models/firestore_school_theme_model.dart';
 import 'package:teoryx_app/features/student/data/models/firestore_student_profile_model.dart';
 import 'package:teoryx_app/features/student/data/repositories/mock_student_repository.dart';
 import 'package:teoryx_app/features/student/domain/repositories/student_repository.dart';
@@ -88,6 +89,15 @@ void main() {
       },
     ).toEntity();
 
+    final schoolTheme = FirestoreSchoolThemeModel.fromFirestore(const {
+      'name': 'Demo School',
+      'fullName': 'Demo School for Learning',
+      'logoUrl': 'https://example.com/demo-logo.png',
+      'primaryColor': '#123456',
+      'secondaryColor': '#ABCDEF',
+      'fontFamily': 'Atkinson Hyperlegible',
+    }).toEntity();
+
     final lesson = FirestorePublishedLessonModel.fromFirestore(
       id: 'fractions-whole',
       data: const {
@@ -122,6 +132,8 @@ void main() {
 
     expect(student.firstName, 'Sofia');
     expect(course.title, 'Grade 4 Math');
+    expect(schoolTheme.schoolName, 'Demo School');
+    expect(schoolTheme.logoAssetPath, 'assets/schools/k2s/k2s_logo.png');
     expect(lesson.learningObjective.id, 'lo-fractions-whole');
     expect(lesson.steps.single.title, 'A whole pizza');
   });

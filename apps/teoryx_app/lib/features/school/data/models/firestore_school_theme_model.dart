@@ -31,20 +31,27 @@ class FirestoreSchoolThemeModel {
   }
 
   static FirestoreSchoolThemeModel fromFirestore(Map<String, dynamic> data) {
+    final fallback = SchoolThemeConfig.k2s();
+    final logoAssetPath = data['logoAssetPath'] as String?;
+
     return FirestoreSchoolThemeModel(
-      schoolName: data['name'] as String? ?? 'TeoryX',
+      schoolName: data['name'] as String? ?? fallback.schoolName,
       fullSchoolName:
-          data['fullName'] as String? ?? data['name'] as String? ?? 'TeoryX',
+          data['fullName'] as String? ??
+          data['name'] as String? ??
+          fallback.fullSchoolName,
       primaryColor: _colorFromHex(
         data['primaryColor'] as String?,
-        const Color(0xFF3057D5),
+        fallback.primaryColor,
       ),
       secondaryColor: _colorFromHex(
         data['secondaryColor'] as String?,
-        const Color(0xFFFFC107),
+        fallback.secondaryColor,
       ),
-      logoAssetPath: data['logoAssetPath'] as String?,
-      fontFamily: data['fontFamily'] as String? ?? 'Atkinson Hyperlegible',
+      logoAssetPath: logoAssetPath == null || logoAssetPath.isEmpty
+          ? fallback.logoAssetPath
+          : logoAssetPath,
+      fontFamily: data['fontFamily'] as String? ?? fallback.fontFamily,
     );
   }
 

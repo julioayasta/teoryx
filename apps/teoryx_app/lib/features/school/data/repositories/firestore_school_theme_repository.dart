@@ -22,6 +22,11 @@ class FirestoreSchoolThemeRepository implements SchoolThemeRepository {
       return SchoolThemeConfig.k2s();
     }
 
+    final status = data['status'] as String?;
+    if (status != null && status != 'active') {
+      return SchoolThemeConfig.k2s();
+    }
+
     return FirestoreSchoolThemeModel.fromFirestore(data).toEntity();
   }
 }

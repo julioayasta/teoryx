@@ -10,19 +10,25 @@ import '../core/theme/school_theme_config.dart';
 import '../features/auth/data/repositories/firebase_auth_repository.dart';
 import '../features/auth/data/repositories/mock_auth_repository.dart';
 import '../features/auth/domain/repositories/auth_repository.dart';
+import '../features/school/data/repositories/firestore_school_theme_repository.dart';
+import '../features/school/domain/repositories/school_theme_repository.dart';
 import 'teoryx_app.dart';
 
 class AppDependencies {
   const AppDependencies({
     required this.authRepository,
     required this.firebaseStatus,
+    required this.schoolThemeConfig,
   });
 
   final AuthRepository authRepository;
   final FirebaseBootstrapStatus firebaseStatus;
+  final SchoolThemeConfig schoolThemeConfig;
 }
 
 Future<AppDependencies> initializeAppDependencies() async {
+  const schoolId = 'school-demo';
+
   if (FirebaseAppConfig.isEnabled) {
     if (!FirebaseAppConfig.hasGeneratedConfiguration) {
       final message =
@@ -37,6 +43,7 @@ Future<AppDependencies> initializeAppDependencies() async {
       return AppDependencies(
         authRepository: MockAuthRepository(),
         firebaseStatus: FirebaseBootstrapStatus.fallback(message),
+        schoolThemeConfig: SchoolThemeConfig.k2s(),
       );
     }
 
@@ -45,10 +52,15 @@ Future<AppDependencies> initializeAppDependencies() async {
         FirebaseAppConfig.initializationTimeout,
       );
       debugPrint('TeoryX Firebase: initialized successfully.');
+      final schoolThemeConfig = await _resolveSchoolThemeConfig(
+        schoolId: schoolId,
+        repository: FirestoreSchoolThemeRepository(),
+      );
 
       return AppDependencies(
         authRepository: FirebaseAuthRepository(),
         firebaseStatus: const FirebaseBootstrapStatus.available(),
+        schoolThemeConfig: schoolThemeConfig,
       );
     } on Object catch (error, stackTrace) {
       final message =
@@ -68,6 +80,7 @@ Future<AppDependencies> initializeAppDependencies() async {
       return AppDependencies(
         authRepository: MockAuthRepository(),
         firebaseStatus: FirebaseBootstrapStatus.fallback(message),
+        schoolThemeConfig: SchoolThemeConfig.k2s(),
       );
     }
   }
@@ -75,6 +88,7 @@ Future<AppDependencies> initializeAppDependencies() async {
   return AppDependencies(
     authRepository: MockAuthRepository(),
     firebaseStatus: const FirebaseBootstrapStatus.mockMode(),
+    schoolThemeConfig: SchoolThemeConfig.k2s(),
   );
 }
 
@@ -84,12 +98,35 @@ Widget buildTeoryXApp({AppDependencies? dependencies}) {
       AppDependencies(
         authRepository: MockAuthRepository(),
         firebaseStatus: const FirebaseBootstrapStatus.mockMode(),
+        schoolThemeConfig: SchoolThemeConfig.k2s(),
       );
 
   return TeoryXApp(
     authRepository: resolvedDependencies.authRepository,
     firebaseStatus: resolvedDependencies.firebaseStatus,
     localeController: AppLocaleController(),
-    schoolThemeConfig: SchoolThemeConfig.k2s(),
+    schoolThemeConfig: resolvedDependencies.schoolThemeConfig,
   );
+}
+
+Future<SchoolThemeConfig> _resolveSchoolThemeConfig({
+  required String schoolId,
+  required SchoolThemeRepository repository,
+}) async {
+  try {
+    final schoolThemeConfig = await repository.getSchoolThemeConfig(schoolId);
+
+    return schoolThemeConfig ?? SchoolThemeConfig.k2s();
+  } on Object catch (error, stackTrace) {
+    debugPrint(
+      'TeoryX Firebase fallback: could not load school theme for $schoolId. '
+      'Using K2S local theme. Error: $error',
+    );
+    debugPrintStack(
+      label: 'TeoryX school theme Firestore stack',
+      stackTrace: stackTrace,
+    );
+
+    return SchoolThemeConfig.k2s();
+  }
 }

@@ -11,9 +11,11 @@ void main() {
     if (FirebaseAppConfig.isEnabled) {
       expect(dependencies.firebaseStatus.isFallbackActive, isTrue);
       expect(dependencies.firebaseStatus.message, contains('Falling back'));
+      expect(dependencies.schoolThemeConfig.schoolName, 'K2S');
     } else {
       expect(dependencies.firebaseStatus.isFallbackActive, isFalse);
       expect(dependencies.firebaseStatus.isFirebaseRequested, isFalse);
+      expect(dependencies.schoolThemeConfig.schoolName, 'K2S');
     }
   });
 }
