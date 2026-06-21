@@ -5,20 +5,20 @@ import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_shell.dart';
-import '../../data/repositories/mock_progress_repository.dart';
 import '../../domain/entities/course_progress.dart';
 import '../../domain/entities/lesson_progress.dart';
 import '../../domain/entities/student_progress.dart';
+import '../controllers/progress_repository_scope.dart';
 
 class ProgressDashboardScreen extends StatelessWidget {
   const ProgressDashboardScreen({super.key});
 
-  static const _progressRepository = MockProgressRepository();
-
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
-    final courseProgress = _progressRepository.getCourseProgress(languageCode);
+    final courseProgress = ProgressRepositoryScope.of(
+      context,
+    ).getCourseProgress('student-001', 'grade-4-math', languageCode);
 
     return AppScaffold(
       breadcrumbs: [

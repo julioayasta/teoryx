@@ -2,13 +2,19 @@ import '../../domain/entities/course_progress.dart';
 import '../../domain/entities/lesson_progress.dart';
 import '../../domain/entities/progress_recommendation.dart';
 import '../../domain/entities/student_progress.dart';
+import '../../domain/repositories/progress_repository.dart';
 
-class MockProgressRepository {
+class MockProgressRepository implements ProgressRepository {
   const MockProgressRepository();
 
   static LessonProgressStatus _status = LessonProgressStatus.studying;
   static int? _lastAssessmentScorePercentage;
   static int _pendingReviewCount = 0;
+
+  @override
+  StudentProgress getStudentProgress(String studentId, String languageCode) {
+    return getCurrentProgress(languageCode);
+  }
 
   StudentProgress getCurrentProgress(String languageCode) {
     final isSpanish = languageCode == 'es';
@@ -38,7 +44,16 @@ class MockProgressRepository {
     );
   }
 
-  CourseProgress getCourseProgress(String languageCode) {
+  @override
+  CourseProgress getCourseProgress(
+    String studentId,
+    String courseId,
+    String languageCode,
+  ) {
+    return getCourseProgressForLanguage(languageCode);
+  }
+
+  CourseProgress getCourseProgressForLanguage(String languageCode) {
     final isSpanish = languageCode == 'es';
     final currentProgress = getCurrentProgress(languageCode);
     final pendingReviewCount = currentProgress.pendingReviewCount > 0

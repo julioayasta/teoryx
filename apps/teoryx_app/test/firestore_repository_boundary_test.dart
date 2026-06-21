@@ -7,6 +7,10 @@ import 'package:teoryx_app/features/lesson/data/repositories/mock_course_reposit
 import 'package:teoryx_app/features/lesson/data/repositories/mock_lesson_repository.dart';
 import 'package:teoryx_app/features/lesson/domain/repositories/course_repository.dart';
 import 'package:teoryx_app/features/lesson/domain/repositories/lesson_repository.dart';
+import 'package:teoryx_app/features/progress/data/models/firestore_student_progress_model.dart';
+import 'package:teoryx_app/features/progress/data/repositories/firestore_progress_repository.dart';
+import 'package:teoryx_app/features/progress/data/repositories/mock_progress_repository.dart';
+import 'package:teoryx_app/features/progress/domain/entities/student_progress.dart';
 import 'package:teoryx_app/features/school/data/models/firestore_school_theme_model.dart';
 import 'package:teoryx_app/features/student/data/models/firestore_student_profile_model.dart';
 import 'package:teoryx_app/features/student/data/repositories/firestore_student_repository.dart';
@@ -136,6 +140,23 @@ void main() {
         ],
       },
     ).toEntity();
+    final progress = FirestoreStudentProgressModel.fromFirestore(
+      id: 'student-001',
+      data: const {
+        'studentId': 'student-001',
+        'courseId': 'grade-4-math',
+        'currentLessonId': 'comparing-fractions',
+        'currentLessonTitle': 'Comparing Fractions',
+        'currentLessonStatus': 'studying',
+        'nextLessonId': 'equivalent-fractions',
+        'nextLessonTitle': 'Equivalent Fractions',
+        'lessonProgressLabel': 'Lesson 2 of 8',
+        'masteryLevel': 'inProgress',
+        'lastAssessmentScorePercentage': 67,
+        'hasPendingReview': true,
+        'pendingReviewCount': 2,
+      },
+    );
 
     expect(student.isValid, isTrue);
     expect(student.toEntity().firstName, 'Sofia');
@@ -144,6 +165,11 @@ void main() {
     expect(schoolTheme.logoAssetPath, 'assets/schools/k2s/k2s_logo.png');
     expect(lesson.learningObjective.id, 'lo-fractions-whole');
     expect(lesson.steps.single.title, 'A whole pizza');
+    expect(progress.isValid, isTrue);
+    expect(
+      progress.toEntity().currentLessonStatus,
+      LessonProgressStatus.studying,
+    );
   });
 
   test('Firestore course mapper rejects inactive or incomplete courses', () {
@@ -208,6 +234,40 @@ void main() {
     expect(inactiveProfile.isValid, isFalse);
   });
 
+  test('Firestore progress mapper rejects unsupported status or mastery', () {
+    final unsupportedStatus = FirestoreStudentProgressModel.fromFirestore(
+      id: 'student-001',
+      data: const {
+        'studentId': 'student-001',
+        'courseId': 'grade-4-math',
+        'currentLessonId': 'comparing-fractions',
+        'currentLessonTitle': 'Comparing Fractions',
+        'currentLessonStatus': 'paused',
+        'nextLessonId': 'equivalent-fractions',
+        'nextLessonTitle': 'Equivalent Fractions',
+        'lessonProgressLabel': 'Lesson 2 of 8',
+        'masteryLevel': 'inProgress',
+      },
+    );
+    final unsupportedMastery = FirestoreStudentProgressModel.fromFirestore(
+      id: 'student-001',
+      data: const {
+        'studentId': 'student-001',
+        'courseId': 'grade-4-math',
+        'currentLessonId': 'comparing-fractions',
+        'currentLessonTitle': 'Comparing Fractions',
+        'currentLessonStatus': 'studying',
+        'nextLessonId': 'equivalent-fractions',
+        'nextLessonTitle': 'Equivalent Fractions',
+        'lessonProgressLabel': 'Lesson 2 of 8',
+        'masteryLevel': 'expert',
+      },
+    );
+
+    expect(unsupportedStatus.isValid, isFalse);
+    expect(unsupportedMastery.isValid, isFalse);
+  });
+
   test('Firestore student repository exposes mock fallback by default', () {
     final repository = FirestoreStudentRepository(
       schoolId: 'school-demo',
@@ -229,6 +289,25 @@ void main() {
     expect(
       repository.getCourseById('grade-4-math', 'en').title,
       'Grade 4 Math',
+    );
+  });
+
+  test('Firestore progress repository exposes mock fallback by default', () {
+    final repository = FirestoreProgressRepository(
+      schoolId: 'school-demo',
+      studentId: 'student-001',
+      fallbackRepository: const MockProgressRepository(),
+    );
+
+    expect(
+      repository.getStudentProgress('student-001', 'en').currentLessonId,
+      'comparing-fractions',
+    );
+    expect(
+      repository
+          .getCourseProgress('student-001', 'grade-4-math', 'en')
+          .courseId,
+      'grade-4-math',
     );
   });
 }

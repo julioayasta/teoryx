@@ -13,6 +13,9 @@ import '../features/auth/domain/repositories/auth_repository.dart';
 import '../features/lesson/data/repositories/firestore_course_repository.dart';
 import '../features/lesson/data/repositories/mock_course_repository.dart';
 import '../features/lesson/domain/repositories/course_repository.dart';
+import '../features/progress/data/repositories/firestore_progress_repository.dart';
+import '../features/progress/data/repositories/mock_progress_repository.dart';
+import '../features/progress/domain/repositories/progress_repository.dart';
 import '../features/school/data/repositories/firestore_school_theme_repository.dart';
 import '../features/school/domain/repositories/school_theme_repository.dart';
 import '../features/student/data/repositories/firestore_student_repository.dart';
@@ -27,6 +30,7 @@ class AppDependencies {
     required this.schoolThemeConfig,
     required this.studentRepository,
     required this.courseRepository,
+    required this.progressRepository,
   });
 
   final AuthRepository authRepository;
@@ -34,6 +38,7 @@ class AppDependencies {
   final SchoolThemeConfig schoolThemeConfig;
   final StudentRepository studentRepository;
   final CourseRepository courseRepository;
+  final ProgressRepository progressRepository;
 }
 
 Future<AppDependencies> initializeAppDependencies() async {
@@ -57,6 +62,7 @@ Future<AppDependencies> initializeAppDependencies() async {
         schoolThemeConfig: SchoolThemeConfig.k2s(),
         studentRepository: const MockStudentRepository(),
         courseRepository: const MockCourseRepository(),
+        progressRepository: const MockProgressRepository(),
       );
     }
 
@@ -80,6 +86,11 @@ Future<AppDependencies> initializeAppDependencies() async {
       );
       final courseRepository = FirestoreCourseRepository(schoolId: schoolId);
       await _preloadCourseCatalog(repository: courseRepository);
+      final progressRepository = FirestoreProgressRepository(
+        schoolId: schoolId,
+        studentId: studentId,
+      );
+      await _preloadStudentProgress(repository: progressRepository);
 
       return AppDependencies(
         authRepository: FirebaseAuthRepository(),
@@ -87,6 +98,7 @@ Future<AppDependencies> initializeAppDependencies() async {
         schoolThemeConfig: schoolThemeConfig,
         studentRepository: studentRepository,
         courseRepository: courseRepository,
+        progressRepository: progressRepository,
       );
     } on Object catch (error, stackTrace) {
       final message =
@@ -109,6 +121,7 @@ Future<AppDependencies> initializeAppDependencies() async {
         schoolThemeConfig: SchoolThemeConfig.k2s(),
         studentRepository: const MockStudentRepository(),
         courseRepository: const MockCourseRepository(),
+        progressRepository: const MockProgressRepository(),
       );
     }
   }
@@ -119,6 +132,7 @@ Future<AppDependencies> initializeAppDependencies() async {
     schoolThemeConfig: SchoolThemeConfig.k2s(),
     studentRepository: const MockStudentRepository(),
     courseRepository: const MockCourseRepository(),
+    progressRepository: const MockProgressRepository(),
   );
 }
 
@@ -153,6 +167,7 @@ Widget buildTeoryXApp({AppDependencies? dependencies}) {
         schoolThemeConfig: SchoolThemeConfig.k2s(),
         studentRepository: const MockStudentRepository(),
         courseRepository: const MockCourseRepository(),
+        progressRepository: const MockProgressRepository(),
       );
 
   return TeoryXApp(
@@ -160,9 +175,27 @@ Widget buildTeoryXApp({AppDependencies? dependencies}) {
     firebaseStatus: resolvedDependencies.firebaseStatus,
     studentRepository: resolvedDependencies.studentRepository,
     courseRepository: resolvedDependencies.courseRepository,
+    progressRepository: resolvedDependencies.progressRepository,
     localeController: AppLocaleController(),
     schoolThemeConfig: resolvedDependencies.schoolThemeConfig,
   );
+}
+
+Future<void> _preloadStudentProgress({
+  required FirestoreProgressRepository repository,
+}) async {
+  try {
+    await repository.preloadStudentProgress('en');
+  } on Object catch (error, stackTrace) {
+    debugPrint(
+      'TeoryX Firebase fallback: could not load student progress. '
+      'Using mock progress. Error: $error',
+    );
+    debugPrintStack(
+      label: 'TeoryX student progress Firestore stack',
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 Future<void> _preloadCourseCatalog({

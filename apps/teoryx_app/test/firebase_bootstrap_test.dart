@@ -20,6 +20,12 @@ void main() {
         dependencies.courseRepository.getAvailableCourses('en'),
         hasLength(4),
       );
+      expect(
+        dependencies.progressRepository
+            .getStudentProgress('student-001', 'en')
+            .currentLessonId,
+        'comparing-fractions',
+      );
     } else {
       expect(dependencies.firebaseStatus.isFallbackActive, isFalse);
       expect(dependencies.firebaseStatus.isFirebaseRequested, isFalse);
@@ -31,6 +37,12 @@ void main() {
       expect(
         dependencies.courseRepository.getAvailableCourses('en'),
         hasLength(4),
+      );
+      expect(
+        dependencies.progressRepository
+            .getStudentProgress('student-001', 'en')
+            .currentLessonId,
+        'comparing-fractions',
       );
     }
   });
