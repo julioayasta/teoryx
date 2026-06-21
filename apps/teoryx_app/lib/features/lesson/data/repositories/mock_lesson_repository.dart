@@ -235,6 +235,21 @@ class MockLessonRepository {
     ];
   }
 
+  List<Lesson> getLessonsForCourse(String courseId) {
+    final lessons = getAvailableLessons();
+
+    if (courseId == 'grade-4-ela') {
+      return const [];
+    }
+
+    return lessons
+        .where(
+          (lesson) =>
+              lesson.gradeLevelId == 'grade-4' && lesson.subjectId == 'math',
+        )
+        .toList();
+  }
+
   Lesson getLessonById(String lessonId) {
     return getAvailableLessons().firstWhere(
       (lesson) => lesson.id == lessonId,

@@ -158,6 +158,60 @@ abstract class AppLocalizations {
   /// **'View all lessons'**
   String get viewAllLessons;
 
+  /// No description provided for @readyToLearnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to learn?'**
+  String get readyToLearnTitle;
+
+  /// No description provided for @chooseCourseFromDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a course first, then pick the lesson you want to study.'**
+  String get chooseCourseFromDashboard;
+
+  /// No description provided for @chooseCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose course'**
+  String get chooseCourse;
+
+  /// No description provided for @courseSelectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Course'**
+  String get courseSelectionTitle;
+
+  /// No description provided for @chooseCoursePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the subject you want to work on today.'**
+  String get chooseCoursePrompt;
+
+  /// No description provided for @backToDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Dashboard'**
+  String get backToDashboard;
+
+  /// No description provided for @backToCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Courses'**
+  String get backToCourses;
+
+  /// No description provided for @backToLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Lessons'**
+  String get backToLessons;
+
+  /// No description provided for @noLessonsForCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons for this course are not available in the prototype yet.'**
+  String get noLessonsForCourse;
+
   /// No description provided for @lessonListTitle.
   ///
   /// In en, this message translates to:

@@ -43,6 +43,36 @@ class AppLocalizationsEs extends AppLocalizations {
   String get viewAllLessons => 'Ver todas las lecciones';
 
   @override
+  String get readyToLearnTitle => 'Listo para aprender?';
+
+  @override
+  String get chooseCourseFromDashboard =>
+      'Elige primero un curso y luego selecciona la leccion que quieres estudiar.';
+
+  @override
+  String get chooseCourse => 'Elegir curso';
+
+  @override
+  String get courseSelectionTitle => 'Elegir curso';
+
+  @override
+  String get chooseCoursePrompt =>
+      'Selecciona la materia que quieres trabajar hoy.';
+
+  @override
+  String get backToDashboard => 'Volver al panel';
+
+  @override
+  String get backToCourses => 'Volver a cursos';
+
+  @override
+  String get backToLessons => 'Volver a lecciones';
+
+  @override
+  String get noLessonsForCourse =>
+      'Las lecciones de este curso aun no estan disponibles en el prototipo.';
+
+  @override
   String get lessonListTitle => 'Lecciones';
 
   @override
