@@ -5,15 +5,14 @@ import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_shell.dart';
-import '../../data/repositories/mock_course_repository.dart';
 import '../../data/repositories/mock_grade_level_repository.dart';
+import '../controllers/course_repository_scope.dart';
 
 class CourseListScreen extends StatelessWidget {
   const CourseListScreen({required this.gradeLevelId, super.key});
 
   final String gradeLevelId;
 
-  static const _courseRepository = MockCourseRepository();
   static const _gradeLevelRepository = MockGradeLevelRepository();
 
   @override
@@ -23,10 +22,9 @@ class CourseListScreen extends StatelessWidget {
       gradeLevelId,
       languageCode,
     );
-    final courses = _courseRepository.getCoursesForGrade(
-      gradeLevelId,
-      languageCode,
-    );
+    final courses = CourseRepositoryScope.of(
+      context,
+    ).getCoursesForGrade(gradeLevelId, languageCode);
 
     return AppScaffold(
       breadcrumbs: [

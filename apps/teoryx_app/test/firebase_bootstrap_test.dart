@@ -16,6 +16,10 @@ void main() {
         dependencies.studentRepository.getCurrentStudent().firstName,
         'Sofia',
       );
+      expect(
+        dependencies.courseRepository.getAvailableCourses('en'),
+        hasLength(4),
+      );
     } else {
       expect(dependencies.firebaseStatus.isFallbackActive, isFalse);
       expect(dependencies.firebaseStatus.isFirebaseRequested, isFalse);
@@ -23,6 +27,10 @@ void main() {
       expect(
         dependencies.studentRepository.getCurrentStudent().firstName,
         'Sofia',
+      );
+      expect(
+        dependencies.courseRepository.getAvailableCourses('en'),
+        hasLength(4),
       );
     }
   });

@@ -10,6 +10,9 @@ import '../core/theme/school_theme_config.dart';
 import '../features/auth/data/repositories/firebase_auth_repository.dart';
 import '../features/auth/data/repositories/mock_auth_repository.dart';
 import '../features/auth/domain/repositories/auth_repository.dart';
+import '../features/lesson/data/repositories/firestore_course_repository.dart';
+import '../features/lesson/data/repositories/mock_course_repository.dart';
+import '../features/lesson/domain/repositories/course_repository.dart';
 import '../features/school/data/repositories/firestore_school_theme_repository.dart';
 import '../features/school/domain/repositories/school_theme_repository.dart';
 import '../features/student/data/repositories/firestore_student_repository.dart';
@@ -23,12 +26,14 @@ class AppDependencies {
     required this.firebaseStatus,
     required this.schoolThemeConfig,
     required this.studentRepository,
+    required this.courseRepository,
   });
 
   final AuthRepository authRepository;
   final FirebaseBootstrapStatus firebaseStatus;
   final SchoolThemeConfig schoolThemeConfig;
   final StudentRepository studentRepository;
+  final CourseRepository courseRepository;
 }
 
 Future<AppDependencies> initializeAppDependencies() async {
@@ -51,6 +56,7 @@ Future<AppDependencies> initializeAppDependencies() async {
         firebaseStatus: FirebaseBootstrapStatus.fallback(message),
         schoolThemeConfig: SchoolThemeConfig.k2s(),
         studentRepository: const MockStudentRepository(),
+        courseRepository: const MockCourseRepository(),
       );
     }
 
@@ -72,12 +78,15 @@ Future<AppDependencies> initializeAppDependencies() async {
         studentId: studentId,
         repository: studentRepository,
       );
+      final courseRepository = FirestoreCourseRepository(schoolId: schoolId);
+      await _preloadCourseCatalog(repository: courseRepository);
 
       return AppDependencies(
         authRepository: FirebaseAuthRepository(),
         firebaseStatus: const FirebaseBootstrapStatus.available(),
         schoolThemeConfig: schoolThemeConfig,
         studentRepository: studentRepository,
+        courseRepository: courseRepository,
       );
     } on Object catch (error, stackTrace) {
       final message =
@@ -99,6 +108,7 @@ Future<AppDependencies> initializeAppDependencies() async {
         firebaseStatus: FirebaseBootstrapStatus.fallback(message),
         schoolThemeConfig: SchoolThemeConfig.k2s(),
         studentRepository: const MockStudentRepository(),
+        courseRepository: const MockCourseRepository(),
       );
     }
   }
@@ -108,6 +118,7 @@ Future<AppDependencies> initializeAppDependencies() async {
     firebaseStatus: const FirebaseBootstrapStatus.mockMode(),
     schoolThemeConfig: SchoolThemeConfig.k2s(),
     studentRepository: const MockStudentRepository(),
+    courseRepository: const MockCourseRepository(),
   );
 }
 
@@ -141,15 +152,34 @@ Widget buildTeoryXApp({AppDependencies? dependencies}) {
         firebaseStatus: const FirebaseBootstrapStatus.mockMode(),
         schoolThemeConfig: SchoolThemeConfig.k2s(),
         studentRepository: const MockStudentRepository(),
+        courseRepository: const MockCourseRepository(),
       );
 
   return TeoryXApp(
     authRepository: resolvedDependencies.authRepository,
     firebaseStatus: resolvedDependencies.firebaseStatus,
     studentRepository: resolvedDependencies.studentRepository,
+    courseRepository: resolvedDependencies.courseRepository,
     localeController: AppLocaleController(),
     schoolThemeConfig: resolvedDependencies.schoolThemeConfig,
   );
+}
+
+Future<void> _preloadCourseCatalog({
+  required FirestoreCourseRepository repository,
+}) async {
+  try {
+    await repository.preloadCourses();
+  } on Object catch (error, stackTrace) {
+    debugPrint(
+      'TeoryX Firebase fallback: could not load course catalog. '
+      'Using mock courses. Error: $error',
+    );
+    debugPrintStack(
+      label: 'TeoryX course catalog Firestore stack',
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 Future<SchoolThemeConfig> _resolveSchoolThemeConfig({

@@ -11,50 +11,80 @@ class FirestoreCourseRepository implements CourseRepository {
     required this.schoolId,
     FirebaseFirestore? firestore,
     CourseRepository? fallbackRepository,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+  }) : _firestore = firestore,
        _fallbackRepository = fallbackRepository ?? const MockCourseRepository();
 
   final String schoolId;
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
   final CourseRepository _fallbackRepository;
+  List<Course>? _cachedCourses;
 
   @override
   List<Course> getEnrolledCourses(String languageCode) {
-    return _fallbackRepository.getEnrolledCourses(languageCode);
+    final courses = _coursesOrFallback(languageCode);
+
+    return courses.where((course) => course.id == 'grade-4-math').toList();
   }
 
   @override
   List<Course> getAvailableCourses(String languageCode) {
-    return _fallbackRepository.getAvailableCourses(languageCode);
+    return _coursesOrFallback(languageCode);
   }
 
   @override
   List<Course> getCoursesForGrade(String gradeLevelId, String languageCode) {
-    return _fallbackRepository.getCoursesForGrade(gradeLevelId, languageCode);
+    return _coursesOrFallback(
+      languageCode,
+    ).where((course) => course.gradeLevelId == gradeLevelId).toList();
   }
 
   @override
   Course getCourseById(String courseId, String languageCode) {
-    return _fallbackRepository.getCourseById(courseId, languageCode);
+    return _coursesOrFallback(languageCode).firstWhere(
+      (course) => course.id == courseId,
+      orElse: () => _fallbackRepository.getCourseById(courseId, languageCode),
+    );
   }
 
-  Future<List<Course>> getAvailableCoursesFromFirestore() async {
-    final snapshot = await _firestore
-        .collection(FirestoreCollectionPaths.courses(schoolId))
-        .where('status', isEqualTo: 'published')
-        .get();
+  Future<List<Course>> preloadCourses() async {
+    try {
+      final firestore = _firestore ?? FirebaseFirestore.instance;
+      final snapshot = await firestore
+          .collection(FirestoreCollectionPaths.courses(schoolId))
+          .get();
 
-    if (snapshot.docs.isEmpty) {
-      return const MockCourseRepository().getAvailableCourses('en');
+      final models =
+          snapshot.docs
+              .map(
+                (doc) => FirestoreCourseModel.fromFirestore(
+                  id: doc.id,
+                  data: doc.data(),
+                ),
+              )
+              .where((model) => model.isValid)
+              .toList()
+            ..sort((a, b) => a.order.compareTo(b.order));
+
+      if (models.isEmpty) {
+        _cachedCourses = null;
+        return _fallbackRepository.getAvailableCourses('en');
+      }
+
+      _cachedCourses = models.map((model) => model.toEntity()).toList();
+      return _cachedCourses!;
+    } on Object {
+      _cachedCourses = null;
+      return _fallbackRepository.getAvailableCourses('en');
+    }
+  }
+
+  List<Course> _coursesOrFallback(String languageCode) {
+    final courses = _cachedCourses;
+
+    if (courses == null || courses.isEmpty) {
+      return _fallbackRepository.getAvailableCourses(languageCode);
     }
 
-    return snapshot.docs
-        .map(
-          (doc) => FirestoreCourseModel.fromFirestore(
-            id: doc.id,
-            data: doc.data(),
-          ).toEntity(),
-        )
-        .toList();
+    return courses;
   }
 }

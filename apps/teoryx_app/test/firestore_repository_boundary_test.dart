@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:teoryx_app/core/data/firestore/firestore_collection_paths.dart';
 import 'package:teoryx_app/features/lesson/data/models/firestore_course_model.dart';
 import 'package:teoryx_app/features/lesson/data/models/firestore_published_lesson_model.dart';
+import 'package:teoryx_app/features/lesson/data/repositories/firestore_course_repository.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/mock_course_repository.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/mock_lesson_repository.dart';
 import 'package:teoryx_app/features/lesson/domain/repositories/course_repository.dart';
@@ -90,6 +91,8 @@ void main() {
         'subjectId': 'math',
         'subjectName': 'Math',
         'title': 'Grade 4 Math',
+        'status': 'published',
+        'order': 1,
       },
     ).toEntity();
 
@@ -143,6 +146,39 @@ void main() {
     expect(lesson.steps.single.title, 'A whole pizza');
   });
 
+  test('Firestore course mapper rejects inactive or incomplete courses', () {
+    final inactiveCourse = FirestoreCourseModel.fromFirestore(
+      id: 'grade-4-math',
+      data: const {
+        'courseId': 'grade-4-math',
+        'curriculumId': 'ca-common-core',
+        'gradeLevelId': 'grade-4',
+        'gradeLevelName': 'Grade 4',
+        'subjectId': 'math',
+        'subjectName': 'Math',
+        'title': 'Grade 4 Math',
+        'status': 'inactive',
+        'order': 1,
+      },
+    );
+    final missingTitle = FirestoreCourseModel.fromFirestore(
+      id: 'grade-4-math',
+      data: const {
+        'courseId': 'grade-4-math',
+        'curriculumId': 'ca-common-core',
+        'gradeLevelId': 'grade-4',
+        'gradeLevelName': 'Grade 4',
+        'subjectId': 'math',
+        'subjectName': 'Math',
+        'status': 'published',
+        'order': 1,
+      },
+    );
+
+    expect(inactiveCourse.isValid, isFalse);
+    expect(missingTitle.isValid, isFalse);
+  });
+
   test('Firestore student mapper rejects missing or inactive profiles', () {
     final missingFirstName = FirestoreStudentProfileModel.fromFirestore(
       id: 'student-001',
@@ -180,5 +216,19 @@ void main() {
     );
 
     expect(repository.getCurrentStudent().firstName, 'Sofia');
+  });
+
+  test('Firestore course repository exposes mock fallback by default', () {
+    final repository = FirestoreCourseRepository(
+      schoolId: 'school-demo',
+      fallbackRepository: const MockCourseRepository(),
+    );
+
+    expect(repository.getAvailableCourses('en'), hasLength(4));
+    expect(repository.getCoursesForGrade('grade-4', 'en'), hasLength(2));
+    expect(
+      repository.getCourseById('grade-4-math', 'en').title,
+      'Grade 4 Math',
+    );
   });
 }

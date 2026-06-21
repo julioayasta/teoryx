@@ -9,6 +9,8 @@ class FirestoreCourseModel {
     required this.subjectId,
     required this.subjectName,
     required this.title,
+    required this.status,
+    required this.order,
   });
 
   final String id;
@@ -18,6 +20,19 @@ class FirestoreCourseModel {
   final String subjectId;
   final String subjectName;
   final String title;
+  final String status;
+  final int order;
+
+  bool get isValid {
+    return id.isNotEmpty &&
+        curriculumId.isNotEmpty &&
+        gradeLevelId.isNotEmpty &&
+        gradeLevelName.isNotEmpty &&
+        subjectId.isNotEmpty &&
+        subjectName.isNotEmpty &&
+        title.isNotEmpty &&
+        (status == 'active' || status == 'published');
+  }
 
   Course toEntity() {
     return Course(
@@ -36,13 +51,15 @@ class FirestoreCourseModel {
     required Map<String, dynamic> data,
   }) {
     return FirestoreCourseModel(
-      id: id,
+      id: data['courseId'] as String? ?? id,
       curriculumId: data['curriculumId'] as String? ?? '',
       gradeLevelId: data['gradeLevelId'] as String? ?? '',
       gradeLevelName: data['gradeLevelName'] as String? ?? '',
       subjectId: data['subjectId'] as String? ?? '',
       subjectName: data['subjectName'] as String? ?? '',
       title: data['title'] as String? ?? '',
+      status: data['status'] as String? ?? 'active',
+      order: data['order'] is int ? data['order'] as int : 0,
     );
   }
 }

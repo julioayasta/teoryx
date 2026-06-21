@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/routing/route_names.dart';
-import '../../../../features/lesson/data/repositories/mock_course_repository.dart';
+import '../../../../features/lesson/presentation/controllers/course_repository_scope.dart';
 import '../../../../features/progress/data/repositories/mock_progress_repository.dart';
 import '../../../../features/progress/domain/entities/student_progress.dart';
 import '../../../../shared/extensions/context_extensions.dart';
@@ -13,14 +13,15 @@ import '../controllers/student_repository_scope.dart';
 class StudentDashboardScreen extends StatelessWidget {
   const StudentDashboardScreen({super.key});
 
-  static const _courseRepository = MockCourseRepository();
   static const _progressRepository = MockProgressRepository();
 
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
     final student = StudentRepositoryScope.of(context).getCurrentStudent();
-    final enrolledCourses = _courseRepository.getEnrolledCourses(languageCode);
+    final enrolledCourses = CourseRepositoryScope.of(
+      context,
+    ).getEnrolledCourses(languageCode);
     final currentProgress = _progressRepository.getCurrentProgress(
       languageCode,
     );

@@ -6,8 +6,8 @@ import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../features/tutor/presentation/widgets/tutor_chat_panel.dart';
 import '../../../../shared/widgets/app_shell.dart';
-import '../../data/repositories/mock_course_repository.dart';
 import '../../data/repositories/mock_lesson_repository.dart';
+import '../controllers/course_repository_scope.dart';
 import '../widgets/guided_lesson_step_card.dart';
 import '../widgets/learning_details_section.dart';
 
@@ -22,13 +22,14 @@ class LessonDetailScreen extends StatelessWidget {
   final String lessonId;
 
   static const _lessonRepository = MockLessonRepository();
-  static const _courseRepository = MockCourseRepository();
 
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
     final lesson = _lessonRepository.getLessonById(lessonId, languageCode);
-    final course = _courseRepository.getCourseById(courseId, languageCode);
+    final course = CourseRepositoryScope.of(
+      context,
+    ).getCourseById(courseId, languageCode);
     final steps = [...lesson.steps]..sort((a, b) => a.order.compareTo(b.order));
 
     return AppScaffold(

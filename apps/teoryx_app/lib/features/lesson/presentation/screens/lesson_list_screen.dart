@@ -5,8 +5,8 @@ import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_shell.dart';
-import '../../data/repositories/mock_course_repository.dart';
 import '../../data/repositories/mock_lesson_repository.dart';
+import '../controllers/course_repository_scope.dart';
 
 class LessonListScreen extends StatelessWidget {
   const LessonListScreen({required this.courseId, super.key});
@@ -14,7 +14,6 @@ class LessonListScreen extends StatelessWidget {
   final String courseId;
 
   static const _lessonRepository = MockLessonRepository();
-  static const _courseRepository = MockCourseRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,9 @@ class LessonListScreen extends StatelessWidget {
       courseId,
       languageCode,
     );
-    final course = _courseRepository.getCourseById(courseId, languageCode);
+    final course = CourseRepositoryScope.of(
+      context,
+    ).getCourseById(courseId, languageCode);
 
     return AppScaffold(
       breadcrumbs: [
