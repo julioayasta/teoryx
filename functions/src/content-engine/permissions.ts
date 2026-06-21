@@ -24,6 +24,12 @@ export function canCall(functionName: CallableName, caller: CallerContext): bool
       return caller.role === 'school_reviewer' || caller.role === 'super_admin';
     case 'publishValidatedArtifact':
       return caller.role === 'school_publisher' || caller.role === 'super_admin' || caller.role === 'system';
+    case 'importCurriculumSource':
+      return caller.role === 'super_admin';
+    case 'requestPedagogicalAnalysis':
+      return caller.role === 'super_admin' || caller.role === 'school_planner' || caller.role === 'school_reviewer' || caller.role === 'school_publisher';
+    case 'getPedagogicalAnalysisStatus':
+      return caller.role === 'super_admin' || caller.role === 'school_planner' || caller.role === 'school_reviewer' || caller.role === 'school_publisher' || caller.role === 'system';
   }
 }
 

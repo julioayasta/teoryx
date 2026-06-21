@@ -18,5 +18,20 @@ export function createContentEngineHandlers(store: ContentEngineStore): Record<C
     requestArtifactRegeneration: (request, caller) => handleRequestArtifactRegeneration(store, request, caller),
     approveArtifactForPublication: (request, caller) => handleApproveArtifactForPublication(store, request, caller),
     publishValidatedArtifact: (request, caller) => handlePublishValidatedArtifact(store, request, caller),
+    importCurriculumSource: async () => ({
+      status: 'failed',
+      errorCode: 'repository_runtime_required',
+      message: 'Curriculum import is available through the repository-backed runtime.',
+    }),
+    requestPedagogicalAnalysis: async () => ({
+      status: 'failed',
+      errorCode: 'repository_runtime_required',
+      message: 'Pedagogical analysis is available through the repository-backed runtime.',
+    }),
+    getPedagogicalAnalysisStatus: async () => ({
+      status: 'failed',
+      errorCode: 'repository_runtime_required',
+      message: 'Pedagogical analysis status is available through the repository-backed runtime.',
+    }),
   };
 }

@@ -5,8 +5,13 @@ import type {
   CostTrackingRecord,
   CourseMap,
   CourseOffering,
+  CurriculumImportBatch,
+  CurriculumSource,
+  CurriculumStandard,
+  CurriculumVersion,
   LessonArtifact,
   LessonSpecification,
+  PedagogicalAnalysis,
   PresentationArtifact,
   PromptExecutionRecord,
   PromptTemplateVersion,
@@ -62,6 +67,27 @@ export interface ContentEngineRepository {
   savePromptTemplateVersion(template: PromptTemplateVersion): Promise<void>;
   savePromptExecutionRecord(record: PromptExecutionRecord): Promise<void>;
   saveCostTrackingRecord(record: CostTrackingRecord): Promise<void>;
+  getCurriculumSource(id: string): Promise<CurriculumSource | undefined>;
+  saveCurriculumSource(source: CurriculumSource): Promise<void>;
+  getCurriculumVersion(input: { sourceId: string; versionId: string }): Promise<CurriculumVersion | undefined>;
+  saveCurriculumVersion(version: CurriculumVersion): Promise<void>;
+  getCurriculumStandard(id: string): Promise<CurriculumStandard | undefined>;
+  saveCurriculumStandard(standard: CurriculumStandard): Promise<void>;
+  listCurriculumStandards(input?: {
+    curriculumSourceId?: string;
+    curriculumVersionId?: string;
+    gradeLevelId?: string;
+    subjectId?: string;
+  }): Promise<CurriculumStandard[]>;
+  getCurriculumImportBatch(id: string): Promise<CurriculumImportBatch | undefined>;
+  saveCurriculumImportBatch(batch: CurriculumImportBatch): Promise<void>;
+  getPedagogicalAnalysis(id: string): Promise<PedagogicalAnalysis | undefined>;
+  findPedagogicalAnalysis(input: {
+    standardId: string;
+    curriculumVersionId: string;
+    language: string;
+  }): Promise<PedagogicalAnalysis | undefined>;
+  savePedagogicalAnalysis(analysis: PedagogicalAnalysis): Promise<void>;
 
   listAuditRecords(): Promise<AuditRecord[]>;
   listProvenanceRecords(): Promise<ProvenanceRecord[]>;
@@ -69,4 +95,6 @@ export interface ContentEngineRepository {
   listPublicationRecords(): Promise<PublicationRecord[]>;
   listPromptExecutionRecords(): Promise<PromptExecutionRecord[]>;
   listCostTrackingRecords(): Promise<CostTrackingRecord[]>;
+  listCurriculumImportBatches(): Promise<CurriculumImportBatch[]>;
+  listPedagogicalAnalyses(): Promise<PedagogicalAnalysis[]>;
 }

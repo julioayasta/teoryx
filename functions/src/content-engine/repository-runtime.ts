@@ -14,8 +14,11 @@ import type {
 import type { AIProvider } from './ai/types.js';
 import { createAIProviderRuntime, type AIProviderEnvironment } from './ai/provider-factory.js';
 import { runFakeCoursePlanWorker } from './course-plan/fake-course-plan-worker.js';
+import { CurriculumImportSchemaError } from './curriculum/curriculum-import-schema.js';
+import { CurriculumImportService } from './curriculum/curriculum-import-service.js';
 import { AILessonContentGenerationError, runAILessonContentWorker } from './lesson-content/ai-lesson-content-worker.js';
 import { runFakeLessonContentWorker } from './lesson-content/fake-lesson-content-worker.js';
+import { PedagogicalAnalysisGenerationError, PedagogicalAnalysisService } from './pedagogy/pedagogical-analysis-service.js';
 import { canAccessSchool, canCall } from './permissions.js';
 import { statusResponseForCaller } from './status.js';
 import type { ContentEngineRepository } from './repositories/content-engine-repository.js';
@@ -42,6 +45,9 @@ export function createFirestoreBackedContentEngineHandlers(
     requestArtifactRegeneration: (request, caller) => requestArtifactRegeneration(repo, request, caller),
     approveArtifactForPublication: (request, caller) => approveArtifactForPublication(repo, request, caller),
     publishValidatedArtifact: (request, caller) => publishValidatedArtifact(repo, request, caller),
+    importCurriculumSource: (request, caller) => importCurriculumSource(repo, request, caller),
+    requestPedagogicalAnalysis: (request, caller) => requestPedagogicalAnalysis(repo, request, caller, options),
+    getPedagogicalAnalysisStatus: (request, caller) => getPedagogicalAnalysisStatus(repo, request, caller),
   };
 }
 
@@ -97,6 +103,79 @@ async function requestCoursePlanGeneration(repo: ContentEngineRepository, reques
       unitPlanCount: output.unitPlans.length,
       lessonSpecificationCount: output.lessonSpecifications.length,
       message: 'Course plan generation completed with fake deterministic output.',
+    };
+  } catch (error) {
+    return failure(error);
+  }
+}
+
+async function importCurriculumSource(repo: ContentEngineRepository, request: CallableRequest, caller: CallerContext) {
+  try {
+    assertAllowed('importCurriculumSource', caller, 'global');
+    const payload = request.payload ?? request;
+    const result = await new CurriculumImportService(repo).importPayload(payload, caller);
+    return {
+      status: result.batch.status,
+      sourceId: result.source.id,
+      versionId: result.version.id,
+      batchId: result.batch.id,
+      checksum: result.batch.checksum,
+      importedCount: result.batch.importedCount,
+      rejectedCount: result.batch.rejectedCount,
+      rejectedRecords: result.batch.rejectedRecords,
+      message: 'Curriculum source import completed.',
+    };
+  } catch (error) {
+    if (error instanceof CurriculumImportSchemaError) {
+      return failed(error.code, error.message);
+    }
+    return failure(error);
+  }
+}
+
+async function requestPedagogicalAnalysis(
+  repo: ContentEngineRepository,
+  request: CallableRequest,
+  caller: CallerContext,
+  options: ContentEngineRuntimeOptions,
+) {
+  try {
+    const schoolId = optionalString(request, 'schoolId');
+    assertAllowed('requestPedagogicalAnalysis', caller, schoolId ?? 'global');
+    const standardId = requiredString(request, 'standardId');
+    const language = optionalString(request, 'language') ?? 'en';
+    const analysis = await new PedagogicalAnalysisService(repo, options).requestAnalysis({
+      standardId,
+      language,
+      schoolId,
+    }, caller);
+    return {
+      status: 'ready',
+      pedagogicalAnalysisId: analysis.pedagogicalAnalysisId,
+      standardId: analysis.standardId,
+      message: 'Pedagogical analysis is ready.',
+    };
+  } catch (error) {
+    if (error instanceof PedagogicalAnalysisGenerationError) {
+      return failed(error.code, error.message);
+    }
+    return failure(error);
+  }
+}
+
+async function getPedagogicalAnalysisStatus(repo: ContentEngineRepository, request: CallableRequest, caller: CallerContext) {
+  try {
+    const schoolId = optionalString(request, 'schoolId');
+    assertAllowed('getPedagogicalAnalysisStatus', caller, schoolId ?? 'global');
+    const pedagogicalAnalysisId = requiredString(request, 'pedagogicalAnalysisId');
+    const analysis = await repo.getPedagogicalAnalysis(pedagogicalAnalysisId);
+    if (!analysis) {
+      return failed('pedagogical_analysis_not_found', 'Pedagogical analysis was not found.');
+    }
+    return {
+      status: analysis.status,
+      pedagogicalAnalysisId: analysis.pedagogicalAnalysisId,
+      validationStatus: analysis.validationStatus,
     };
   } catch (error) {
     return failure(error);

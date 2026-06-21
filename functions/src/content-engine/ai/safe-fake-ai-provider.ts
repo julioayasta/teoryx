@@ -12,6 +12,30 @@ export class SafeFakeAIProvider implements AIProvider {
       throw new AIProviderError('Safe fake provider failure requested.', 'safe_fake_failure', false);
     }
 
+    if (request.taskType === 'pedagogical_analysis_generation') {
+      const content = JSON.stringify({
+        prerequisites: ['Understand grade-level vocabulary', 'Recall prior related concepts'],
+        targetSkills: ['Explain the standard in student-friendly language', 'Apply the standard to a concrete example'],
+        vocabularyTerms: ['standard', 'evidence', 'strategy'],
+        misconceptions: ['Students may confuse the procedure with the concept'],
+        assessmentEvidence: ['Student explains the concept accurately', 'Student applies the skill in a new example'],
+        languageProfile: {
+          band: String(request.variables.gradeLevelId ?? 'grade-4'),
+          sentenceComplexity: 'short compound sentences',
+          vocabularySupport: 'define academic terms before use',
+          scaffolding: 'use concrete examples before abstraction',
+        },
+      });
+
+      return {
+        content,
+        rawOutput: { deterministic: true },
+        estimatedInputTokens: estimateTokens(request.prompt),
+        estimatedOutputTokens: estimateTokens(content),
+        estimatedCostUsd: 0,
+      };
+    }
+
     const input = stableStringify({
       taskType: request.taskType,
       promptTemplateVersionId: request.promptTemplateVersionId,

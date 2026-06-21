@@ -5,8 +5,13 @@ import type {
   CostTrackingRecord,
   CourseMap,
   CourseOffering,
+  CurriculumImportBatch,
+  CurriculumSource,
+  CurriculumStandard,
+  CurriculumVersion,
   LessonArtifact,
   LessonSpecification,
+  PedagogicalAnalysis,
   PresentationArtifact,
   PromptExecutionRecord,
   PromptTemplateVersion,
@@ -17,7 +22,7 @@ import type {
   ValidationArtifact,
   VersionHistoryRecord,
 } from '../contracts.js';
-import { collections } from '../firestore/paths.js';
+import { collections, curriculumVersionCollection } from '../firestore/paths.js';
 import type { DocumentStore } from '../firestore/document-store.js';
 import type { ContentEngineRepository } from './content-engine-repository.js';
 
@@ -203,6 +208,74 @@ export class FirestoreContentEngineRepository implements ContentEngineRepository
     await this.set(collections.costTrackingRecords, record.id, record);
   }
 
+  async getCurriculumSource(id: string): Promise<CurriculumSource | undefined> {
+    return this.get<CurriculumSource>(collections.curriculumSources, id);
+  }
+
+  async saveCurriculumSource(source: CurriculumSource): Promise<void> {
+    await this.set(collections.curriculumSources, source.id, source);
+  }
+
+  async getCurriculumVersion(input: { sourceId: string; versionId: string }): Promise<CurriculumVersion | undefined> {
+    return this.get<CurriculumVersion>(curriculumVersionCollection(input.sourceId), input.versionId);
+  }
+
+  async saveCurriculumVersion(version: CurriculumVersion): Promise<void> {
+    await this.set(curriculumVersionCollection(version.curriculumSourceId), version.id, version);
+  }
+
+  async getCurriculumStandard(id: string): Promise<CurriculumStandard | undefined> {
+    return this.get<CurriculumStandard>(collections.curriculumStandards, id);
+  }
+
+  async saveCurriculumStandard(standard: CurriculumStandard): Promise<void> {
+    await this.set(collections.curriculumStandards, standard.id, standard);
+  }
+
+  async listCurriculumStandards(input?: {
+    curriculumSourceId?: string;
+    curriculumVersionId?: string;
+    gradeLevelId?: string;
+    subjectId?: string;
+  }): Promise<CurriculumStandard[]> {
+    return (await this.list<CurriculumStandard>(collections.curriculumStandards))
+      .filter((standard) =>
+        (!input?.curriculumSourceId || standard.curriculumSourceId === input.curriculumSourceId) &&
+        (!input?.curriculumVersionId || standard.curriculumVersionId === input.curriculumVersionId) &&
+        (!input?.gradeLevelId || standard.gradeLevelId === input.gradeLevelId) &&
+        (!input?.subjectId || standard.subjectId === input.subjectId)
+      )
+      .sort((a, b) => a.code.localeCompare(b.code));
+  }
+
+  async getCurriculumImportBatch(id: string): Promise<CurriculumImportBatch | undefined> {
+    return this.get<CurriculumImportBatch>(collections.curriculumImportBatches, id);
+  }
+
+  async saveCurriculumImportBatch(batch: CurriculumImportBatch): Promise<void> {
+    await this.set(collections.curriculumImportBatches, batch.id, batch);
+  }
+
+  async getPedagogicalAnalysis(id: string): Promise<PedagogicalAnalysis | undefined> {
+    return this.get<PedagogicalAnalysis>(collections.pedagogicalAnalyses, id);
+  }
+
+  async findPedagogicalAnalysis(input: {
+    standardId: string;
+    curriculumVersionId: string;
+    language: string;
+  }): Promise<PedagogicalAnalysis | undefined> {
+    return (await this.list<PedagogicalAnalysis>(collections.pedagogicalAnalyses)).find((analysis) =>
+      analysis.standardId === input.standardId &&
+      analysis.curriculumVersionId === input.curriculumVersionId &&
+      analysis.language === input.language
+    );
+  }
+
+  async savePedagogicalAnalysis(analysis: PedagogicalAnalysis): Promise<void> {
+    await this.set(collections.pedagogicalAnalyses, analysis.pedagogicalAnalysisId, analysis);
+  }
+
   async listAuditRecords(): Promise<AuditRecord[]> {
     return this.list<AuditRecord>(collections.generationAuditEntries);
   }
@@ -225,6 +298,14 @@ export class FirestoreContentEngineRepository implements ContentEngineRepository
 
   async listCostTrackingRecords(): Promise<CostTrackingRecord[]> {
     return this.list<CostTrackingRecord>(collections.costTrackingRecords);
+  }
+
+  async listCurriculumImportBatches(): Promise<CurriculumImportBatch[]> {
+    return this.list<CurriculumImportBatch>(collections.curriculumImportBatches);
+  }
+
+  async listPedagogicalAnalyses(): Promise<PedagogicalAnalysis[]> {
+    return this.list<PedagogicalAnalysis>(collections.pedagogicalAnalyses);
   }
 
   private async get<T extends Plain>(collection: string, id: string): Promise<T | undefined> {

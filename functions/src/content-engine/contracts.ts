@@ -28,7 +28,10 @@ export type CallableName =
   | 'requestSchoolLessonGeneration'
   | 'requestArtifactRegeneration'
   | 'approveArtifactForPublication'
-  | 'publishValidatedArtifact';
+  | 'publishValidatedArtifact'
+  | 'importCurriculumSource'
+  | 'requestPedagogicalAnalysis'
+  | 'getPedagogicalAnalysisStatus';
 
 export interface CallerContext {
   userId: string;
@@ -250,6 +253,81 @@ export interface PublicationRecord {
   status: 'pending' | 'published' | 'failed';
 }
 
+export interface CurriculumSource {
+  id: string;
+  name: string;
+  jurisdiction: string;
+  framework: string;
+  officialSourceUrl: string;
+  updatedAt: string;
+}
+
+export interface CurriculumVersion {
+  id: string;
+  curriculumSourceId: string;
+  sourceVersion: string;
+  effectiveDate: string;
+  retiredDate?: string;
+  importDate: string;
+  checksum: string;
+  officialSourceUrl: string;
+}
+
+export interface CurriculumStandard {
+  id: string;
+  curriculumSourceId: string;
+  curriculumVersionId: string;
+  code: string;
+  title: string;
+  description: string;
+  gradeLevelId: string;
+  subjectId: string;
+  checksum: string;
+}
+
+export interface CurriculumImportBatch {
+  id: string;
+  curriculumSourceId: string;
+  curriculumVersionId: string;
+  checksum: string;
+  status: 'completed' | 'completed_with_rejections' | 'failed';
+  importedCount: number;
+  rejectedCount: number;
+  rejectedRecords: Array<{
+    index: number;
+    reason: string;
+  }>;
+  createdAt: string;
+}
+
+export interface PedagogicalAnalysis {
+  pedagogicalAnalysisId: string;
+  standardId: string;
+  curriculumSourceId: string;
+  curriculumVersionId: string;
+  standardCode: string;
+  language: string;
+  gradeLevelId: string;
+  subjectId: string;
+  prerequisites: string[];
+  targetSkills: string[];
+  vocabularyTerms: string[];
+  misconceptions: string[];
+  assessmentEvidence: string[];
+  languageProfile: {
+    band: string;
+    sentenceComplexity: string;
+    vocabularySupport: string;
+    scaffolding: string;
+  };
+  validationStatus: 'valid' | 'invalid';
+  promptTemplateVersionIds: string[];
+  sourceGenerationRequestId: string;
+  status: 'ready' | 'failed';
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PromptTemplateVersion {
   id: string;
   templateId: string;
@@ -318,4 +396,9 @@ export interface ContentEngineStore {
   promptTemplateVersions: Map<string, PromptTemplateVersion>;
   promptExecutionRecords: PromptExecutionRecord[];
   costTrackingRecords: CostTrackingRecord[];
+  curriculumSources: Map<string, CurriculumSource>;
+  curriculumVersions: Map<string, CurriculumVersion>;
+  curriculumStandards: Map<string, CurriculumStandard>;
+  curriculumImportBatches: Map<string, CurriculumImportBatch>;
+  pedagogicalAnalyses: Map<string, PedagogicalAnalysis>;
 }
