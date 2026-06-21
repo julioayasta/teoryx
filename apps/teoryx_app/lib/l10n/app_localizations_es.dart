@@ -39,6 +39,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Usa acceso de prototipo para revisar la experiencia de aprendizaje del estudiante.';
 
   @override
+  String get roleSelectionMessage =>
+      'Elige un rol para revisar el prototipo. La autenticacion real vendra despues.';
+
+  @override
   String get continueAsStudent => 'Continuar como estudiante';
 
   @override
@@ -71,10 +75,40 @@ class AppLocalizationsEs extends AppLocalizations {
   String get continueLearningTitle => 'Continuar aprendiendo';
 
   @override
+  String get continueLearningAction => 'Continuar';
+
+  @override
   String get noStartedCourses => 'Aun no hay cursos iniciados.';
 
   @override
   String get startedCourseLabel => 'Curso iniciado';
+
+  @override
+  String get currentLessonLabel => 'Leccion actual:';
+
+  @override
+  String get currentLessonComparingFractions => 'Comparar fracciones';
+
+  @override
+  String get progressLabel => 'Progreso:';
+
+  @override
+  String get lessonProgressTwoOfEight => 'Leccion 2 de 8';
+
+  @override
+  String get studentMetricsTitle => 'Metricas del estudiante';
+
+  @override
+  String get weeklyGoalMetric => 'Meta semanal';
+
+  @override
+  String get learningStreakMetric => 'Racha de aprendizaje';
+
+  @override
+  String get masteryScoreMetric => 'Nivel de dominio';
+
+  @override
+  String get lessonsCompletedMetric => 'Lecciones completadas';
 
   @override
   String get courseCatalogTitle => 'Catalogo de cursos';

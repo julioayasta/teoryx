@@ -39,6 +39,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use prototype access to review the student learning experience.';
 
   @override
+  String get roleSelectionMessage =>
+      'Choose a role to preview the prototype. Real authentication will come later.';
+
+  @override
   String get continueAsStudent => 'Continue as Student';
 
   @override
@@ -71,10 +75,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueLearningTitle => 'Continue learning';
 
   @override
+  String get continueLearningAction => 'Continue';
+
+  @override
   String get noStartedCourses => 'No started courses yet.';
 
   @override
   String get startedCourseLabel => 'Started course';
+
+  @override
+  String get currentLessonLabel => 'Current Lesson:';
+
+  @override
+  String get currentLessonComparingFractions => 'Comparing Fractions';
+
+  @override
+  String get progressLabel => 'Progress:';
+
+  @override
+  String get lessonProgressTwoOfEight => 'Lesson 2 of 8';
+
+  @override
+  String get studentMetricsTitle => 'Student metrics';
+
+  @override
+  String get weeklyGoalMetric => 'Weekly Goal';
+
+  @override
+  String get learningStreakMetric => 'Learning Streak';
+
+  @override
+  String get masteryScoreMetric => 'Mastery Score';
+
+  @override
+  String get lessonsCompletedMetric => 'Lessons Completed';
 
   @override
   String get courseCatalogTitle => 'Course catalog';
@@ -87,7 +121,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseCourse => 'Choose course';
 
   @override
-  String get chooseNewCourse => 'Choose new course';
+  String get chooseNewCourse => 'Choose New Course';
 
   @override
   String get gradeSelectionTitle => 'Choose Grade';

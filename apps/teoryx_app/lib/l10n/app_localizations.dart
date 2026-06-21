@@ -152,6 +152,12 @@ abstract class AppLocalizations {
   /// **'Use prototype access to review the student learning experience.'**
   String get mockLoginMessage;
 
+  /// No description provided for @roleSelectionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a role to preview the prototype. Real authentication will come later.'**
+  String get roleSelectionMessage;
+
   /// No description provided for @continueAsStudent.
   ///
   /// In en, this message translates to:
@@ -212,6 +218,12 @@ abstract class AppLocalizations {
   /// **'Continue learning'**
   String get continueLearningTitle;
 
+  /// No description provided for @continueLearningAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueLearningAction;
+
   /// No description provided for @noStartedCourses.
   ///
   /// In en, this message translates to:
@@ -223,6 +235,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Started course'**
   String get startedCourseLabel;
+
+  /// No description provided for @currentLessonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Lesson:'**
+  String get currentLessonLabel;
+
+  /// No description provided for @currentLessonComparingFractions.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparing Fractions'**
+  String get currentLessonComparingFractions;
+
+  /// No description provided for @progressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress:'**
+  String get progressLabel;
+
+  /// No description provided for @lessonProgressTwoOfEight.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson 2 of 8'**
+  String get lessonProgressTwoOfEight;
+
+  /// No description provided for @studentMetricsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Student metrics'**
+  String get studentMetricsTitle;
+
+  /// No description provided for @weeklyGoalMetric.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Goal'**
+  String get weeklyGoalMetric;
+
+  /// No description provided for @learningStreakMetric.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Streak'**
+  String get learningStreakMetric;
+
+  /// No description provided for @masteryScoreMetric.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery Score'**
+  String get masteryScoreMetric;
+
+  /// No description provided for @lessonsCompletedMetric.
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons Completed'**
+  String get lessonsCompletedMetric;
 
   /// No description provided for @courseCatalogTitle.
   ///
@@ -245,7 +311,7 @@ abstract class AppLocalizations {
   /// No description provided for @chooseNewCourse.
   ///
   /// In en, this message translates to:
-  /// **'Choose new course'**
+  /// **'Choose New Course'**
   String get chooseNewCourse;
 
   /// No description provided for @gradeSelectionTitle.

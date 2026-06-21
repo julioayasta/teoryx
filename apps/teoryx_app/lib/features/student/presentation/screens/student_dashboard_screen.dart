@@ -59,20 +59,85 @@ class StudentDashboardScreen extends StatelessWidget {
           else
             for (final course in enrolledCourses)
               Card(
-                child: ListTile(
-                  leading: Icon(
-                    Icons.play_circle_outline,
-                    color: context.colorScheme.primary,
-                  ),
-                  title: Text(course.title),
-                  subtitle: Text(context.l10n.startedCourseLabel),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.goNamed(
-                    RouteNames.lessonList,
-                    pathParameters: {'courseId': course.id},
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.play_circle_outline,
+                            color: context.colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              course.title,
+                              style: context.textTheme.titleMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        context.l10n.currentLessonLabel,
+                        style: context.textTheme.labelLarge,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(context.l10n.currentLessonComparingFractions),
+                      const SizedBox(height: 12),
+                      Text(
+                        context.l10n.progressLabel,
+                        style: context.textTheme.labelLarge,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(context.l10n.lessonProgressTwoOfEight),
+                      const SizedBox(height: 16),
+                      FilledButton.icon(
+                        onPressed: () => context.goNamed(
+                          RouteNames.lessonList,
+                          pathParameters: {'courseId': course.id},
+                        ),
+                        icon: const Icon(Icons.arrow_forward),
+                        label: Text(context.l10n.continueLearningAction),
+                      ),
+                    ],
                   ),
                 ),
               ),
+          const SizedBox(height: 28),
+          Text(
+            context.l10n.studentMetricsTitle,
+            style: context.textTheme.titleLarge,
+          ),
+          const SizedBox(height: 12),
+          GridView.count(
+            crossAxisCount: 2,
+            childAspectRatio: 2.4,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _MetricPlaceholder(
+                title: context.l10n.weeklyGoalMetric,
+                icon: Icons.flag_outlined,
+              ),
+              _MetricPlaceholder(
+                title: context.l10n.learningStreakMetric,
+                icon: Icons.local_fire_department_outlined,
+              ),
+              _MetricPlaceholder(
+                title: context.l10n.masteryScoreMetric,
+                icon: Icons.insights_outlined,
+              ),
+              _MetricPlaceholder(
+                title: context.l10n.lessonsCompletedMetric,
+                icon: Icons.task_alt_outlined,
+              ),
+            ],
+          ),
           const SizedBox(height: 28),
           Text(
             context.l10n.courseCatalogTitle,
@@ -82,11 +147,39 @@ class StudentDashboardScreen extends StatelessWidget {
           Text(context.l10n.chooseCourseFromDashboard),
           const SizedBox(height: 12),
           FilledButton.icon(
+            key: const Key('choose-new-course-button'),
             onPressed: () => context.goNamed(RouteNames.gradeSelection),
             icon: const Icon(Icons.school_outlined),
             label: Text(context.l10n.chooseNewCourse),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MetricPlaceholder extends StatelessWidget {
+  const _MetricPlaceholder({required this.title, required this.icon});
+
+  final String title;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(color: context.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Icon(icon, color: context.colorScheme.primary),
+            const SizedBox(width: 8),
+            Expanded(child: Text(title)),
+          ],
+        ),
       ),
     );
   }

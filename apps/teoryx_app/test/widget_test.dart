@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teoryx_app/app/app_bootstrap.dart';
 
@@ -8,15 +9,21 @@ void main() {
     await tester.pumpWidget(buildTeoryXApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('Choose a mock role'), findsOneWidget);
+    expect(find.text('Welcome to TeoryX'), findsOneWidget);
 
     await tester.tap(find.text('Continue as Student'));
     await tester.pumpAndSettle();
     expect(find.text('Student Dashboard'), findsOneWidget);
     expect(find.text('Continue learning'), findsOneWidget);
     expect(find.text('Grade 4 Math'), findsOneWidget);
+    expect(find.text('Current Lesson:'), findsOneWidget);
+    expect(find.text('Comparing Fractions'), findsOneWidget);
+    expect(find.text('Lesson 2 of 8'), findsOneWidget);
+    expect(find.text('Weekly Goal'), findsOneWidget);
 
-    await tester.tap(find.text('Choose new course'));
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Choose New Course').last);
     await tester.pumpAndSettle();
     expect(find.text('Choose Grade'), findsOneWidget);
 

@@ -29,13 +29,13 @@ class MockLoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    context.l10n.mockLoginTitle,
+                    context.l10n.welcomeTitle,
                     style: context.textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    context.l10n.mockLoginMessage,
+                    context.l10n.roleSelectionMessage,
                     style: context.textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
