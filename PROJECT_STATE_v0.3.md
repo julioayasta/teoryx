@@ -284,6 +284,32 @@ schools/{schoolId}
 - Theme editing was not added; it remains future School Admin Portal responsibility
 - Presentation-layer Firebase import guard remains in place
 
+## Content Engine Status
+
+Content Engine work is currently documentation/design only. No Content Engine runtime implementation, AI generation, Firestore write workflow, Student App change, or School Admin Portal change has been implemented from these CE design sprints.
+
+Completed:
+
+- CE-01 Content Engine Architecture
+- CE-02A Curriculum Source Registry
+- CE-02B Pedagogical Analysis Engine
+- CE-02C Instructional Blueprint Engine
+- CE-02D Generation Artifact Contracts
+
+Document references:
+
+- `docs/sprints/sprint-ce-01-content-engine-architecture.md`
+- `docs/sprints/sprint-ce-02a-curriculum-source-registry.md`
+- `docs/sprints/sprint-ce-02b-pedagogical-analysis-engine.md`
+- `docs/sprints/sprint-ce-02c-instructional-blueprint-engine.md`
+- `docs/sprints/sprint-ce-02d-generation-artifact-contracts.md`
+
+Next recommended milestone:
+
+```text
+CE-03A Content Engine MVP Execution Pipeline
+```
+
 ## Current Repository Boundaries
 
 Auth:
