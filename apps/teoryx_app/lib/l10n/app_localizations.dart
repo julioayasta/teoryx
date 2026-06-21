@@ -218,6 +218,12 @@ abstract class AppLocalizations {
   /// **'Tutor Chat'**
   String get tutorChatTitle;
 
+  /// No description provided for @closeTutorChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Close tutor chat'**
+  String get closeTutorChat;
+
   /// No description provided for @mockTutorInputHint.
   ///
   /// In en, this message translates to:

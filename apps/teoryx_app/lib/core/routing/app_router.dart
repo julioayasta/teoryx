@@ -4,7 +4,6 @@ import '../../features/lesson/presentation/screens/lesson_detail_screen.dart';
 import '../../features/lesson/presentation/screens/lesson_list_screen.dart';
 import '../../features/student/presentation/screens/student_dashboard_screen.dart';
 import '../../features/student/presentation/screens/welcome_screen.dart';
-import '../../features/tutor/presentation/screens/tutor_chat_screen.dart';
 import 'route_names.dart';
 
 class AppRouter {
@@ -34,14 +33,6 @@ class AppRouter {
         builder: (context, state) {
           final lessonId = state.pathParameters['lessonId']!;
           return LessonDetailScreen(lessonId: lessonId);
-        },
-      ),
-      GoRoute(
-        path: '/lessons/:lessonId/tutor',
-        name: RouteNames.tutorChat,
-        builder: (context, state) {
-          final lessonId = state.pathParameters['lessonId']!;
-          return TutorChatScreen(lessonId: lessonId);
         },
       ),
     ],

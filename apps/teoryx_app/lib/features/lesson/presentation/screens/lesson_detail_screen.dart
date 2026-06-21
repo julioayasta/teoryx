@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../features/tutor/presentation/widgets/tutor_chat_panel.dart';
 import '../../data/repositories/mock_lesson_repository.dart';
 import '../../domain/entities/lesson_step.dart';
 
@@ -83,15 +82,21 @@ class LessonDetailScreen extends StatelessWidget {
           for (final step in steps) _LessonStepCard(step: step),
           const SizedBox(height: 12),
           FilledButton.icon(
-            onPressed: () => context.goNamed(
-              RouteNames.tutorChat,
-              pathParameters: {'lessonId': lesson.id},
-            ),
+            onPressed: () => _showTutorPanel(context, lesson.id),
             icon: const Icon(Icons.chat_bubble_outline),
             label: Text(context.l10n.askTutor),
           ),
         ],
       ),
+    );
+  }
+
+  void _showTutorPanel(BuildContext context, String lessonId) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => TutorChatPanel(lessonId: lessonId),
     );
   }
 }

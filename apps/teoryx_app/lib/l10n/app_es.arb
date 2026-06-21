@@ -25,6 +25,7 @@
   "summaryLabel": "Resumen",
   "askTutor": "Preguntar al tutor",
   "tutorChatTitle": "Chat con tutor",
+  "closeTutorChat": "Cerrar chat con tutor",
   "mockTutorInputHint": "Entrada del tutor mock desactivada",
   "guidedLessonTitle": "Leccion guiada",
   "lessonStepTypeStory": "Historia",

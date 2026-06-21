@@ -73,6 +73,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tutorChatTitle => 'Chat con tutor';
 
   @override
+  String get closeTutorChat => 'Cerrar chat con tutor';
+
+  @override
   String get mockTutorInputHint => 'Entrada del tutor mock desactivada';
 
   @override

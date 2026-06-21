@@ -31,5 +31,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Tutor Chat'), findsOneWidget);
     expect(find.textContaining('Let us reason'), findsOneWidget);
+    expect(find.text('Fractions as Parts of a Whole'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Close tutor chat'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tutor Chat'), findsNothing);
+    expect(find.text('Fractions as Parts of a Whole'), findsOneWidget);
   });
 }
