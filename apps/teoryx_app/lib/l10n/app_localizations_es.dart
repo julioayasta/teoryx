@@ -101,6 +101,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Continuar con la siguiente leccion';
 
   @override
+  String get viewProgressAction => 'Ver progreso';
+
+  @override
   String get noStartedCourses => 'Aun no hay cursos iniciados.';
 
   @override
@@ -131,6 +134,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get progressLabel => 'Progreso:';
+
+  @override
+  String get progressDashboardTitle => 'Panel de progreso';
+
+  @override
+  String lessonsCompletedOfTotal(int completed, int total) {
+    return '$completed de $total lecciones';
+  }
+
+  @override
+  String get currentRecommendationLabel => 'Recomendacion actual:';
+
+  @override
+  String get masterySummaryTitle => 'Resumen de dominio';
+
+  @override
+  String get assessmentSummaryTitle => 'Evaluacion mas reciente';
 
   @override
   String get lessonProgressTwoOfEight => 'Leccion 2 de 8';

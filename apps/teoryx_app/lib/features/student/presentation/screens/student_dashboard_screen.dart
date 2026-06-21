@@ -123,6 +123,13 @@ class StudentDashboardScreen extends StatelessWidget {
                         icon: const Icon(Icons.arrow_forward),
                         label: Text(recommendation.actionLabel),
                       ),
+                      const SizedBox(height: 8),
+                      OutlinedButton.icon(
+                        onPressed: () =>
+                            context.goNamed(RouteNames.progressDashboard),
+                        icon: const Icon(Icons.insights_outlined),
+                        label: Text(context.l10n.viewProgressAction),
+                      ),
                     ],
                   ),
                 ),

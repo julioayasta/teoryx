@@ -6,6 +6,7 @@ import '../../features/lesson/presentation/screens/lesson_detail_screen.dart';
 import '../../features/lesson/presentation/screens/lesson_list_screen.dart';
 import '../../features/lesson/presentation/screens/course_list_screen.dart';
 import '../../features/lesson/presentation/screens/grade_selection_screen.dart';
+import '../../features/progress/presentation/screens/progress_dashboard_screen.dart';
 import '../../features/student/presentation/screens/student_dashboard_screen.dart';
 import '../../features/student/presentation/screens/mock_login_screen.dart';
 import 'route_names.dart';
@@ -25,6 +26,11 @@ class AppRouter {
         path: '/student',
         name: RouteNames.studentDashboard,
         builder: (context, state) => const StudentDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/student/progress',
+        name: RouteNames.progressDashboard,
+        builder: (context, state) => const ProgressDashboardScreen(),
       ),
       GoRoute(
         path: '/catalog/grades',

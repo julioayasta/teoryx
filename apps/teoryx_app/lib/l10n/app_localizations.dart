@@ -266,6 +266,12 @@ abstract class AppLocalizations {
   /// **'Continue with Next Lesson'**
   String get continueWithNextLessonAction;
 
+  /// No description provided for @viewProgressAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View Progress'**
+  String get viewProgressAction;
+
   /// No description provided for @noStartedCourses.
   ///
   /// In en, this message translates to:
@@ -325,6 +331,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Progress:'**
   String get progressLabel;
+
+  /// No description provided for @progressDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress Dashboard'**
+  String get progressDashboardTitle;
+
+  /// No description provided for @lessonsCompletedOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} lessons'**
+  String lessonsCompletedOfTotal(int completed, int total);
+
+  /// No description provided for @currentRecommendationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current recommendation:'**
+  String get currentRecommendationLabel;
+
+  /// No description provided for @masterySummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery Summary'**
+  String get masterySummaryTitle;
+
+  /// No description provided for @assessmentSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest Assessment'**
+  String get assessmentSummaryTitle;
 
   /// No description provided for @lessonProgressTwoOfEight.
   ///

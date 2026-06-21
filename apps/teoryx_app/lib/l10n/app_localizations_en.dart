@@ -100,6 +100,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueWithNextLessonAction => 'Continue with Next Lesson';
 
   @override
+  String get viewProgressAction => 'View Progress';
+
+  @override
   String get noStartedCourses => 'No started courses yet.';
 
   @override
@@ -130,6 +133,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progressLabel => 'Progress:';
+
+  @override
+  String get progressDashboardTitle => 'Progress Dashboard';
+
+  @override
+  String lessonsCompletedOfTotal(int completed, int total) {
+    return '$completed of $total lessons';
+  }
+
+  @override
+  String get currentRecommendationLabel => 'Current recommendation:';
+
+  @override
+  String get masterySummaryTitle => 'Mastery Summary';
+
+  @override
+  String get assessmentSummaryTitle => 'Latest Assessment';
 
   @override
   String get lessonProgressTwoOfEight => 'Lesson 2 of 8';

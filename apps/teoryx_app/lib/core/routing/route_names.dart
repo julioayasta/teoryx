@@ -9,4 +9,5 @@ class RouteNames {
   static const lessonDetail = 'lesson-detail';
   static const assessment = 'assessment';
   static const assessmentResults = 'assessment-results';
+  static const progressDashboard = 'progress-dashboard';
 }

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'app/app_bootstrap.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(buildTeoryXApp());
+  final dependencies = await initializeAppDependencies();
+
+  runApp(buildTeoryXApp(dependencies: dependencies));
 }

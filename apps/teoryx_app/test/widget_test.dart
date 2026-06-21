@@ -114,5 +114,25 @@ void main() {
     expect(find.textContaining('67% autocalificado'), findsOneWidget);
     expect(find.textContaining('2 elementos'), findsOneWidget);
     expect(find.text('Continuar con la siguiente leccion'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('Ver progreso'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ver progreso'));
+    await tester.pumpAndSettle();
+    expect(find.text('Panel de progreso'), findsWidgets);
+    expect(find.text('Grado 4 Matematicas'), findsOneWidget);
+    expect(find.text('2 de 8 lecciones'), findsOneWidget);
+    expect(find.text('Resumen de dominio'), findsOneWidget);
+    expect(find.text('Fracciones como partes de un entero'), findsOneWidget);
+    expect(find.text('Competente'), findsOneWidget);
+    expect(find.text('Evaluacion mas reciente'), findsOneWidget);
+    expect(find.text('Puntaje autocalificado'), findsOneWidget);
+    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+    expect(find.text('Recomendacion'), findsOneWidget);
+    expect(
+      find.textContaining('trabajo escrito aun esta pendiente'),
+      findsOneWidget,
+    );
   });
 }

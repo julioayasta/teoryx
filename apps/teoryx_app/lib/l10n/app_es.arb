@@ -33,6 +33,7 @@
   "continueLearningAction": "Continuar",
   "continueAssessmentAction": "Continuar evaluacion",
   "continueWithNextLessonAction": "Continuar con la siguiente leccion",
+  "viewProgressAction": "Ver progreso",
   "noStartedCourses": "Aun no hay cursos iniciados.",
   "startedCourseLabel": "Curso iniciado",
   "currentLessonLabel": "Leccion actual:",
@@ -48,6 +49,21 @@
   },
   "currentLessonComparingFractions": "Comparar fracciones",
   "progressLabel": "Progreso:",
+  "progressDashboardTitle": "Panel de progreso",
+  "lessonsCompletedOfTotal": "{completed} de {total} lecciones",
+  "@lessonsCompletedOfTotal": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "currentRecommendationLabel": "Recomendacion actual:",
+  "masterySummaryTitle": "Resumen de dominio",
+  "assessmentSummaryTitle": "Evaluacion mas reciente",
   "lessonProgressTwoOfEight": "Leccion 2 de 8",
   "studentMetricsTitle": "Metricas del estudiante",
   "weeklyGoalMetric": "Meta semanal",
