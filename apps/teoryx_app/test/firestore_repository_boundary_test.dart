@@ -8,6 +8,7 @@ import 'package:teoryx_app/features/lesson/domain/repositories/course_repository
 import 'package:teoryx_app/features/lesson/domain/repositories/lesson_repository.dart';
 import 'package:teoryx_app/features/school/data/models/firestore_school_theme_model.dart';
 import 'package:teoryx_app/features/student/data/models/firestore_student_profile_model.dart';
+import 'package:teoryx_app/features/student/data/repositories/firestore_student_repository.dart';
 import 'package:teoryx_app/features/student/data/repositories/mock_student_repository.dart';
 import 'package:teoryx_app/features/student/domain/repositories/student_repository.dart';
 
@@ -70,12 +71,15 @@ void main() {
       id: 'student-001',
       schoolId: 'school-demo',
       data: const {
+        'studentId': 'student-001',
         'firstName': 'Sofia',
+        'lastName': 'Rivera',
+        'gradeLevelId': 'grade-4',
         'gradeLevelName': 'Grade 4',
-        'subjectName': 'Math',
         'preferredLanguage': 'en',
+        'status': 'active',
       },
-    ).toEntity();
+    );
 
     final course = FirestoreCourseModel.fromFirestore(
       id: 'grade-4-math',
@@ -130,11 +134,51 @@ void main() {
       },
     ).toEntity();
 
-    expect(student.firstName, 'Sofia');
+    expect(student.isValid, isTrue);
+    expect(student.toEntity().firstName, 'Sofia');
     expect(course.title, 'Grade 4 Math');
     expect(schoolTheme.schoolName, 'Demo School');
     expect(schoolTheme.logoAssetPath, 'assets/schools/k2s/k2s_logo.png');
     expect(lesson.learningObjective.id, 'lo-fractions-whole');
     expect(lesson.steps.single.title, 'A whole pizza');
+  });
+
+  test('Firestore student mapper rejects missing or inactive profiles', () {
+    final missingFirstName = FirestoreStudentProfileModel.fromFirestore(
+      id: 'student-001',
+      schoolId: 'school-demo',
+      data: const {
+        'studentId': 'student-001',
+        'gradeLevelId': 'grade-4',
+        'gradeLevelName': 'Grade 4',
+        'preferredLanguage': 'en',
+        'status': 'active',
+      },
+    );
+    final inactiveProfile = FirestoreStudentProfileModel.fromFirestore(
+      id: 'student-001',
+      schoolId: 'school-demo',
+      data: const {
+        'studentId': 'student-001',
+        'firstName': 'Sofia',
+        'gradeLevelId': 'grade-4',
+        'gradeLevelName': 'Grade 4',
+        'preferredLanguage': 'en',
+        'status': 'inactive',
+      },
+    );
+
+    expect(missingFirstName.isValid, isFalse);
+    expect(inactiveProfile.isValid, isFalse);
+  });
+
+  test('Firestore student repository exposes mock fallback by default', () {
+    final repository = FirestoreStudentRepository(
+      schoolId: 'school-demo',
+      studentId: 'student-001',
+      fallbackRepository: const MockStudentRepository(),
+    );
+
+    expect(repository.getCurrentStudent().firstName, 'Sofia');
   });
 }

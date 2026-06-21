@@ -5,17 +5,30 @@ class FirestoreStudentProfileModel {
     required this.id,
     required this.schoolId,
     required this.firstName,
+    required this.lastName,
+    required this.gradeLevelId,
     required this.gradeLevelName,
-    required this.subjectName,
     required this.preferredLanguage,
+    required this.status,
   });
 
   final String id;
   final String schoolId;
   final String firstName;
+  final String lastName;
+  final String gradeLevelId;
   final String gradeLevelName;
-  final String subjectName;
   final String preferredLanguage;
+  final String status;
+
+  bool get isValid {
+    return id.isNotEmpty &&
+        schoolId.isNotEmpty &&
+        firstName.isNotEmpty &&
+        gradeLevelId.isNotEmpty &&
+        gradeLevelName.isNotEmpty &&
+        status == 'active';
+  }
 
   StudentProfile toEntity() {
     return StudentProfile(
@@ -23,7 +36,7 @@ class FirestoreStudentProfileModel {
       schoolId: schoolId,
       firstName: firstName,
       gradeLevelName: gradeLevelName,
-      subjectName: subjectName,
+      subjectName: '',
       preferredLanguage: preferredLanguage,
     );
   }
@@ -34,12 +47,14 @@ class FirestoreStudentProfileModel {
     required Map<String, dynamic> data,
   }) {
     return FirestoreStudentProfileModel(
-      id: id,
+      id: data['studentId'] as String? ?? id,
       schoolId: schoolId,
       firstName: data['firstName'] as String? ?? '',
+      lastName: data['lastName'] as String? ?? '',
+      gradeLevelId: data['gradeLevelId'] as String? ?? '',
       gradeLevelName: data['gradeLevelName'] as String? ?? '',
-      subjectName: data['subjectName'] as String? ?? '',
       preferredLanguage: data['preferredLanguage'] as String? ?? 'en',
+      status: data['status'] as String? ?? 'active',
     );
   }
 }

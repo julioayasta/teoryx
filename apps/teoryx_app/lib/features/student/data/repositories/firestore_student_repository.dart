@@ -12,18 +12,19 @@ class FirestoreStudentRepository implements StudentRepository {
     required this.studentId,
     FirebaseFirestore? firestore,
     StudentRepository? fallbackRepository,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+  }) : _firestore = firestore,
        _fallbackRepository =
            fallbackRepository ?? const MockStudentRepository();
 
   final String schoolId;
   final String studentId;
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
   final StudentRepository _fallbackRepository;
+  StudentProfile? _cachedStudentProfile;
 
   @override
   StudentProfile getCurrentStudent() {
-    return _fallbackRepository.getCurrentStudent();
+    return _cachedStudentProfile ?? _fallbackRepository.getCurrentStudent();
   }
 
   @override
@@ -31,27 +32,52 @@ class FirestoreStudentRepository implements StudentRepository {
     required String schoolId,
     required String studentId,
   }) async {
-    final snapshot = await _firestore
-        .doc(
-          FirestoreCollectionPaths.student(
-            schoolId: schoolId,
-            studentId: studentId,
-          ),
-        )
-        .get();
-    final data = snapshot.data();
+    try {
+      final firestore = _firestore ?? FirebaseFirestore.instance;
+      final snapshot = await firestore
+          .doc(
+            FirestoreCollectionPaths.student(
+              schoolId: schoolId,
+              studentId: studentId,
+            ),
+          )
+          .get();
+      final data = snapshot.data();
 
-    if (!snapshot.exists || data == null) {
-      return _fallbackRepository.getStudentProfile(
+      if (!snapshot.exists || data == null) {
+        return _fallbackStudentProfile(
+          schoolId: schoolId,
+          studentId: studentId,
+        );
+      }
+
+      final model = FirestoreStudentProfileModel.fromFirestore(
+        id: snapshot.id,
         schoolId: schoolId,
-        studentId: studentId,
+        data: data,
       );
-    }
 
-    return FirestoreStudentProfileModel.fromFirestore(
-      id: snapshot.id,
+      if (!model.isValid) {
+        return _fallbackStudentProfile(
+          schoolId: schoolId,
+          studentId: studentId,
+        );
+      }
+
+      _cachedStudentProfile = model.toEntity();
+      return _cachedStudentProfile;
+    } on Object {
+      return _fallbackStudentProfile(schoolId: schoolId, studentId: studentId);
+    }
+  }
+
+  Future<StudentProfile?> _fallbackStudentProfile({
+    required String schoolId,
+    required String studentId,
+  }) {
+    return _fallbackRepository.getStudentProfile(
       schoolId: schoolId,
-      data: data,
-    ).toEntity();
+      studentId: studentId,
+    );
   }
 }

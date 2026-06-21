@@ -2,7 +2,7 @@
 
 Date: 2026-06-21
 
-This document is the current handoff state for TeoryX after Sprint 05.1 and Sprint 05.2. It summarizes product direction, architecture status, repository boundaries, Firebase fallback behavior, Firestore structure, completed work, and remaining roadmap.
+This document is the current handoff state for TeoryX after Sprint 05.3. It summarizes product direction, architecture status, repository boundaries, Firebase fallback behavior, Firestore structure, completed work, and remaining roadmap.
 
 ## Vision
 
@@ -64,9 +64,10 @@ Current implementation:
 - Mock mode remains the default runtime path
 - Firebase Auth foundation exists behind repository boundaries
 - Firestore repository foundation exists behind repository boundaries
+- School theme can be loaded from Firestore when Firebase is enabled, configured, and available
 - No Content Engine implementation yet
 - No real AI lesson generation yet
-- No UI flow has been switched wholesale to Firestore
+- No learning flow has been switched wholesale to Firestore
 
 Frontend architecture:
 
@@ -78,6 +79,7 @@ Frontend architecture:
 - Centralized localization
 - Repository boundaries for Auth, Student, School Theme, Course Catalog, and Lessons
 - Mock repositories remain the default source for screens
+- K2S local branding remains the default/fallback theme
 
 Key app paths:
 
@@ -255,6 +257,33 @@ Completed:
 - Added tests for repository boundaries, mappers, collection paths, and presentation-layer Firebase import safety
 - Added Firestore structure documentation
 
+### Sprint 05.3 - School Theme from Firestore with Mock Fallback
+
+Completed:
+
+- Connected one low-risk Firestore read path for school theme/branding
+- App bootstrap now resolves `SchoolThemeConfig` before building `TeoryXApp`
+- Conservative temporary tenant id remains `school-demo`
+- When Firebase is enabled, configured, and initialized, the app attempts to read:
+
+```text
+schools/{schoolId}
+```
+
+- Firestore school theme fields currently supported:
+  - `name`
+  - `fullName`
+  - `primaryColor`
+  - `secondaryColor`
+  - `fontFamily`
+  - `status`
+  - `logoAssetPath` only for bundled local assets
+- `logoUrl` is intentionally not used yet; remote image loading was not added
+- If Firestore is unavailable, missing, inactive, or throws, the app falls back to `SchoolThemeConfig.k2s()`
+- Courses, lessons, progress, and assessments remain on mock repositories
+- Theme editing was not added; it remains future School Admin Portal responsibility
+- Presentation-layer Firebase import guard remains in place
+
 ## Current Repository Boundaries
 
 Auth:
@@ -303,6 +332,8 @@ Rules:
 - Mock repositories remain default unless Firebase is explicitly enabled, configured, and successfully initialized.
 - Firestore repositories are infrastructure-only at this stage.
 - No screen has been redesigned to depend directly on Firestore.
+- School theme is the only Firestore read path currently connected to app bootstrap.
+- Theme reads are read-only from the Student App.
 
 ## Firebase Fallback Behavior
 
@@ -332,6 +363,14 @@ Real Firebase initialization requires both:
 ```
 
 If initialization fails or times out, the app falls back to mock auth instead of crashing.
+
+School theme fallback behavior:
+
+- Mock mode uses `SchoolThemeConfig.k2s()`
+- Firebase unavailable/config missing uses `SchoolThemeConfig.k2s()`
+- Firebase available attempts to load `schools/school-demo`
+- Missing, inactive, or failing school theme documents fall back to `SchoolThemeConfig.k2s()`
+- Remote `logoUrl` is ignored for now; local K2S logo asset remains the fallback
 
 Current known Firebase configuration status:
 
@@ -543,7 +582,7 @@ English and Spanish mock lesson data exist locally in the mock lesson repository
 
 ## Current Verification Status
 
-Latest verification after Sprint 05.2:
+Latest verification after Sprint 05.3:
 
 ```text
 flutter analyze
@@ -560,6 +599,8 @@ Additional tests include:
 - Firestore path checks
 - Presentation-layer Firebase import guard
 - Firebase fallback bootstrap behavior
+- School theme bootstrap fallback behavior
+- Firestore school theme mapper behavior, including local logo fallback
 
 ## Known Environment Notes
 
@@ -583,7 +624,7 @@ There is also a Windows `Zone.Identifier` metadata artifact beside the K2S logo 
 
 Recommended next work:
 
-### Sprint 05.3 - Firebase Configuration Completion
+### Sprint 05.4 - Firebase Configuration Completion
 
 - Run `flutterfire configure`
 - Generate `lib/firebase_options.dart`
@@ -600,9 +641,8 @@ Recommended next work:
 
 ### Sprint 07 - Firestore Read Integration Pilot
 
-- Switch one low-risk read path to repository-driven Firestore with mock fallback
-- Suggested first candidates:
-  - school theme
+- Continue with one additional low-risk read path using repository-driven Firestore with mock fallback
+- Suggested next candidates:
   - student profile
   - course catalog
 - Do not switch published lessons until content quality/versioning rules are ready

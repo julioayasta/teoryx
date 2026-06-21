@@ -12,6 +12,9 @@ import '../features/auth/data/repositories/mock_auth_repository.dart';
 import '../features/auth/domain/repositories/auth_repository.dart';
 import '../features/school/data/repositories/firestore_school_theme_repository.dart';
 import '../features/school/domain/repositories/school_theme_repository.dart';
+import '../features/student/data/repositories/firestore_student_repository.dart';
+import '../features/student/data/repositories/mock_student_repository.dart';
+import '../features/student/domain/repositories/student_repository.dart';
 import 'teoryx_app.dart';
 
 class AppDependencies {
@@ -19,15 +22,18 @@ class AppDependencies {
     required this.authRepository,
     required this.firebaseStatus,
     required this.schoolThemeConfig,
+    required this.studentRepository,
   });
 
   final AuthRepository authRepository;
   final FirebaseBootstrapStatus firebaseStatus;
   final SchoolThemeConfig schoolThemeConfig;
+  final StudentRepository studentRepository;
 }
 
 Future<AppDependencies> initializeAppDependencies() async {
   const schoolId = 'school-demo';
+  const studentId = 'student-001';
 
   if (FirebaseAppConfig.isEnabled) {
     if (!FirebaseAppConfig.hasGeneratedConfiguration) {
@@ -44,6 +50,7 @@ Future<AppDependencies> initializeAppDependencies() async {
         authRepository: MockAuthRepository(),
         firebaseStatus: FirebaseBootstrapStatus.fallback(message),
         schoolThemeConfig: SchoolThemeConfig.k2s(),
+        studentRepository: const MockStudentRepository(),
       );
     }
 
@@ -56,11 +63,21 @@ Future<AppDependencies> initializeAppDependencies() async {
         schoolId: schoolId,
         repository: FirestoreSchoolThemeRepository(),
       );
+      final studentRepository = FirestoreStudentRepository(
+        schoolId: schoolId,
+        studentId: studentId,
+      );
+      await _preloadStudentProfile(
+        schoolId: schoolId,
+        studentId: studentId,
+        repository: studentRepository,
+      );
 
       return AppDependencies(
         authRepository: FirebaseAuthRepository(),
         firebaseStatus: const FirebaseBootstrapStatus.available(),
         schoolThemeConfig: schoolThemeConfig,
+        studentRepository: studentRepository,
       );
     } on Object catch (error, stackTrace) {
       final message =
@@ -81,6 +98,7 @@ Future<AppDependencies> initializeAppDependencies() async {
         authRepository: MockAuthRepository(),
         firebaseStatus: FirebaseBootstrapStatus.fallback(message),
         schoolThemeConfig: SchoolThemeConfig.k2s(),
+        studentRepository: const MockStudentRepository(),
       );
     }
   }
@@ -89,7 +107,30 @@ Future<AppDependencies> initializeAppDependencies() async {
     authRepository: MockAuthRepository(),
     firebaseStatus: const FirebaseBootstrapStatus.mockMode(),
     schoolThemeConfig: SchoolThemeConfig.k2s(),
+    studentRepository: const MockStudentRepository(),
   );
+}
+
+Future<void> _preloadStudentProfile({
+  required String schoolId,
+  required String studentId,
+  required StudentRepository repository,
+}) async {
+  try {
+    await repository.getStudentProfile(
+      schoolId: schoolId,
+      studentId: studentId,
+    );
+  } on Object catch (error, stackTrace) {
+    debugPrint(
+      'TeoryX Firebase fallback: could not load student profile for '
+      '$schoolId/$studentId. Using mock student profile. Error: $error',
+    );
+    debugPrintStack(
+      label: 'TeoryX student profile Firestore stack',
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 Widget buildTeoryXApp({AppDependencies? dependencies}) {
@@ -99,11 +140,13 @@ Widget buildTeoryXApp({AppDependencies? dependencies}) {
         authRepository: MockAuthRepository(),
         firebaseStatus: const FirebaseBootstrapStatus.mockMode(),
         schoolThemeConfig: SchoolThemeConfig.k2s(),
+        studentRepository: const MockStudentRepository(),
       );
 
   return TeoryXApp(
     authRepository: resolvedDependencies.authRepository,
     firebaseStatus: resolvedDependencies.firebaseStatus,
+    studentRepository: resolvedDependencies.studentRepository,
     localeController: AppLocaleController(),
     schoolThemeConfig: resolvedDependencies.schoolThemeConfig,
   );

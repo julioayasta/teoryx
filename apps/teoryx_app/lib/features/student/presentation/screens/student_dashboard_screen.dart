@@ -8,19 +8,18 @@ import '../../../../features/progress/domain/entities/student_progress.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_shell.dart';
-import '../../data/repositories/mock_student_repository.dart';
+import '../controllers/student_repository_scope.dart';
 
 class StudentDashboardScreen extends StatelessWidget {
   const StudentDashboardScreen({super.key});
 
-  static const _studentRepository = MockStudentRepository();
   static const _courseRepository = MockCourseRepository();
   static const _progressRepository = MockProgressRepository();
 
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
-    final student = _studentRepository.getCurrentStudent();
+    final student = StudentRepositoryScope.of(context).getCurrentStudent();
     final enrolledCourses = _courseRepository.getEnrolledCourses(languageCode);
     final currentProgress = _progressRepository.getCurrentProgress(
       languageCode,
