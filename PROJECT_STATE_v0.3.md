@@ -297,6 +297,8 @@ Completed:
 - CE-02D Generation Artifact Contracts
 - CE-02E Course Planning and Lesson Specification
 - CE-03A Content Engine MVP Execution Pipeline
+- CE-03B API and Cloud Function Contracts
+- CE-03C Emulator-First Contract Tests
 
 Content Engine Architecture Status:
 
@@ -306,6 +308,18 @@ Content Engine Architecture Status:
 - Artifact Contract design complete
 - Course Planning design complete
 - Execution Pipeline design complete
+- API Contract design complete
+- Contract Validation design complete
+
+Content Engine:
+
+```text
+Architecture: COMPLETE
+Execution Design: COMPLETE
+API Contracts: COMPLETE
+Contract Validation Design: COMPLETE
+Implementation Status: NOT STARTED
+```
 
 Document references:
 
@@ -315,12 +329,15 @@ Document references:
 - `docs/sprints/sprint-ce-02c-instructional-blueprint-engine.md`
 - `docs/sprints/sprint-ce-02d-generation-artifact-contracts.md`
 - `docs/sprints/sprint-ce-02e-course-planning-and-lesson-specification.md`
+- `docs/sprints/sprint-ce-02f-architecture-gap-review.md`
 - `docs/sprints/sprint-ce-03a-execution-pipeline.md`
+- `docs/sprints/sprint-ce-03b-api-cloud-function-contracts.md`
+- `docs/sprints/sprint-ce-03c-emulator-first-contract-tests.md`
 
 Next recommended milestone:
 
 ```text
-CE-03B API and Cloud Function Contracts
+CE-04 Emulator Contract Harness and Minimal Function Skeleton
 ```
 
 ## Current Repository Boundaries
