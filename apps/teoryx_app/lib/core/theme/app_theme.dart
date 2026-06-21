@@ -31,6 +31,7 @@ class AppTheme {
     return ThemeData(
       colorScheme: colorScheme,
       fontFamily: schoolThemeConfig.fontFamily,
+      splashFactory: InkRipple.splashFactory,
       useMaterial3: true,
       extensions: [
         SchoolBrandTheme(
