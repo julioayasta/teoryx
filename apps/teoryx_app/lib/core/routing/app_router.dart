@@ -2,9 +2,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/lesson/presentation/screens/lesson_detail_screen.dart';
 import '../../features/lesson/presentation/screens/lesson_list_screen.dart';
-import '../../features/lesson/presentation/screens/course_selection_screen.dart';
+import '../../features/lesson/presentation/screens/course_list_screen.dart';
+import '../../features/lesson/presentation/screens/grade_selection_screen.dart';
 import '../../features/student/presentation/screens/student_dashboard_screen.dart';
-import '../../features/student/presentation/screens/welcome_screen.dart';
+import '../../features/student/presentation/screens/mock_login_screen.dart';
 import 'route_names.dart';
 
 class AppRouter {
@@ -15,8 +16,8 @@ class AppRouter {
     routes: [
       GoRoute(
         path: '/',
-        name: RouteNames.welcome,
-        builder: (context, state) => const WelcomeScreen(),
+        name: RouteNames.mockLogin,
+        builder: (context, state) => const MockLoginScreen(),
       ),
       GoRoute(
         path: '/student',
@@ -24,9 +25,17 @@ class AppRouter {
         builder: (context, state) => const StudentDashboardScreen(),
       ),
       GoRoute(
-        path: '/courses',
-        name: RouteNames.courseSelection,
-        builder: (context, state) => const CourseSelectionScreen(),
+        path: '/catalog/grades',
+        name: RouteNames.gradeSelection,
+        builder: (context, state) => const GradeSelectionScreen(),
+      ),
+      GoRoute(
+        path: '/catalog/grades/:gradeLevelId/courses',
+        name: RouteNames.courseList,
+        builder: (context, state) {
+          final gradeLevelId = state.pathParameters['gradeLevelId']!;
+          return CourseListScreen(gradeLevelId: gradeLevelId);
+        },
       ),
       GoRoute(
         path: '/courses/:courseId/lessons',

@@ -13,7 +13,11 @@ class TutorChatPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final messages = _tutorRepository.getMessagesForLesson(lessonId);
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final messages = _tutorRepository.getMessagesForLesson(
+      lessonId,
+      languageCode,
+    );
 
     return SafeArea(
       top: false,

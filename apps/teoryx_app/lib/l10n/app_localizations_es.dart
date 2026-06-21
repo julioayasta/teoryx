@@ -12,6 +12,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'TeoryX';
 
   @override
+  String get languageEnglish => 'EN';
+
+  @override
+  String get languageSpanish => 'ES';
+
+  @override
   String get foundationReadyTitle => 'Base lista';
 
   @override
@@ -26,10 +32,26 @@ class AppLocalizationsEs extends AppLocalizations {
       'Inicia una sesion de aprendizaje basada en curriculo con datos locales de prototipo.';
 
   @override
+  String get mockLoginTitle => 'Elige un rol mock';
+
+  @override
+  String get mockLoginMessage =>
+      'Usa acceso de prototipo para revisar la experiencia de aprendizaje del estudiante.';
+
+  @override
   String get continueAsStudent => 'Continuar como estudiante';
 
   @override
+  String get continueAsParent => 'Continuar como padre';
+
+  @override
+  String get continueAsSchoolAdmin => 'Continuar como administrador escolar';
+
+  @override
   String get dashboardTitle => 'Panel del estudiante';
+
+  @override
+  String get backToLogin => 'Volver al login';
 
   @override
   String studentGreeting(Object firstName) {
@@ -46,11 +68,32 @@ class AppLocalizationsEs extends AppLocalizations {
   String get readyToLearnTitle => 'Listo para aprender?';
 
   @override
+  String get continueLearningTitle => 'Continuar aprendiendo';
+
+  @override
+  String get noStartedCourses => 'Aun no hay cursos iniciados.';
+
+  @override
+  String get startedCourseLabel => 'Curso iniciado';
+
+  @override
+  String get courseCatalogTitle => 'Catalogo de cursos';
+
+  @override
   String get chooseCourseFromDashboard =>
       'Elige primero un curso y luego selecciona la leccion que quieres estudiar.';
 
   @override
   String get chooseCourse => 'Elegir curso';
+
+  @override
+  String get chooseNewCourse => 'Elegir curso nuevo';
+
+  @override
+  String get gradeSelectionTitle => 'Elegir grado';
+
+  @override
+  String get chooseGradePrompt => 'Selecciona tu grado.';
 
   @override
   String get courseSelectionTitle => 'Elegir curso';
@@ -63,10 +106,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backToDashboard => 'Volver al panel';
 
   @override
+  String get backToGrades => 'Volver a grados';
+
+  @override
   String get backToCourses => 'Volver a cursos';
 
   @override
   String get backToLessons => 'Volver a lecciones';
+
+  @override
+  String get noCoursesForGrade =>
+      'Los cursos de este grado aun no estan disponibles en el prototipo.';
 
   @override
   String get noLessonsForCourse =>

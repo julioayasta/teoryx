@@ -23,11 +23,20 @@ class LessonDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lesson = _lessonRepository.getLessonById(lessonId);
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final lesson = _lessonRepository.getLessonById(lessonId, languageCode);
     final steps = [...lesson.steps]..sort((a, b) => a.order.compareTo(b.order));
 
     return AppScaffold(
       title: lesson.title,
+      leading: IconButton(
+        tooltip: context.l10n.backToLessons,
+        onPressed: () => context.goNamed(
+          RouteNames.lessonList,
+          pathParameters: {'courseId': courseId},
+        ),
+        icon: const Icon(Icons.arrow_back),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showTutorPanel(context, lesson.id),
         icon: const Icon(Icons.chat_bubble_outline),
@@ -36,15 +45,6 @@ class LessonDetailScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          OutlinedButton.icon(
-            onPressed: () => context.goNamed(
-              RouteNames.lessonList,
-              pathParameters: {'courseId': courseId},
-            ),
-            icon: const Icon(Icons.arrow_back),
-            label: Text(context.l10n.backToLessons),
-          ),
-          const SizedBox(height: 20),
           Text(lesson.title, style: context.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(

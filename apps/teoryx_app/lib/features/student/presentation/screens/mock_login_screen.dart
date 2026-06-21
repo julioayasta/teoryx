@@ -5,12 +5,13 @@ import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+class MockLoginScreen extends StatelessWidget {
+  const MockLoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
+      title: context.l10n.appTitle,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -28,13 +29,13 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    context.l10n.welcomeTitle,
+                    context.l10n.mockLoginTitle,
                     style: context.textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    context.l10n.welcomeMessage,
+                    context.l10n.mockLoginMessage,
                     style: context.textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
@@ -42,8 +43,20 @@ class WelcomeScreen extends StatelessWidget {
                   FilledButton.icon(
                     onPressed: () =>
                         context.goNamed(RouteNames.studentDashboard),
-                    icon: const Icon(Icons.arrow_forward),
+                    icon: const Icon(Icons.person_outline),
                     label: Text(context.l10n.continueAsStudent),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: null,
+                    icon: const Icon(Icons.family_restroom_outlined),
+                    label: Text(context.l10n.continueAsParent),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: null,
+                    icon: const Icon(Icons.admin_panel_settings_outlined),
+                    label: Text(context.l10n.continueAsSchoolAdmin),
                   ),
                 ],
               ),

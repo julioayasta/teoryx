@@ -15,19 +15,30 @@ class LessonListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lessons = _lessonRepository.getLessonsForCourse(courseId);
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final lessons = _lessonRepository.getLessonsForCourse(
+      courseId,
+      languageCode,
+    );
 
     return AppScaffold(
       title: context.l10n.lessonListTitle,
+      leading: IconButton(
+        tooltip: context.l10n.backToCourses,
+        onPressed: () {
+          final gradeLevelId = courseId.startsWith('grade-5')
+              ? 'grade-5'
+              : 'grade-4';
+          context.goNamed(
+            RouteNames.courseList,
+            pathParameters: {'gradeLevelId': gradeLevelId},
+          );
+        },
+        icon: const Icon(Icons.arrow_back),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          OutlinedButton.icon(
-            onPressed: () => context.goNamed(RouteNames.courseSelection),
-            icon: const Icon(Icons.arrow_back),
-            label: Text(context.l10n.backToCourses),
-          ),
-          const SizedBox(height: 20),
           if (lessons.isEmpty)
             Text(context.l10n.noLessonsForCourse)
           else

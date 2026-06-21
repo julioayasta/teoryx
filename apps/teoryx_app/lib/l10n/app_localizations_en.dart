@@ -12,6 +12,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'TeoryX';
 
   @override
+  String get languageEnglish => 'EN';
+
+  @override
+  String get languageSpanish => 'ES';
+
+  @override
   String get foundationReadyTitle => 'Foundation ready';
 
   @override
@@ -26,10 +32,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Start a curriculum-based learning session with local prototype data.';
 
   @override
+  String get mockLoginTitle => 'Choose a mock role';
+
+  @override
+  String get mockLoginMessage =>
+      'Use prototype access to review the student learning experience.';
+
+  @override
   String get continueAsStudent => 'Continue as Student';
 
   @override
+  String get continueAsParent => 'Continue as Parent';
+
+  @override
+  String get continueAsSchoolAdmin => 'Continue as School Admin';
+
+  @override
   String get dashboardTitle => 'Student Dashboard';
+
+  @override
+  String get backToLogin => 'Back to Login';
 
   @override
   String studentGreeting(Object firstName) {
@@ -46,11 +68,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readyToLearnTitle => 'Ready to learn?';
 
   @override
+  String get continueLearningTitle => 'Continue learning';
+
+  @override
+  String get noStartedCourses => 'No started courses yet.';
+
+  @override
+  String get startedCourseLabel => 'Started course';
+
+  @override
+  String get courseCatalogTitle => 'Course catalog';
+
+  @override
   String get chooseCourseFromDashboard =>
       'Choose a course first, then pick the lesson you want to study.';
 
   @override
   String get chooseCourse => 'Choose course';
+
+  @override
+  String get chooseNewCourse => 'Choose new course';
+
+  @override
+  String get gradeSelectionTitle => 'Choose Grade';
+
+  @override
+  String get chooseGradePrompt => 'Select your grade level.';
 
   @override
   String get courseSelectionTitle => 'Choose Course';
@@ -63,10 +106,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backToDashboard => 'Back to Dashboard';
 
   @override
+  String get backToGrades => 'Back to Grades';
+
+  @override
   String get backToCourses => 'Back to Courses';
 
   @override
   String get backToLessons => 'Back to Lessons';
+
+  @override
+  String get noCoursesForGrade =>
+      'Courses for this grade are not available in the prototype yet.';
 
   @override
   String get noLessonsForCourse =>

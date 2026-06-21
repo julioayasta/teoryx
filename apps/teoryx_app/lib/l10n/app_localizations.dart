@@ -104,6 +104,18 @@ abstract class AppLocalizations {
   /// **'TeoryX'**
   String get appTitle;
 
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'EN'**
+  String get languageEnglish;
+
+  /// No description provided for @languageSpanish.
+  ///
+  /// In en, this message translates to:
+  /// **'ES'**
+  String get languageSpanish;
+
   /// No description provided for @foundationReadyTitle.
   ///
   /// In en, this message translates to:
@@ -128,17 +140,47 @@ abstract class AppLocalizations {
   /// **'Start a curriculum-based learning session with local prototype data.'**
   String get welcomeMessage;
 
+  /// No description provided for @mockLoginTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a mock role'**
+  String get mockLoginTitle;
+
+  /// No description provided for @mockLoginMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Use prototype access to review the student learning experience.'**
+  String get mockLoginMessage;
+
   /// No description provided for @continueAsStudent.
   ///
   /// In en, this message translates to:
   /// **'Continue as Student'**
   String get continueAsStudent;
 
+  /// No description provided for @continueAsParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Parent'**
+  String get continueAsParent;
+
+  /// No description provided for @continueAsSchoolAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as School Admin'**
+  String get continueAsSchoolAdmin;
+
   /// No description provided for @dashboardTitle.
   ///
   /// In en, this message translates to:
   /// **'Student Dashboard'**
   String get dashboardTitle;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get backToLogin;
 
   /// No description provided for @studentGreeting.
   ///
@@ -164,6 +206,30 @@ abstract class AppLocalizations {
   /// **'Ready to learn?'**
   String get readyToLearnTitle;
 
+  /// No description provided for @continueLearningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue learning'**
+  String get continueLearningTitle;
+
+  /// No description provided for @noStartedCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'No started courses yet.'**
+  String get noStartedCourses;
+
+  /// No description provided for @startedCourseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Started course'**
+  String get startedCourseLabel;
+
+  /// No description provided for @courseCatalogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Course catalog'**
+  String get courseCatalogTitle;
+
   /// No description provided for @chooseCourseFromDashboard.
   ///
   /// In en, this message translates to:
@@ -175,6 +241,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose course'**
   String get chooseCourse;
+
+  /// No description provided for @chooseNewCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose new course'**
+  String get chooseNewCourse;
+
+  /// No description provided for @gradeSelectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Grade'**
+  String get gradeSelectionTitle;
+
+  /// No description provided for @chooseGradePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your grade level.'**
+  String get chooseGradePrompt;
 
   /// No description provided for @courseSelectionTitle.
   ///
@@ -194,6 +278,12 @@ abstract class AppLocalizations {
   /// **'Back to Dashboard'**
   String get backToDashboard;
 
+  /// No description provided for @backToGrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Grades'**
+  String get backToGrades;
+
   /// No description provided for @backToCourses.
   ///
   /// In en, this message translates to:
@@ -205,6 +295,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Lessons'**
   String get backToLessons;
+
+  /// No description provided for @noCoursesForGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses for this grade are not available in the prototype yet.'**
+  String get noCoursesForGrade;
 
   /// No description provided for @noLessonsForCourse.
   ///

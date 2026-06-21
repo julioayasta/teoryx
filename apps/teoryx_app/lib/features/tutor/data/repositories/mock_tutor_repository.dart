@@ -3,7 +3,35 @@ import '../../domain/entities/tutor_message.dart';
 class MockTutorRepository {
   const MockTutorRepository();
 
-  List<TutorMessage> getMessagesForLesson(String lessonId) {
+  List<TutorMessage> getMessagesForLesson(
+    String lessonId,
+    String languageCode,
+  ) {
+    if (languageCode == 'es') {
+      return [
+        TutorMessage(
+          id: 'message-1',
+          lessonId: lessonId,
+          author: TutorMessageAuthor.tutor,
+          text:
+              'Razonemos desde el objetivo de aprendizaje. Una fraccion nombra partes iguales del mismo entero.',
+        ),
+        TutorMessage(
+          id: 'message-2',
+          lessonId: lessonId,
+          author: TutorMessageAuthor.student,
+          text: 'Por que importa el denominador?',
+        ),
+        TutorMessage(
+          id: 'message-3',
+          lessonId: lessonId,
+          author: TutorMessageAuthor.tutor,
+          text:
+              'El denominador dice cuantas partes iguales forman un entero. Si el entero no cambia, un denominador mayor puede significar partes mas pequenas.',
+        ),
+      ];
+    }
+
     return [
       TutorMessage(
         id: 'message-1',
