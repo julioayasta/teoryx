@@ -22,7 +22,15 @@ docs/
 architecture/
 prompts/
 
+Current project handoff:
+
+- PROJECT_STATE_v0.2.md
+
 ## MVP Scope
+
+The architecture must support K-12 from the beginning.
+
+Initial MVP seed/content scope:
 
 Grades:
 
@@ -65,4 +73,23 @@ Cloud:
 
 ## Status
 
-Sprint 0 Completed
+Sprint 01 Completed
+
+Sprint 02 Completed
+
+Sprint 02.1 Stability Fix Completed
+
+Current implementation:
+
+- Flutter Student App prototype
+- Mock/local data only
+- K2S tenant branding
+- English/Spanish localization
+- Guided lesson vertical slice
+- Tutor overlay prototype
+- No Firebase, Firestore, AI API, or backend yet
+
+Latest required verification:
+
+- flutter analyze
+- flutter test
