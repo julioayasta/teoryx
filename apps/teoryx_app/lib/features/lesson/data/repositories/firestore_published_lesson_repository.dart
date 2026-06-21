@@ -37,6 +37,53 @@ class FirestorePublishedLessonRepository implements LessonRepository {
     );
   }
 
+  @override
+  Future<Lesson?> getPublishedLessonById(
+    String lessonId,
+    String languageCode,
+  ) async {
+    final cachedLessons = _cachedLessons;
+
+    if (cachedLessons != null) {
+      for (final lesson in cachedLessons) {
+        if (lesson.id == lessonId && lesson.language == languageCode) {
+          return lesson;
+        }
+      }
+    }
+
+    try {
+      final firestore = _firestore ?? FirebaseFirestore.instance;
+      final doc = await firestore
+          .collection(FirestoreCollectionPaths.publishedLessonContent)
+          .doc(lessonId)
+          .get();
+
+      if (!doc.exists || doc.data() == null) {
+        return _fallbackRepository.getPublishedLessonById(
+          lessonId,
+          languageCode,
+        );
+      }
+
+      final model = FirestorePublishedLessonModel.fromFirestore(
+        id: doc.id,
+        data: doc.data()!,
+      );
+
+      if (!model.isValid || model.language != languageCode) {
+        return null;
+      }
+
+      final lesson = model.toEntity();
+      _cachedLessons = [...?_cachedLessons, lesson];
+
+      return lesson;
+    } on Object {
+      return _fallbackRepository.getPublishedLessonById(lessonId, languageCode);
+    }
+  }
+
   Future<List<Lesson>> preloadPublishedLessons() async {
     try {
       final firestore = _firestore ?? FirebaseFirestore.instance;

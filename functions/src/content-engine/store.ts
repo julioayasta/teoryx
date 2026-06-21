@@ -1,11 +1,14 @@
 import type {
   ContentEngineStore,
   ContentGenerationRequest,
+  CostTrackingRecord,
   CourseMap,
   CourseOffering,
   LessonArtifact,
   LessonSpecification,
   PresentationArtifact,
+  PromptExecutionRecord,
+  PromptTemplateVersion,
   PublishedLessonContent,
   UnitPlan,
   ValidationArtifact,
@@ -26,5 +29,8 @@ export function createEmptyStore(): ContentEngineStore {
     provenanceRecords: [],
     versionHistoryRecords: [],
     publicationRecords: [],
+    promptTemplateVersions: new Map<string, PromptTemplateVersion>(),
+    promptExecutionRecords: [] as PromptExecutionRecord[],
+    costTrackingRecords: [] as CostTrackingRecord[],
   };
 }

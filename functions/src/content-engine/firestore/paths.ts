@@ -13,6 +13,9 @@ export const collections = {
   provenanceRecords: 'provenanceRecords',
   versionHistories: 'versionHistories',
   artifactPublicationRecords: 'artifactPublicationRecords',
+  promptTemplateVersions: 'promptTemplateVersions',
+  promptExecutionRecords: 'promptExecutionRecords',
+  costTrackingRecords: 'costTrackingRecords',
 } as const;
 
 export type CollectionName = typeof collections[keyof typeof collections];

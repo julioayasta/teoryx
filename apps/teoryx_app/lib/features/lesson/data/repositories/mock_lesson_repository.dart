@@ -40,6 +40,20 @@ class MockLessonRepository implements LessonRepository {
       orElse: () => getAvailableLessons(languageCode).first,
     );
   }
+
+  @override
+  Future<Lesson?> getPublishedLessonById(
+    String lessonId,
+    String languageCode,
+  ) async {
+    for (final lesson in getAvailableLessons(languageCode)) {
+      if (lesson.id == lessonId) {
+        return lesson;
+      }
+    }
+
+    return null;
+  }
 }
 
 const _englishLessons = [

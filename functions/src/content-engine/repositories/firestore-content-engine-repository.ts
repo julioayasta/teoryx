@@ -2,11 +2,14 @@ import type {
   AuditRecord,
   ContentGenerationRequest,
   ContentGenerationJob,
+  CostTrackingRecord,
   CourseMap,
   CourseOffering,
   LessonArtifact,
   LessonSpecification,
   PresentationArtifact,
+  PromptExecutionRecord,
+  PromptTemplateVersion,
   ProvenanceRecord,
   PublishedLessonContent,
   PublicationRecord,
@@ -175,6 +178,31 @@ export class FirestoreContentEngineRepository implements ContentEngineRepository
     await this.set(collections.artifactPublicationRecords, record.id, record);
   }
 
+  async getPromptTemplateVersion(id: string): Promise<PromptTemplateVersion | undefined> {
+    return this.get<PromptTemplateVersion>(collections.promptTemplateVersions, id);
+  }
+
+  async listPromptTemplateVersions(input?: { taskType?: string; status?: PromptTemplateVersion['status'] }): Promise<PromptTemplateVersion[]> {
+    return (await this.list<PromptTemplateVersion>(collections.promptTemplateVersions))
+      .filter((template) =>
+        (!input?.taskType || template.taskType === input.taskType) &&
+        (!input?.status || template.status === input.status)
+      )
+      .sort((a, b) => b.version.localeCompare(a.version));
+  }
+
+  async savePromptTemplateVersion(template: PromptTemplateVersion): Promise<void> {
+    await this.set(collections.promptTemplateVersions, template.id, template);
+  }
+
+  async savePromptExecutionRecord(record: PromptExecutionRecord): Promise<void> {
+    await this.set(collections.promptExecutionRecords, record.id, record);
+  }
+
+  async saveCostTrackingRecord(record: CostTrackingRecord): Promise<void> {
+    await this.set(collections.costTrackingRecords, record.id, record);
+  }
+
   async listAuditRecords(): Promise<AuditRecord[]> {
     return this.list<AuditRecord>(collections.generationAuditEntries);
   }
@@ -189,6 +217,14 @@ export class FirestoreContentEngineRepository implements ContentEngineRepository
 
   async listPublicationRecords(): Promise<PublicationRecord[]> {
     return this.list<PublicationRecord>(collections.artifactPublicationRecords);
+  }
+
+  async listPromptExecutionRecords(): Promise<PromptExecutionRecord[]> {
+    return this.list<PromptExecutionRecord>(collections.promptExecutionRecords);
+  }
+
+  async listCostTrackingRecords(): Promise<CostTrackingRecord[]> {
+    return this.list<CostTrackingRecord>(collections.costTrackingRecords);
   }
 
   private async get<T extends Plain>(collection: string, id: string): Promise<T | undefined> {

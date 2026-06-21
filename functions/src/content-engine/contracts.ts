@@ -250,6 +250,56 @@ export interface PublicationRecord {
   status: 'pending' | 'published' | 'failed';
 }
 
+export interface PromptTemplateVersion {
+  id: string;
+  templateId: string;
+  version: string;
+  taskType: string;
+  status: 'draft' | 'active' | 'retired';
+  promptText: string;
+  outputSchemaId?: string;
+  createdAt: string;
+}
+
+export interface PromptExecutionRecord {
+  id: string;
+  schoolId: string;
+  requestId?: string;
+  artifactId?: string;
+  provider: string;
+  model: string;
+  promptTemplateVersionId: string;
+  inputHash: string;
+  outputHash?: string;
+  estimatedInputTokens?: number;
+  estimatedOutputTokens?: number;
+  estimatedCostUsd?: number;
+  status: 'succeeded' | 'failed';
+  error?: {
+    code: string;
+    message: string;
+    retryable: boolean;
+  };
+  timeoutMs?: number;
+  retryAttempt: number;
+  maxRetries: number;
+  createdAt: string;
+  completedAt: string;
+}
+
+export interface CostTrackingRecord {
+  id: string;
+  schoolId: string;
+  requestId?: string;
+  promptExecutionRecordId: string;
+  provider: string;
+  model: string;
+  estimatedInputTokens: number;
+  estimatedOutputTokens: number;
+  estimatedCostUsd: number;
+  createdAt: string;
+}
+
 export interface ContentEngineStore {
   courseOfferings: Map<string, CourseOffering>;
   courseMaps: Map<string, CourseMap>;
@@ -265,4 +315,7 @@ export interface ContentEngineStore {
   provenanceRecords: ProvenanceRecord[];
   versionHistoryRecords: VersionHistoryRecord[];
   publicationRecords: PublicationRecord[];
+  promptTemplateVersions: Map<string, PromptTemplateVersion>;
+  promptExecutionRecords: PromptExecutionRecord[];
+  costTrackingRecords: CostTrackingRecord[];
 }

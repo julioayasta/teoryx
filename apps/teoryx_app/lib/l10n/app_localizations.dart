@@ -578,6 +578,36 @@ abstract class AppLocalizations {
   /// **'Let\'s catch you up step by step. Read the story, pause at the questions, and use the tutor whenever you want help without leaving the lesson.'**
   String get guidedLessonIntro;
 
+  /// No description provided for @gettingLessonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting your lesson...'**
+  String get gettingLessonTitle;
+
+  /// No description provided for @gettingLessonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We are preparing this lesson. This usually takes a moment.'**
+  String get gettingLessonMessage;
+
+  /// No description provided for @lessonContentUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson unavailable'**
+  String get lessonContentUnavailableTitle;
+
+  /// No description provided for @lessonContentUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not prepare this lesson yet. Please try again.'**
+  String get lessonContentUnavailable;
+
+  /// No description provided for @retryLessonContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryLessonContent;
+
   /// No description provided for @learningDetailsTitle.
   ///
   /// In en, this message translates to:

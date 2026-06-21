@@ -265,6 +265,23 @@ class AppLocalizationsEn extends AppLocalizations {
       'Let\'s catch you up step by step. Read the story, pause at the questions, and use the tutor whenever you want help without leaving the lesson.';
 
   @override
+  String get gettingLessonTitle => 'Getting your lesson...';
+
+  @override
+  String get gettingLessonMessage =>
+      'We are preparing this lesson. This usually takes a moment.';
+
+  @override
+  String get lessonContentUnavailableTitle => 'Lesson unavailable';
+
+  @override
+  String get lessonContentUnavailable =>
+      'We could not prepare this lesson yet. Please try again.';
+
+  @override
+  String get retryLessonContent => 'Try again';
+
+  @override
   String get learningDetailsTitle => 'Learning details';
 
   @override

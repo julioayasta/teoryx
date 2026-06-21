@@ -11,11 +11,17 @@ import '../features/auth/data/repositories/firebase_auth_repository.dart';
 import '../features/auth/data/repositories/mock_auth_repository.dart';
 import '../features/auth/domain/repositories/auth_repository.dart';
 import '../features/lesson/data/repositories/firestore_course_repository.dart';
+import '../features/lesson/data/repositories/firebase_content_generation_repository.dart';
+import '../features/lesson/data/repositories/firestore_lesson_specification_repository.dart';
 import '../features/lesson/data/repositories/firestore_published_lesson_repository.dart';
+import '../features/lesson/data/repositories/mock_content_generation_repository.dart';
 import '../features/lesson/data/repositories/mock_course_repository.dart';
 import '../features/lesson/data/repositories/mock_lesson_repository.dart';
+import '../features/lesson/data/repositories/mock_lesson_specification_repository.dart';
+import '../features/lesson/domain/repositories/content_generation_repository.dart';
 import '../features/lesson/domain/repositories/course_repository.dart';
 import '../features/lesson/domain/repositories/lesson_repository.dart';
+import '../features/lesson/domain/repositories/lesson_specification_repository.dart';
 import '../features/progress/data/repositories/firestore_progress_repository.dart';
 import '../features/progress/data/repositories/mock_progress_repository.dart';
 import '../features/progress/domain/repositories/progress_repository.dart';
@@ -34,6 +40,8 @@ class AppDependencies {
     required this.studentRepository,
     required this.courseRepository,
     required this.lessonRepository,
+    required this.lessonSpecificationRepository,
+    required this.contentGenerationRepository,
     required this.progressRepository,
   });
 
@@ -43,6 +51,8 @@ class AppDependencies {
   final StudentRepository studentRepository;
   final CourseRepository courseRepository;
   final LessonRepository lessonRepository;
+  final LessonSpecificationRepository lessonSpecificationRepository;
+  final ContentGenerationRepository contentGenerationRepository;
   final ProgressRepository progressRepository;
 }
 
@@ -68,6 +78,9 @@ Future<AppDependencies> initializeAppDependencies() async {
         studentRepository: const MockStudentRepository(),
         courseRepository: const MockCourseRepository(),
         lessonRepository: const MockLessonRepository(),
+        lessonSpecificationRepository:
+            const MockLessonSpecificationRepository(),
+        contentGenerationRepository: const MockContentGenerationRepository(),
         progressRepository: const MockProgressRepository(),
       );
     }
@@ -94,6 +107,8 @@ Future<AppDependencies> initializeAppDependencies() async {
       await _preloadCourseCatalog(repository: courseRepository);
       final lessonRepository = FirestorePublishedLessonRepository();
       await _preloadPublishedLessons(repository: lessonRepository);
+      final lessonSpecificationRepository =
+          FirestoreLessonSpecificationRepository();
       final progressRepository = FirestoreProgressRepository(
         schoolId: schoolId,
         studentId: studentId,
@@ -107,6 +122,8 @@ Future<AppDependencies> initializeAppDependencies() async {
         studentRepository: studentRepository,
         courseRepository: courseRepository,
         lessonRepository: lessonRepository,
+        lessonSpecificationRepository: lessonSpecificationRepository,
+        contentGenerationRepository: FirebaseContentGenerationRepository(),
         progressRepository: progressRepository,
       );
     } on Object catch (error, stackTrace) {
@@ -131,6 +148,9 @@ Future<AppDependencies> initializeAppDependencies() async {
         studentRepository: const MockStudentRepository(),
         courseRepository: const MockCourseRepository(),
         lessonRepository: const MockLessonRepository(),
+        lessonSpecificationRepository:
+            const MockLessonSpecificationRepository(),
+        contentGenerationRepository: const MockContentGenerationRepository(),
         progressRepository: const MockProgressRepository(),
       );
     }
@@ -143,6 +163,8 @@ Future<AppDependencies> initializeAppDependencies() async {
     studentRepository: const MockStudentRepository(),
     courseRepository: const MockCourseRepository(),
     lessonRepository: const MockLessonRepository(),
+    lessonSpecificationRepository: const MockLessonSpecificationRepository(),
+    contentGenerationRepository: const MockContentGenerationRepository(),
     progressRepository: const MockProgressRepository(),
   );
 }
@@ -179,6 +201,9 @@ Widget buildTeoryXApp({AppDependencies? dependencies}) {
         studentRepository: const MockStudentRepository(),
         courseRepository: const MockCourseRepository(),
         lessonRepository: const MockLessonRepository(),
+        lessonSpecificationRepository:
+            const MockLessonSpecificationRepository(),
+        contentGenerationRepository: const MockContentGenerationRepository(),
         progressRepository: const MockProgressRepository(),
       );
 
@@ -188,6 +213,10 @@ Widget buildTeoryXApp({AppDependencies? dependencies}) {
     studentRepository: resolvedDependencies.studentRepository,
     courseRepository: resolvedDependencies.courseRepository,
     lessonRepository: resolvedDependencies.lessonRepository,
+    lessonSpecificationRepository:
+        resolvedDependencies.lessonSpecificationRepository,
+    contentGenerationRepository:
+        resolvedDependencies.contentGenerationRepository,
     progressRepository: resolvedDependencies.progressRepository,
     localeController: AppLocaleController(),
     schoolThemeConfig: resolvedDependencies.schoolThemeConfig,

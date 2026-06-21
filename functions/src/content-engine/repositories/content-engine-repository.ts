@@ -2,11 +2,14 @@ import type {
   AuditRecord,
   ContentGenerationRequest,
   ContentGenerationJob,
+  CostTrackingRecord,
   CourseMap,
   CourseOffering,
   LessonArtifact,
   LessonSpecification,
   PresentationArtifact,
+  PromptExecutionRecord,
+  PromptTemplateVersion,
   ProvenanceRecord,
   PublishedLessonContent,
   PublicationRecord,
@@ -54,9 +57,16 @@ export interface ContentEngineRepository {
   saveProvenance(record: ProvenanceRecord): Promise<void>;
   saveVersionHistory(record: VersionHistoryRecord): Promise<void>;
   savePublicationRecord(record: PublicationRecord): Promise<void>;
+  getPromptTemplateVersion(id: string): Promise<PromptTemplateVersion | undefined>;
+  listPromptTemplateVersions(input?: { taskType?: string; status?: PromptTemplateVersion['status'] }): Promise<PromptTemplateVersion[]>;
+  savePromptTemplateVersion(template: PromptTemplateVersion): Promise<void>;
+  savePromptExecutionRecord(record: PromptExecutionRecord): Promise<void>;
+  saveCostTrackingRecord(record: CostTrackingRecord): Promise<void>;
 
   listAuditRecords(): Promise<AuditRecord[]>;
   listProvenanceRecords(): Promise<ProvenanceRecord[]>;
   listPublishedLessonContent(): Promise<PublishedLessonContent[]>;
   listPublicationRecords(): Promise<PublicationRecord[]>;
+  listPromptExecutionRecords(): Promise<PromptExecutionRecord[]>;
+  listCostTrackingRecords(): Promise<CostTrackingRecord[]>;
 }

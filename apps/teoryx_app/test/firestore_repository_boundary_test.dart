@@ -1,11 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teoryx_app/core/data/firestore/firestore_collection_paths.dart';
+import 'package:teoryx_app/features/lesson/data/models/firestore_lesson_specification_model.dart';
 import 'package:teoryx_app/features/lesson/data/models/firestore_course_model.dart';
 import 'package:teoryx_app/features/lesson/data/models/firestore_published_lesson_model.dart';
+import 'package:teoryx_app/features/lesson/data/repositories/mock_content_generation_repository.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/firestore_course_repository.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/firestore_published_lesson_repository.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/mock_course_repository.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/mock_lesson_repository.dart';
+import 'package:teoryx_app/features/lesson/data/repositories/mock_lesson_specification_repository.dart';
+import 'package:teoryx_app/features/lesson/domain/entities/content_generation_result.dart';
 import 'package:teoryx_app/features/lesson/domain/repositories/course_repository.dart';
 import 'package:teoryx_app/features/lesson/domain/repositories/lesson_repository.dart';
 import 'package:teoryx_app/features/progress/data/models/firestore_student_progress_model.dart';
@@ -145,6 +149,22 @@ void main() {
         ],
       },
     ).toEntity();
+    final lessonSpecification = FirestoreLessonSpecificationModel.fromFirestore(
+      id: 'spec-fractions-whole',
+      data: const {
+        'lessonId': 'lesson-fractions-whole',
+        'schoolId': 'school-demo',
+        'courseId': 'grade-4-math',
+        'courseOfferingId': 'offering-school-demo-grade-4-math-en',
+        'title': 'Fractions as Parts of a Whole',
+        'order': 1,
+        'language': 'en',
+        'generationStatus': 'not_generated',
+        'estimatedDuration': '20 minutes',
+        'difficultyLevel': 'foundational',
+        'status': 'active',
+      },
+    );
     final progress = FirestoreStudentProgressModel.fromFirestore(
       id: 'student-001',
       data: const {
@@ -171,6 +191,8 @@ void main() {
     expect(lesson.id, 'fractions-whole');
     expect(lesson.learningObjective.id, 'lo-fractions-whole');
     expect(lesson.steps.single.title, 'A whole pizza');
+    expect(lessonSpecification.isValid, isTrue);
+    expect(lessonSpecification.toEntity().id, 'spec-fractions-whole');
     expect(progress.isValid, isTrue);
     expect(
       progress.toEntity().currentLessonStatus,
@@ -382,6 +404,40 @@ void main() {
         repository.getLessonById('comparing-fractions', 'en').title,
         'Comparing Fractions',
       );
+    },
+  );
+
+  test(
+    'CE callable repositories expose safe mock fallback by default',
+    () async {
+      const lessonSpecificationRepository = MockLessonSpecificationRepository();
+      const contentGenerationRepository = MockContentGenerationRepository();
+
+      expect(
+        await lessonSpecificationRepository.getLessonSpecificationsForCourse(
+          'grade-4-math',
+          'en',
+        ),
+        isEmpty,
+      );
+      expect(
+        await lessonSpecificationRepository.getLessonSpecificationById(
+          'missing-spec',
+          'en',
+        ),
+        isNull,
+      );
+
+      final generationResult = await contentGenerationRepository
+          .requestLessonContent(
+            schoolId: 'school-demo',
+            courseOfferingId: 'offering-school-demo-grade-4-math-en',
+            courseId: 'grade-4-math',
+            lessonSpecificationId: 'spec-fractions-whole',
+            languageCode: 'en',
+          );
+
+      expect(generationResult.status, ContentGenerationStatus.failed);
     },
   );
 

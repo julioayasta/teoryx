@@ -17,9 +17,11 @@ void main() {
       "import 'package:firebase_core/",
       "import 'package:firebase_auth/",
       "import 'package:cloud_firestore/",
+      "import 'package:cloud_functions/",
       'import "package:firebase_core/',
       'import "package:firebase_auth/',
       'import "package:cloud_firestore/',
+      'import "package:cloud_functions/',
     ];
 
     final violations = <String>[];
