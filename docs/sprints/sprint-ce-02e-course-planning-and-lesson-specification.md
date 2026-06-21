@@ -80,6 +80,52 @@ Curriculum Selection
 
 When full content is missing, the execution pipeline uses the specification to know what lesson should be generated.
 
+## Course Availability Rule
+
+A course is not available in the Student App just because the course record exists.
+
+A course becomes available to students only when the School Admin Portal has generated, reviewed, and published or enabled the planning records needed for the student lesson list:
+
+- `CourseMap`
+- `UnitPlan` records
+- `LessonSpecification` records
+
+The Student App course catalog should only show courses that:
+
+- are enabled for students
+- belong to the student's school/grade/language context
+- have a valid active `CourseMap`
+- have valid active `UnitPlan` records
+- have valid active `LessonSpecification` records
+
+This prevents the Student App from showing empty courses or course shells that are not ready for learning.
+
+### School Portal Course Availability Flow
+
+School Portal flow:
+
+1. Create or select course.
+2. Generate `CourseMap` from the selected curriculum.
+3. Generate `UnitPlan` records.
+4. Generate `LessonSpecification` records.
+5. Review and edit planning records through authorized workflows.
+6. Publish or enable the course for students.
+
+School Portal may expose draft, review, validation, and authoring states. These states must not be shown directly in the Student App.
+
+### Student App Course Availability Flow
+
+Student App flow:
+
+1. Student selects grade.
+2. App shows only available courses.
+3. App reads `LessonSpecification` records for the lesson list.
+4. If selected lesson has `publishedContentId`, open the published lesson.
+5. If selected lesson does not have `publishedContentId`, request generation and show `pending`.
+6. When generation completes, show `ready` or `failed`.
+
+Student App availability is based on published/enabled planning records, not merely the existence of a course catalog record.
+
 ## Product Responsibilities
 
 ### Student App
@@ -580,6 +626,8 @@ Validation must confirm:
 Validation must confirm:
 
 - Student App only reads active/approved specifications
+- Student App only shows courses enabled for students
+- course availability requires valid `CourseMap`, `UnitPlan`, and `LessonSpecification` records
 - Student App cannot edit specifications
 - Student App sees safe availability status only
 - Student App does not see internal authoring fields unless explicitly allowed
@@ -668,6 +716,7 @@ Result:
 7. `LessonSpecification.publishedContentId` links to `publishedLessonContent` when available.
 8. If `publishedContentId` is missing, Student App requests generation and waits for `pending`, `ready`, or `failed`.
 9. Published lesson content history must remain immutable.
+10. A course is available in the Student App only when it is enabled for students and has valid active `CourseMap`, `UnitPlan`, and `LessonSpecification` records.
 
 ## Recommended Next CE Sprint
 

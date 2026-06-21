@@ -295,6 +295,17 @@ Completed:
 - CE-02B Pedagogical Analysis Engine
 - CE-02C Instructional Blueprint Engine
 - CE-02D Generation Artifact Contracts
+- CE-02E Course Planning and Lesson Specification
+- CE-03A Content Engine MVP Execution Pipeline
+
+Content Engine Architecture Status:
+
+- Curriculum Intelligence complete
+- Pedagogical Intelligence complete
+- Instructional Intelligence complete
+- Artifact Contract design complete
+- Course Planning design complete
+- Execution Pipeline design complete
 
 Document references:
 
@@ -303,11 +314,13 @@ Document references:
 - `docs/sprints/sprint-ce-02b-pedagogical-analysis-engine.md`
 - `docs/sprints/sprint-ce-02c-instructional-blueprint-engine.md`
 - `docs/sprints/sprint-ce-02d-generation-artifact-contracts.md`
+- `docs/sprints/sprint-ce-02e-course-planning-and-lesson-specification.md`
+- `docs/sprints/sprint-ce-03a-execution-pipeline.md`
 
 Next recommended milestone:
 
 ```text
-CE-03A Content Engine MVP Execution Pipeline
+CE-03B API and Cloud Function Contracts
 ```
 
 ## Current Repository Boundaries
