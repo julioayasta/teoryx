@@ -21,7 +21,7 @@ void main() {
     expect(find.text('Hello, Sofia'), findsWidgets);
     expect(find.text('Continue Studying'), findsOneWidget);
     expect(find.text('Grade 4 Math'), findsOneWidget);
-    expect(find.text('Current Lesson:'), findsOneWidget);
+    expect(find.text('Continue:'), findsOneWidget);
     expect(find.text('Comparing Fractions'), findsOneWidget);
     expect(find.text('Lesson 2 of 8'), findsOneWidget);
     expect(find.byIcon(Icons.grade_outlined), findsNothing);
@@ -105,5 +105,14 @@ void main() {
     expect(find.text('Puntaje autocalificado'), findsOneWidget);
     expect(find.text('Revision pendiente'), findsWidgets);
     expect(find.text('67%'), findsOneWidget);
+
+    await tester.tap(find.text('Volver al panel'));
+    await tester.pumpAndSettle();
+    expect(find.text('Recomendacion siguiente:'), findsOneWidget);
+    expect(find.text('Fracciones equivalentes'), findsOneWidget);
+    expect(find.text('Comparar fracciones completada'), findsOneWidget);
+    expect(find.textContaining('67% autocalificado'), findsOneWidget);
+    expect(find.textContaining('2 elementos'), findsOneWidget);
+    expect(find.text('Continuar con la siguiente leccion'), findsOneWidget);
   });
 }

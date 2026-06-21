@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/routing/route_names.dart';
 import '../../../../features/lesson/data/repositories/mock_course_repository.dart';
+import '../../../../features/progress/data/repositories/mock_progress_repository.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_shell.dart';
@@ -29,10 +30,17 @@ class AssessmentScreen extends StatefulWidget {
 class _AssessmentScreenState extends State<AssessmentScreen> {
   static const _assessmentRepository = MockAssessmentRepository();
   static const _courseRepository = MockCourseRepository();
+  static const _progressRepository = MockProgressRepository();
 
   final _selectedValues = <String, String>{};
   final _writtenResponses = <String, String>{};
   final _documentAttached = <String, bool>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _progressRepository.markAssessmentStarted();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,9 +153,13 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       studentId: 'student-001',
       answers: answers,
     );
-    _assessmentRepository.gradeAttempt(
+    final result = _assessmentRepository.gradeAttempt(
       assessment: assessment,
       attempt: attempt,
+    );
+    _progressRepository.markAssessmentCompleted(
+      autoGradedScorePercentage: result.autoGradedScorePercentage,
+      pendingReviewCount: result.pendingReviewCount,
     );
 
     context.goNamed(

@@ -25,6 +25,10 @@ class StudentDashboardScreen extends StatelessWidget {
     final currentProgress = _progressRepository.getCurrentProgress(
       languageCode,
     );
+    final recommendation = _ProgressRecommendation.from(
+      context,
+      currentProgress,
+    );
 
     return AppScaffold(
       breadcrumbs: [AppBreadcrumb(label: context.l10n.dashboardTitle)],
@@ -84,11 +88,20 @@ class StudentDashboardScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        context.l10n.currentLessonLabel,
+                        recommendation.heading,
                         style: context.textTheme.labelLarge,
                       ),
                       const SizedBox(height: 4),
-                      Text(currentProgress.currentLessonTitle),
+                      Text(recommendation.primaryLessonTitle),
+                      if (recommendation.previousLessonText != null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          context.l10n.previousLessonLabel,
+                          style: context.textTheme.labelLarge,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(recommendation.previousLessonText!),
+                      ],
                       const SizedBox(height: 12),
                       Text(
                         context.l10n.progressLabel,
@@ -101,14 +114,14 @@ class StudentDashboardScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       FilledButton.icon(
                         onPressed: () => context.goNamed(
-                          RouteNames.lessonDetail,
+                          recommendation.routeName,
                           pathParameters: {
                             'courseId': currentProgress.courseId,
-                            'lessonId': currentProgress.lessonId,
+                            'lessonId': recommendation.targetLessonId,
                           },
                         ),
                         icon: const Icon(Icons.arrow_forward),
-                        label: Text(context.l10n.continueLearningAction),
+                        label: Text(recommendation.actionLabel),
                       ),
                     ],
                   ),
@@ -159,6 +172,57 @@ class StudentDashboardScreen extends StatelessWidget {
   }
 }
 
+class _ProgressRecommendation {
+  const _ProgressRecommendation({
+    required this.heading,
+    required this.primaryLessonTitle,
+    required this.targetLessonId,
+    required this.routeName,
+    required this.actionLabel,
+    this.previousLessonText,
+  });
+
+  final String heading;
+  final String primaryLessonTitle;
+  final String targetLessonId;
+  final String routeName;
+  final String actionLabel;
+  final String? previousLessonText;
+
+  factory _ProgressRecommendation.from(
+    BuildContext context,
+    StudentProgress progress,
+  ) {
+    return switch (progress.currentLessonStatus) {
+      LessonProgressStatus.studying => _ProgressRecommendation(
+        heading: context.l10n.continueLessonLabel,
+        primaryLessonTitle: progress.currentLessonTitle,
+        targetLessonId: progress.currentLessonId,
+        routeName: RouteNames.lessonDetail,
+        actionLabel: context.l10n.continueLearningAction,
+      ),
+      LessonProgressStatus.assessmentStarted => _ProgressRecommendation(
+        heading: context.l10n.continueAssessmentLabel,
+        primaryLessonTitle: progress.currentLessonTitle,
+        targetLessonId: progress.currentLessonId,
+        routeName: RouteNames.assessment,
+        actionLabel: context.l10n.continueAssessmentAction,
+      ),
+      LessonProgressStatus.assessmentCompleted ||
+      LessonProgressStatus.readyForNextLesson => _ProgressRecommendation(
+        heading: context.l10n.recommendedNextLabel,
+        primaryLessonTitle: progress.nextLessonTitle,
+        targetLessonId: progress.nextLessonId,
+        routeName: RouteNames.lessonDetail,
+        actionLabel: context.l10n.continueWithNextLessonAction,
+        previousLessonText: context.l10n.previousLessonCompleted(
+          progress.currentLessonTitle,
+        ),
+      ),
+    };
+  }
+}
+
 class _ProgressDetails extends StatelessWidget {
   const _ProgressDetails({required this.progress});
 
@@ -177,12 +241,16 @@ class _ProgressDetails extends StatelessWidget {
         if (progress.lastAssessmentScorePercentage != null)
           _ProgressChip(
             label: context.l10n.lastAssessmentScoreLabel,
-            value: '${progress.lastAssessmentScorePercentage}%',
+            value: context.l10n.autoGradedScoreValue(
+              progress.lastAssessmentScorePercentage!,
+            ),
           ),
         if (progress.hasPendingReview)
           _ProgressChip(
             label: context.l10n.pendingReviewNotice,
-            value: context.l10n.pendingReview,
+            value: context.l10n.pendingReviewCountValue(
+              progress.pendingReviewCount,
+            ),
           ),
       ],
     );

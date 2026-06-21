@@ -94,6 +94,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueLearningAction => 'Continue';
 
   @override
+  String get continueAssessmentAction => 'Continue Assessment';
+
+  @override
+  String get continueWithNextLessonAction => 'Continue with Next Lesson';
+
+  @override
   String get noStartedCourses => 'No started courses yet.';
 
   @override
@@ -101,6 +107,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currentLessonLabel => 'Current Lesson:';
+
+  @override
+  String get continueLessonLabel => 'Continue:';
+
+  @override
+  String get continueAssessmentLabel => 'Continue Assessment:';
+
+  @override
+  String get recommendedNextLabel => 'Recommended next:';
+
+  @override
+  String get previousLessonLabel => 'Previous lesson:';
+
+  @override
+  String previousLessonCompleted(Object lessonTitle) {
+    return '$lessonTitle completed';
+  }
 
   @override
   String get currentLessonComparingFractions => 'Comparing Fractions';
@@ -325,8 +348,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lastAssessmentScoreLabel => 'Last Assessment Score:';
 
   @override
+  String autoGradedScoreValue(int score) {
+    return '$score% auto-graded';
+  }
+
+  @override
   String get masteryStateLabel => 'Mastery:';
 
   @override
-  String get pendingReviewNotice => 'Review:';
+  String get pendingReviewNotice => 'Pending review:';
+
+  @override
+  String pendingReviewCountValue(int count) {
+    return '$count items';
+  }
 }

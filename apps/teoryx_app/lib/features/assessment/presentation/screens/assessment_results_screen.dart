@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/routing/route_names.dart';
 import '../../../../features/lesson/data/repositories/mock_course_repository.dart';
+import '../../../../features/progress/data/repositories/mock_progress_repository.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_shell.dart';
@@ -23,6 +24,7 @@ class AssessmentResultsScreen extends StatelessWidget {
 
   static const _assessmentRepository = MockAssessmentRepository();
   static const _courseRepository = MockCourseRepository();
+  static const _progressRepository = MockProgressRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +73,10 @@ class AssessmentResultsScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+    _progressRepository.markAssessmentCompleted(
+      autoGradedScorePercentage: result.autoGradedScorePercentage,
+      pendingReviewCount: result.pendingReviewCount,
     );
 
     return AppScaffold(

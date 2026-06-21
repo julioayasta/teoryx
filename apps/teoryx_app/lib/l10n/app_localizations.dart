@@ -254,6 +254,18 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get continueLearningAction;
 
+  /// No description provided for @continueAssessmentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Assessment'**
+  String get continueAssessmentAction;
+
+  /// No description provided for @continueWithNextLessonAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Next Lesson'**
+  String get continueWithNextLessonAction;
+
   /// No description provided for @noStartedCourses.
   ///
   /// In en, this message translates to:
@@ -271,6 +283,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Current Lesson:'**
   String get currentLessonLabel;
+
+  /// No description provided for @continueLessonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue:'**
+  String get continueLessonLabel;
+
+  /// No description provided for @continueAssessmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Assessment:'**
+  String get continueAssessmentLabel;
+
+  /// No description provided for @recommendedNextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended next:'**
+  String get recommendedNextLabel;
+
+  /// No description provided for @previousLessonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous lesson:'**
+  String get previousLessonLabel;
+
+  /// No description provided for @previousLessonCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{lessonTitle} completed'**
+  String previousLessonCompleted(Object lessonTitle);
 
   /// No description provided for @currentLessonComparingFractions.
   ///
@@ -704,6 +746,12 @@ abstract class AppLocalizations {
   /// **'Last Assessment Score:'**
   String get lastAssessmentScoreLabel;
 
+  /// No description provided for @autoGradedScoreValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{score}% auto-graded'**
+  String autoGradedScoreValue(int score);
+
   /// No description provided for @masteryStateLabel.
   ///
   /// In en, this message translates to:
@@ -713,8 +761,14 @@ abstract class AppLocalizations {
   /// No description provided for @pendingReviewNotice.
   ///
   /// In en, this message translates to:
-  /// **'Review:'**
+  /// **'Pending review:'**
   String get pendingReviewNotice;
+
+  /// No description provided for @pendingReviewCountValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String pendingReviewCountValue(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -31,9 +31,21 @@
   "continueLearningTitle": "Continue learning",
   "continueStudyingTitle": "Continue Studying",
   "continueLearningAction": "Continue",
+  "continueAssessmentAction": "Continue Assessment",
+  "continueWithNextLessonAction": "Continue with Next Lesson",
   "noStartedCourses": "No started courses yet.",
   "startedCourseLabel": "Started course",
   "currentLessonLabel": "Current Lesson:",
+  "continueLessonLabel": "Continue:",
+  "continueAssessmentLabel": "Continue Assessment:",
+  "recommendedNextLabel": "Recommended next:",
+  "previousLessonLabel": "Previous lesson:",
+  "previousLessonCompleted": "{lessonTitle} completed",
+  "@previousLessonCompleted": {
+    "placeholders": {
+      "lessonTitle": {}
+    }
+  },
   "currentLessonComparingFractions": "Comparing Fractions",
   "progressLabel": "Progress:",
   "lessonProgressTwoOfEight": "Lesson 2 of 8",
@@ -106,6 +118,22 @@
   "masteryProficient": "Proficient",
   "masteryMastered": "Mastered",
   "lastAssessmentScoreLabel": "Last Assessment Score:",
+  "autoGradedScoreValue": "{score}% auto-graded",
+  "@autoGradedScoreValue": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
   "masteryStateLabel": "Mastery:",
-  "pendingReviewNotice": "Review:"
+  "pendingReviewNotice": "Pending review:",
+  "pendingReviewCountValue": "{count} items",
+  "@pendingReviewCountValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }
