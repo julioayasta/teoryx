@@ -11,7 +11,10 @@ import type {
   PublishedLessonContent,
   VersionHistoryRecord,
 } from './contracts.js';
+import type { AIProvider } from './ai/types.js';
+import { createAIProviderRuntime, type AIProviderEnvironment } from './ai/provider-factory.js';
 import { runFakeCoursePlanWorker } from './course-plan/fake-course-plan-worker.js';
+import { AILessonContentGenerationError, runAILessonContentWorker } from './lesson-content/ai-lesson-content-worker.js';
 import { runFakeLessonContentWorker } from './lesson-content/fake-lesson-content-worker.js';
 import { canAccessSchool, canCall } from './permissions.js';
 import { statusResponseForCaller } from './status.js';
@@ -19,13 +22,21 @@ import type { ContentEngineRepository } from './repositories/content-engine-repo
 
 export type RepositoryHandler = (request: CallableRequest, caller: CallerContext) => Promise<CallableResponse>;
 
-export function createFirestoreBackedContentEngineHandlers(repo: ContentEngineRepository): Record<CallableName, RepositoryHandler> {
+export interface ContentEngineRuntimeOptions {
+  env?: AIProviderEnvironment;
+  aiProvider?: AIProvider;
+}
+
+export function createFirestoreBackedContentEngineHandlers(
+  repo: ContentEngineRepository,
+  options: ContentEngineRuntimeOptions = {},
+): Record<CallableName, RepositoryHandler> {
   return {
     requestCoursePlanGeneration: (request, caller) => requestCoursePlanGeneration(repo, request, caller),
     getCoursePlanStatus: (request, caller) => getCoursePlanStatus(repo, request, caller),
     publishCourseOffering: (request, caller) => publishCourseOffering(repo, request, caller),
     getLessonSpecificationsForCourse: (request, caller) => getLessonSpecificationsForCourse(repo, request, caller),
-    requestLessonContent: (request, caller) => requestLessonContent(repo, request, caller),
+    requestLessonContent: (request, caller) => requestLessonContent(repo, request, caller, options),
     getContentGenerationStatus: (request, caller) => getContentGenerationStatus(repo, request, caller),
     requestSchoolLessonGeneration: (request, caller) => requestSchoolLessonGeneration(repo, request, caller),
     requestArtifactRegeneration: (request, caller) => requestArtifactRegeneration(repo, request, caller),
@@ -174,7 +185,12 @@ async function getLessonSpecificationsForCourse(repo: ContentEngineRepository, r
   }
 }
 
-async function requestLessonContent(repo: ContentEngineRepository, request: CallableRequest, caller: CallerContext) {
+async function requestLessonContent(
+  repo: ContentEngineRepository,
+  request: CallableRequest,
+  caller: CallerContext,
+  options: ContentEngineRuntimeOptions,
+) {
   try {
     const schoolId = requiredString(request, 'schoolId');
     assertAllowed('requestLessonContent', caller, schoolId);
@@ -205,13 +221,47 @@ async function requestLessonContent(repo: ContentEngineRepository, request: Call
       intent: 'fill_missing',
       publicationMode: 'auto_publish_after_validation',
     });
-    const output = await runFakeLessonContentWorker(repo, {
-      requestId: generationRequest.id,
-      schoolId,
-      courseId,
-      language,
-      lesson,
-    });
+    const aiRuntime = createAIProviderRuntime(repo, options.env, options.aiProvider);
+    let output: Awaited<ReturnType<typeof runFakeLessonContentWorker>>;
+    if (aiRuntime.realAIEnabled || options.aiProvider) {
+      try {
+        output = await runAILessonContentWorker(repo, aiRuntime.service, {
+          requestId: generationRequest.id,
+          schoolId,
+          courseId,
+          language,
+          lesson,
+        });
+      } catch (error) {
+        if (aiRuntime.fallbackToFake) {
+          output = await runFakeLessonContentWorker(repo, {
+            requestId: generationRequest.id,
+            schoolId,
+            courseId,
+            language,
+            lesson,
+          });
+        } else {
+          await repo.saveGenerationRequest({
+            ...generationRequest,
+            status: 'failed',
+            studentVisibleStatus: 'failed',
+            schoolPortalVisibleStatus: 'failed',
+            publishedContentId: null,
+          });
+          const errorCode = error instanceof AILessonContentGenerationError ? error.code : 'ai_lesson_generation_failed';
+          return failed(errorCode, 'Lesson content generation failed safely.');
+        }
+      }
+    } else {
+      output = await runFakeLessonContentWorker(repo, {
+        requestId: generationRequest.id,
+        schoolId,
+        courseId,
+        language,
+        lesson,
+      });
+    }
     await repo.saveGenerationRequest({
       ...generationRequest,
       status: 'ready',

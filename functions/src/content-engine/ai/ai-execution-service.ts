@@ -81,6 +81,14 @@ export class AIExecutionService {
 
       await this.repo.savePromptExecutionRecord(promptExecutionRecord);
       await this.repo.saveCostTrackingRecord(costTrackingRecord);
+      await this.repo.saveProvenance({
+        id: `provenance-${promptExecutionRecord.id}`,
+        schoolId: request.schoolId,
+        targetType: 'promptExecutionRecord',
+        targetId: promptExecutionRecord.id,
+        sourceIds: [promptResolution.template.id],
+        createdAt: completedAt,
+      });
 
       return { response, promptExecutionRecord, costTrackingRecord };
     } catch (error) {
@@ -107,6 +115,14 @@ export class AIExecutionService {
 
       await this.repo.savePromptExecutionRecord(promptExecutionRecord);
       await this.repo.saveCostTrackingRecord(costTrackingRecord);
+      await this.repo.saveProvenance({
+        id: `provenance-${promptExecutionRecord.id}`,
+        schoolId: request.schoolId,
+        targetType: 'promptExecutionRecord',
+        targetId: promptExecutionRecord.id,
+        sourceIds: [promptResolution.template.id],
+        createdAt: completedAt,
+      });
 
       return { promptExecutionRecord, costTrackingRecord };
     }
