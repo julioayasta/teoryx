@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'learning_objective.dart';
+import 'lesson_step.dart';
 
 class Lesson extends Equatable {
   const Lesson({
@@ -20,6 +21,7 @@ class Lesson extends Equatable {
     required this.guidedPractice,
     required this.independentPractice,
     required this.summary,
+    required this.steps,
   });
 
   final String id;
@@ -38,6 +40,7 @@ class Lesson extends Equatable {
   final String guidedPractice;
   final String independentPractice;
   final String summary;
+  final List<LessonStep> steps;
 
   @override
   List<Object?> get props => [
@@ -57,5 +60,6 @@ class Lesson extends Equatable {
         guidedPractice,
         independentPractice,
         summary,
+        steps,
       ];
 }

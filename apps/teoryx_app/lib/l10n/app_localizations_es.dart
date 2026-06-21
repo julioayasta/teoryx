@@ -74,4 +74,31 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get mockTutorInputHint => 'Entrada del tutor mock desactivada';
+
+  @override
+  String get guidedLessonTitle => 'Leccion guiada';
+
+  @override
+  String get lessonStepTypeStory => 'Historia';
+
+  @override
+  String get lessonStepTypeImagePlaceholder => 'Marcador de imagen';
+
+  @override
+  String get lessonStepTypeExplanation => 'Explicacion';
+
+  @override
+  String get lessonStepTypeQuestion => 'Pregunta';
+
+  @override
+  String get lessonStepTypePractice => 'Practica';
+
+  @override
+  String get lessonStepTypeSummary => 'Resumen';
+
+  @override
+  String get lessonStepPromptLabel => 'Consigna';
+
+  @override
+  String get lessonStepExpectedAnswerLabel => 'Respuesta esperada';
 }

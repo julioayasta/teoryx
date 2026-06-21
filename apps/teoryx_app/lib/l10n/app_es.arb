@@ -25,5 +25,14 @@
   "summaryLabel": "Resumen",
   "askTutor": "Preguntar al tutor",
   "tutorChatTitle": "Chat con tutor",
-  "mockTutorInputHint": "Entrada del tutor mock desactivada"
+  "mockTutorInputHint": "Entrada del tutor mock desactivada",
+  "guidedLessonTitle": "Leccion guiada",
+  "lessonStepTypeStory": "Historia",
+  "lessonStepTypeImagePlaceholder": "Marcador de imagen",
+  "lessonStepTypeExplanation": "Explicacion",
+  "lessonStepTypeQuestion": "Pregunta",
+  "lessonStepTypePractice": "Practica",
+  "lessonStepTypeSummary": "Resumen",
+  "lessonStepPromptLabel": "Consigna",
+  "lessonStepExpectedAnswerLabel": "Respuesta esperada"
 }

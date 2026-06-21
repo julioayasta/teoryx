@@ -223,6 +223,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mock tutor input disabled'**
   String get mockTutorInputHint;
+
+  /// No description provided for @guidedLessonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Guided Lesson'**
+  String get guidedLessonTitle;
+
+  /// No description provided for @lessonStepTypeStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Story'**
+  String get lessonStepTypeStory;
+
+  /// No description provided for @lessonStepTypeImagePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Placeholder'**
+  String get lessonStepTypeImagePlaceholder;
+
+  /// No description provided for @lessonStepTypeExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get lessonStepTypeExplanation;
+
+  /// No description provided for @lessonStepTypeQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get lessonStepTypeQuestion;
+
+  /// No description provided for @lessonStepTypePractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice'**
+  String get lessonStepTypePractice;
+
+  /// No description provided for @lessonStepTypeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get lessonStepTypeSummary;
+
+  /// No description provided for @lessonStepPromptLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt'**
+  String get lessonStepPromptLabel;
+
+  /// No description provided for @lessonStepExpectedAnswerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Answer'**
+  String get lessonStepExpectedAnswerLabel;
 }
 
 class _AppLocalizationsDelegate
