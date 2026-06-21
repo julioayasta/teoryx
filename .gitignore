@@ -19,6 +19,8 @@ Thumbs.db
 
 # Firebase
 firebase-debug.log
+functions/lib/
+functions/node_modules/
 
 # Generated
 *.g.dart
