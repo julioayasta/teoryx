@@ -28,6 +28,8 @@ The Content Engine must be invocable by:
 
 1. School Admin Portal
 2. Student App when a requested lesson does not exist
+3. Super Admin workflows
+4. System/background jobs
 
 The Student App must never call AI directly.
 
@@ -38,6 +40,233 @@ The Student App may only:
 - receive a pending generation request reference
 - listen for readiness
 - render content once ready
+
+## Invocation Model
+
+The Content Engine is an information generation system.
+
+It can be invoked from different TeoryX products, but permissions and workflow differ by source.
+
+Every `ContentGenerationRequest` must include:
+
+```text
+source
+intent
+editAllowed
+publicationMode
+```
+
+Allowed `source` values:
+
+```text
+school_admin_portal
+student_app
+super_admin
+system
+```
+
+Allowed `intent` values:
+
+```text
+create_new
+update_existing
+fill_missing
+regenerate
+translate
+improve
+```
+
+Allowed `publicationMode` values:
+
+```text
+draft
+auto_publish_after_validation
+require_review
+```
+
+### Source-Based Behavior
+
+#### School Admin Portal
+
+The School Admin Portal is an authoring workflow.
+
+It may:
+
+- request creation of a new lesson
+- request updates or regeneration of an existing lesson
+- edit generated lesson content
+- save drafts
+- submit generated content for review/publication
+
+Default request behavior:
+
+```text
+source = school_admin_portal
+editAllowed = true
+publicationMode = require_review
+```
+
+Allowed intents:
+
+```text
+create_new
+update_existing
+regenerate
+translate
+improve
+```
+
+School Admin Portal may produce `draft` or `ready_for_review` artifacts, but should not silently bypass publication policy.
+
+#### Student App
+
+The Student App is a read-only consumption workflow.
+
+It may:
+
+- request missing lesson content only
+- receive pending/ready/failed state
+- render published/ready content once available
+
+It must not:
+
+- edit generated content
+- approve content
+- publish content
+- modify curriculum selection
+- choose arbitrary standards
+- call AI directly
+
+Default request behavior:
+
+```text
+source = student_app
+intent = fill_missing
+editAllowed = false
+publicationMode = auto_publish_after_validation
+```
+
+If policy does not allow auto-publication, the Student App receives `pending`, `ready`, or `failed` state but does not enter an authoring workflow.
+
+Student App requests must be constrained to the already selected curriculum context:
+
+```text
+schoolId
+curriculumId
+gradeLevelId
+subjectId
+standardId
+language
+```
+
+The Student App cannot change these identifiers during a missing-content request.
+
+#### Super Admin
+
+Super Admin workflows are governance workflows.
+
+They may:
+
+- create global or tenant-specific generation requests
+- regenerate content
+- translate content
+- improve content
+- approve or publish according to governance policy
+
+Default request behavior:
+
+```text
+source = super_admin
+editAllowed = true
+publicationMode = require_review
+```
+
+Allowed intents:
+
+```text
+create_new
+update_existing
+regenerate
+translate
+improve
+```
+
+Super Admin may override broader publication policy only through explicit governance rules.
+
+#### System
+
+System workflows are background/maintenance workflows.
+
+They may:
+
+- regenerate stale content
+- translate approved content
+- improve content quality
+- repair missing derived artifacts
+
+Default request behavior:
+
+```text
+source = system
+editAllowed = false
+publicationMode = require_review
+```
+
+Allowed intents:
+
+```text
+fill_missing
+regenerate
+translate
+improve
+```
+
+System-generated changes should remain reviewable unless explicitly covered by a safe auto-publication policy.
+
+### Invocation Policy Matrix
+
+```text
+source               allowed workflow        editAllowed  publication default
+school_admin_portal  authoring               true         require_review
+student_app          read-only consumption    false        auto_publish_after_validation or require_review by policy
+super_admin          governance              true         require_review
+system               background maintenance  false        require_review
+```
+
+### CE Behavior by Invocation Source
+
+The same Content Engine pipeline is used for all sources:
+
+```text
+Standard
+-> Learning Objective
+-> Assessment Blueprint
+-> Lesson
+-> Tutor Prompt
+-> Presentation Contract
+-> Validation
+-> Persist
+-> Publish or Review State
+```
+
+But source controls:
+
+- which intents are allowed
+- whether generated content can be edited
+- whether the result can become a draft
+- whether publication can be automatic after validation
+- whether the caller receives an authoring artifact or only request status
+- whether curriculum identifiers are caller-selected or pre-constrained
+
+The Student App must receive only:
+
+```text
+pending
+ready
+failed
+```
+
+It must never receive an editable draft workflow.
 
 ## Bounded Context
 
@@ -136,6 +365,10 @@ Fields:
 - `subjectId`
 - `standardId`
 - `language`
+- `source`
+- `intent`
+- `editAllowed`
+- `publicationMode`
 - `requestedByUserId`
 - `requestedByClient`
 - `idempotencyKey`
