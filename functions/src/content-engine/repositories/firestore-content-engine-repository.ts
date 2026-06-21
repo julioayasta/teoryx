@@ -125,12 +125,26 @@ export class FirestoreContentEngineRepository implements ContentEngineRepository
     return this.get<LessonArtifact>(collections.lessonArtifacts, id);
   }
 
+  async findLessonArtifactBySpecification(input: { schoolId: string; lessonSpecificationId: string }): Promise<LessonArtifact | undefined> {
+    return (await this.list<LessonArtifact>(collections.lessonArtifacts)).find((artifact) =>
+      artifact.schoolId === input.schoolId &&
+      artifact.lessonSpecificationId === input.lessonSpecificationId
+    );
+  }
+
   async saveLessonArtifact(artifact: LessonArtifact): Promise<void> {
     await this.set(collections.lessonArtifacts, artifact.id, artifact);
   }
 
   async getPresentationArtifact(id: string): Promise<PresentationArtifact | undefined> {
     return this.get<PresentationArtifact>(collections.presentationArtifacts, id);
+  }
+
+  async findPresentationArtifactBySpecification(input: { schoolId: string; lessonSpecificationId: string }): Promise<PresentationArtifact | undefined> {
+    return (await this.list<PresentationArtifact>(collections.presentationArtifacts)).find((artifact) =>
+      artifact.schoolId === input.schoolId &&
+      artifact.lessonSpecificationId === input.lessonSpecificationId
+    );
   }
 
   async savePresentationArtifact(artifact: PresentationArtifact): Promise<void> {

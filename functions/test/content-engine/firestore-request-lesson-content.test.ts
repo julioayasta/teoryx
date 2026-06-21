@@ -41,7 +41,7 @@ test('Firestore runtime returns published content before creating generation req
   assert.equal(afterCount, beforeCount);
 });
 
-test('Firestore runtime persists pending request and audit/provenance records', async () => {
+test('Firestore runtime persists generated request and audit/provenance records', async () => {
   const context = createFirestoreTestContext();
   await context.seed();
   await context.store.clear();
@@ -57,12 +57,12 @@ test('Firestore runtime persists pending request and audit/provenance records', 
     idempotencyKey: 'unique-firestore-request',
   }, repoCallers.student);
 
-  assert.equal(response.status, 'pending');
-  assert.equal((await context.repo.listAuditRecords()).length, 1);
-  assert.equal((await context.repo.listProvenanceRecords()).length, 1);
+  assert.equal(response.status, 'ready');
+  assert.ok((await context.repo.listAuditRecords()).length >= 2);
+  assert.ok((await context.repo.listProvenanceRecords()).length >= 2);
 });
 
-test('Firestore runtime reuses pending request across separate handler instances', async () => {
+test('Firestore runtime reuses generated content across separate handler instances', async () => {
   const context = createFirestoreTestContext();
   await context.seed();
   const handlersA = createFirestoreBackedContentEngineHandlers(context.repo);
@@ -83,9 +83,9 @@ test('Firestore runtime reuses pending request across separate handler instances
     language: 'en',
   }, repoCallers.student);
 
-  assert.equal(first.status, 'pending');
-  assert.equal(second.status, 'pending');
-  assert.equal(first.requestId, second.requestId);
+  assert.equal(first.status, 'ready');
+  assert.equal(second.status, 'ready');
+  assert.equal(first.publishedContentId, second.publishedContentId);
 });
 
 test('Firestore runtime filters Student App status to pending ready or failed', async () => {

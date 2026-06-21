@@ -42,8 +42,10 @@ export interface ContentEngineRepository {
   listContentGenerationJobs(input?: { requestId?: string; schoolId?: string }): Promise<ContentGenerationJob[]>;
 
   getLessonArtifact(id: string): Promise<LessonArtifact | undefined>;
+  findLessonArtifactBySpecification(input: { schoolId: string; lessonSpecificationId: string }): Promise<LessonArtifact | undefined>;
   saveLessonArtifact(artifact: LessonArtifact): Promise<void>;
   getPresentationArtifact(id: string): Promise<PresentationArtifact | undefined>;
+  findPresentationArtifactBySpecification(input: { schoolId: string; lessonSpecificationId: string }): Promise<PresentationArtifact | undefined>;
   savePresentationArtifact(artifact: PresentationArtifact): Promise<void>;
   getValidationArtifact(id: string): Promise<ValidationArtifact | undefined>;
   saveValidationArtifact(artifact: ValidationArtifact): Promise<void>;

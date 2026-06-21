@@ -12,6 +12,7 @@ import type {
   VersionHistoryRecord,
 } from './contracts.js';
 import { runFakeCoursePlanWorker } from './course-plan/fake-course-plan-worker.js';
+import { runFakeLessonContentWorker } from './lesson-content/fake-lesson-content-worker.js';
 import { canAccessSchool, canCall } from './permissions.js';
 import { statusResponseForCaller } from './status.js';
 import type { ContentEngineRepository } from './repositories/content-engine-repository.js';
@@ -204,7 +205,41 @@ async function requestLessonContent(repo: ContentEngineRepository, request: Call
       intent: 'fill_missing',
       publicationMode: 'auto_publish_after_validation',
     });
-    return { status: 'pending', requestId: generationRequest.id, publishedContentId: null, message: 'Getting your lesson ready.' };
+    const output = await runFakeLessonContentWorker(repo, {
+      requestId: generationRequest.id,
+      schoolId,
+      courseId,
+      language,
+      lesson,
+    });
+    await repo.saveGenerationRequest({
+      ...generationRequest,
+      status: 'ready',
+      studentVisibleStatus: 'ready',
+      schoolPortalVisibleStatus: 'published',
+      publishedContentId: output.publishedContent.id,
+    });
+    await repo.savePublicationRecord({
+      id: `publication-${output.publishedContent.id}`,
+      schoolId,
+      presentationArtifactId: output.presentationArtifact.id,
+      publishedContentId: output.publishedContent.id,
+      status: 'published',
+    });
+    await writeRepositoryAudit(repo, caller, {
+      schoolId,
+      eventType: 'lesson_content_published',
+      targetType: 'publishedLessonContent',
+      targetId: output.publishedContent.id,
+      sourceIds: [generationRequest.id, output.job.id, output.lessonArtifact.id, output.presentationArtifact.id, output.validationArtifact.id, lesson.id],
+      versionChangeType: 'published',
+    });
+    return {
+      status: 'ready',
+      requestId: generationRequest.id,
+      publishedContentId: output.publishedContent.id,
+      message: 'Lesson is ready.',
+    };
   } catch (error) {
     return failure(error);
   }

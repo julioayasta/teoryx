@@ -127,12 +127,42 @@ export interface ContentGenerationJob {
 
 export interface PublishedLessonContent {
   id: string;
+  publishedContentId?: string;
   schoolId: string;
   courseId: string;
   lessonSpecificationId: string;
+  curriculumId?: string;
+  gradeLevelId?: string;
+  subjectId?: string;
+  standardId?: string;
+  standardCode?: string;
   language: string;
   status: 'published' | 'retracted' | 'superseded';
   title: string;
+  bigIdea?: string;
+  essentialQuestion?: string;
+  learningObjectiveId?: string;
+  learningObjective?: string;
+  lessonContent?: string;
+  guidedPractice?: string;
+  independentPractice?: string;
+  summary?: string;
+  steps?: PublishedLessonStep[];
+  version?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PublishedLessonStep {
+  id: string;
+  lessonId: string;
+  order: number;
+  type: 'story' | 'imagePlaceholder' | 'explanation' | 'question' | 'practice' | 'summary';
+  title: string;
+  body: string;
+  prompt?: string;
+  expectedAnswer?: string;
+  imageDescription?: string;
 }
 
 export interface ContentGenerationRequest {
@@ -158,6 +188,8 @@ export interface PresentationArtifact {
   status: 'draft' | 'generated' | 'validation_failed' | 'ready_for_review' | 'approved' | 'published';
   validationArtifactId?: string;
   lessonArtifactId?: string;
+  publishedContentId?: string;
+  blocks?: PublishedLessonStep[];
 }
 
 export interface ValidationArtifact {
@@ -170,6 +202,15 @@ export interface ValidationArtifact {
 export interface LessonArtifact {
   id: string;
   schoolId: string;
+  lessonSpecificationId?: string;
+  title?: string;
+  bigIdea?: string;
+  essentialQuestion?: string;
+  learningObjective?: string;
+  lessonContent?: string;
+  guidedPractice?: string;
+  independentPractice?: string;
+  summary?: string;
   status: 'draft' | 'generated' | 'validation_failed' | 'ready_for_review' | 'approved' | 'published';
 }
 
