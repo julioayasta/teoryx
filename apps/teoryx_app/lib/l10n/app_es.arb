@@ -2,5 +2,28 @@
   "@@locale": "es",
   "appTitle": "TeoryX",
   "foundationReadyTitle": "Base lista",
-  "foundationReadyMessage": "La arquitectura de la aplicacion esta preparada para aprendizaje K-12 basado en curriculo."
+  "foundationReadyMessage": "La arquitectura de la aplicacion esta preparada para aprendizaje K-12 basado en curriculo.",
+  "welcomeTitle": "Bienvenido a TeoryX",
+  "welcomeMessage": "Inicia una sesion de aprendizaje basada en curriculo con datos locales de prototipo.",
+  "continueAsStudent": "Continuar como estudiante",
+  "dashboardTitle": "Panel del estudiante",
+  "studentGreeting": "Hola, {firstName}",
+  "@studentGreeting": {
+    "placeholders": {
+      "firstName": {}
+    }
+  },
+  "availableLessonsTitle": "Lecciones disponibles",
+  "viewAllLessons": "Ver todas las lecciones",
+  "lessonListTitle": "Lecciones",
+  "bigIdeaLabel": "Gran idea",
+  "essentialQuestionLabel": "Pregunta esencial",
+  "learningObjectiveLabel": "Objetivo de aprendizaje",
+  "lessonContentLabel": "Contenido de la leccion",
+  "guidedPracticeLabel": "Practica guiada",
+  "independentPracticeLabel": "Practica independiente",
+  "summaryLabel": "Resumen",
+  "askTutor": "Preguntar al tutor",
+  "tutorChatTitle": "Chat con tutor",
+  "mockTutorInputHint": "Entrada del tutor mock desactivada"
 }

@@ -2,5 +2,28 @@
   "@@locale": "en",
   "appTitle": "TeoryX",
   "foundationReadyTitle": "Foundation ready",
-  "foundationReadyMessage": "The application architecture is prepared for K-12 curriculum-based learning."
+  "foundationReadyMessage": "The application architecture is prepared for K-12 curriculum-based learning.",
+  "welcomeTitle": "Welcome to TeoryX",
+  "welcomeMessage": "Start a curriculum-based learning session with local prototype data.",
+  "continueAsStudent": "Continue as Student",
+  "dashboardTitle": "Student Dashboard",
+  "studentGreeting": "Hello, {firstName}",
+  "@studentGreeting": {
+    "placeholders": {
+      "firstName": {}
+    }
+  },
+  "availableLessonsTitle": "Available lessons",
+  "viewAllLessons": "View all lessons",
+  "lessonListTitle": "Lessons",
+  "bigIdeaLabel": "Big Idea",
+  "essentialQuestionLabel": "Essential Question",
+  "learningObjectiveLabel": "Learning Objective",
+  "lessonContentLabel": "Lesson Content",
+  "guidedPracticeLabel": "Guided Practice",
+  "independentPracticeLabel": "Independent Practice",
+  "summaryLabel": "Summary",
+  "askTutor": "Ask Tutor",
+  "tutorChatTitle": "Tutor Chat",
+  "mockTutorInputHint": "Mock tutor input disabled"
 }

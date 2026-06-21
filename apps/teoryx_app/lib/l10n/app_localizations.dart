@@ -115,6 +115,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The application architecture is prepared for K-12 curriculum-based learning.'**
   String get foundationReadyMessage;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to TeoryX'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a curriculum-based learning session with local prototype data.'**
+  String get welcomeMessage;
+
+  /// No description provided for @continueAsStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Student'**
+  String get continueAsStudent;
+
+  /// No description provided for @dashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Dashboard'**
+  String get dashboardTitle;
+
+  /// No description provided for @studentGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {firstName}'**
+  String studentGreeting(Object firstName);
+
+  /// No description provided for @availableLessonsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Available lessons'**
+  String get availableLessonsTitle;
+
+  /// No description provided for @viewAllLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'View all lessons'**
+  String get viewAllLessons;
+
+  /// No description provided for @lessonListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons'**
+  String get lessonListTitle;
+
+  /// No description provided for @bigIdeaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Big Idea'**
+  String get bigIdeaLabel;
+
+  /// No description provided for @essentialQuestionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Essential Question'**
+  String get essentialQuestionLabel;
+
+  /// No description provided for @learningObjectiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Objective'**
+  String get learningObjectiveLabel;
+
+  /// No description provided for @lessonContentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson Content'**
+  String get lessonContentLabel;
+
+  /// No description provided for @guidedPracticeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Guided Practice'**
+  String get guidedPracticeLabel;
+
+  /// No description provided for @independentPracticeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Independent Practice'**
+  String get independentPracticeLabel;
+
+  /// No description provided for @summaryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get summaryLabel;
+
+  /// No description provided for @askTutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Tutor'**
+  String get askTutor;
+
+  /// No description provided for @tutorChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor Chat'**
+  String get tutorChatTitle;
+
+  /// No description provided for @mockTutorInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Mock tutor input disabled'**
+  String get mockTutorInputHint;
 }
 
 class _AppLocalizationsDelegate
