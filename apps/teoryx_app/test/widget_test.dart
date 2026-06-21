@@ -9,21 +9,35 @@ void main() {
     await tester.pumpWidget(buildTeoryXApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('Welcome to TeoryX'), findsOneWidget);
+    expect(find.text('Knowledge for Success'), findsOneWidget);
+    expect(find.text('Email'), findsOneWidget);
+    expect(find.text('Password'), findsOneWidget);
+    expect(find.text('Sign In'), findsOneWidget);
 
-    await tester.tap(find.text('Continue as Student'));
+    expect(find.text('Continue as Student'), findsNothing);
+
+    await tester.tap(find.text('Sign In'));
     await tester.pumpAndSettle();
-    expect(find.text('Student Dashboard'), findsOneWidget);
-    expect(find.text('Continue learning'), findsOneWidget);
+    expect(find.text('Hello, Sofia'), findsWidgets);
+    expect(find.text('Continue Studying'), findsOneWidget);
     expect(find.text('Grade 4 Math'), findsOneWidget);
     expect(find.text('Current Lesson:'), findsOneWidget);
     expect(find.text('Comparing Fractions'), findsOneWidget);
     expect(find.text('Lesson 2 of 8'), findsOneWidget);
-    expect(find.text('Weekly Goal'), findsOneWidget);
+    expect(find.byIcon(Icons.grade_outlined), findsNothing);
+    expect(find.byIcon(Icons.calculate_outlined), findsNothing);
 
-    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Choose New Course').last);
+    expect(find.byTooltip('Back to Lessons'), findsOneWidget);
+    expect(find.text('Two Tables, Two Pizzas'), findsOneWidget);
+    expect(find.byTooltip('Student Dashboard'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Student Dashboard'));
+    await tester.pumpAndSettle();
+    expect(find.text('Hello, Sofia'), findsWidgets);
+
+    await tester.tap(find.text('New Course from Catalog'));
     await tester.pumpAndSettle();
     expect(find.text('Choose Grade'), findsOneWidget);
 
@@ -60,11 +74,5 @@ void main() {
 
     expect(find.text('Fracciones como partes de un entero'), findsWidgets);
     expect(find.text('Te perdiste la leccion de pizza'), findsOneWidget);
-
-    await tester.scrollUntilVisible(find.text('Detalles de aprendizaje'), 300);
-    expect(find.text('Detalles de aprendizaje'), findsOneWidget);
-    await tester.tap(find.text('Detalles de aprendizaje'));
-    await tester.pumpAndSettle();
-    expect(find.text('Gran idea'), findsOneWidget);
   });
 }

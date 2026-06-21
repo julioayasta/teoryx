@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../shared/widgets/app_shell.dart';
 import '../../data/repositories/mock_grade_level_repository.dart';
 
 class GradeSelectionScreen extends StatelessWidget {
@@ -17,12 +18,25 @@ class GradeSelectionScreen extends StatelessWidget {
     final gradeLevels = _gradeLevelRepository.getGradeLevels(languageCode);
 
     return AppScaffold(
-      title: context.l10n.gradeSelectionTitle,
+      breadcrumbs: [
+        AppBreadcrumb(
+          label: context.l10n.dashboardTitle,
+          onTap: () => context.goNamed(RouteNames.studentDashboard),
+        ),
+        AppBreadcrumb(label: context.l10n.gradeSelectionTitle),
+      ],
       leading: IconButton(
         tooltip: context.l10n.backToDashboard,
         onPressed: () => context.goNamed(RouteNames.studentDashboard),
         icon: const Icon(Icons.arrow_back),
       ),
+      actions: [
+        IconButton(
+          tooltip: context.l10n.dashboardTitle,
+          onPressed: () => context.goNamed(RouteNames.studentDashboard),
+          icon: const Icon(Icons.home_outlined),
+        ),
+      ],
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

@@ -12,11 +12,16 @@ class LearningDetailsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ExpansionTile(
+        key: const Key('learning-details-section'),
         leading: Icon(Icons.info_outline, color: context.colorScheme.primary),
         title: Text(context.l10n.learningDetailsTitle),
         subtitle: Text(lesson.standardCode),
-        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
         children: [
+          _LearningDetail(
+            title: context.l10n.standardLabel,
+            body: lesson.standardCode,
+          ),
           _LearningDetail(
             title: context.l10n.bigIdeaLabel,
             body: lesson.bigIdea,
@@ -60,13 +65,24 @@ class _LearningDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: context.textTheme.labelLarge),
-          const SizedBox(height: 4),
-          Text(body),
+          Text(
+            title,
+            textAlign: TextAlign.start,
+            style: context.textTheme.labelLarge?.copyWith(
+              color: context.colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(body, textAlign: TextAlign.start),
+          ),
+          const SizedBox(height: 8),
+          Divider(height: 1, color: context.colorScheme.outlineVariant),
         ],
       ),
     );

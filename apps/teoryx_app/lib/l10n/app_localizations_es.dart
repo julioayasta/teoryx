@@ -43,6 +43,15 @@ class AppLocalizationsEs extends AppLocalizations {
       'Elige un rol para revisar el prototipo. La autenticacion real vendra despues.';
 
   @override
+  String get emailLabel => 'Correo';
+
+  @override
+  String get passwordLabel => 'Contrasena';
+
+  @override
+  String get signIn => 'Iniciar sesion';
+
+  @override
   String get continueAsStudent => 'Continuar como estudiante';
 
   @override
@@ -56,6 +65,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get backToLogin => 'Volver al login';
+
+  @override
+  String get studentMetadataPlaceholder =>
+      'Los detalles del estudiante apareceran aqui en un sprint futuro.';
 
   @override
   String studentGreeting(Object firstName) {
@@ -73,6 +86,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get continueLearningTitle => 'Continuar aprendiendo';
+
+  @override
+  String get continueStudyingTitle => 'Continuar estudiando';
 
   @override
   String get continueLearningAction => 'Continuar';
@@ -124,6 +140,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chooseNewCourse => 'Elegir curso nuevo';
 
   @override
+  String get newCourseFromCatalog => 'Curso nuevo del catalogo';
+
+  @override
   String get gradeSelectionTitle => 'Elegir grado';
 
   @override
@@ -158,6 +177,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get lessonListTitle => 'Lecciones';
+
+  @override
+  String get standardLabel => 'Estandar:';
 
   @override
   String get bigIdeaLabel => 'Gran idea';

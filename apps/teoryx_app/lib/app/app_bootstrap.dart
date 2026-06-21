@@ -7,6 +7,6 @@ import 'teoryx_app.dart';
 Widget buildTeoryXApp() {
   return TeoryXApp(
     localeController: AppLocaleController(),
-    schoolThemeConfig: SchoolThemeConfig.defaultConfig(),
+    schoolThemeConfig: SchoolThemeConfig.k2s(),
   );
 }

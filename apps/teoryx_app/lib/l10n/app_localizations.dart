@@ -158,6 +158,24 @@ abstract class AppLocalizations {
   /// **'Choose a role to preview the prototype. Real authentication will come later.'**
   String get roleSelectionMessage;
 
+  /// No description provided for @emailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signIn;
+
   /// No description provided for @continueAsStudent.
   ///
   /// In en, this message translates to:
@@ -188,6 +206,12 @@ abstract class AppLocalizations {
   /// **'Back to Login'**
   String get backToLogin;
 
+  /// No description provided for @studentMetadataPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Student details will appear here in a future sprint.'**
+  String get studentMetadataPlaceholder;
+
   /// No description provided for @studentGreeting.
   ///
   /// In en, this message translates to:
@@ -217,6 +241,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue learning'**
   String get continueLearningTitle;
+
+  /// No description provided for @continueStudyingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Studying'**
+  String get continueStudyingTitle;
 
   /// No description provided for @continueLearningAction.
   ///
@@ -314,6 +344,12 @@ abstract class AppLocalizations {
   /// **'Choose New Course'**
   String get chooseNewCourse;
 
+  /// No description provided for @newCourseFromCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'New Course from Catalog'**
+  String get newCourseFromCatalog;
+
   /// No description provided for @gradeSelectionTitle.
   ///
   /// In en, this message translates to:
@@ -379,6 +415,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lessons'**
   String get lessonListTitle;
+
+  /// No description provided for @standardLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard:'**
+  String get standardLabel;
 
   /// No description provided for @bigIdeaLabel.
   ///

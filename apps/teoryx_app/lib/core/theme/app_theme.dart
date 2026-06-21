@@ -30,12 +30,16 @@ class AppTheme {
   ) {
     return ThemeData(
       colorScheme: colorScheme,
+      fontFamily: schoolThemeConfig.fontFamily,
       useMaterial3: true,
       extensions: [
         SchoolBrandTheme(
+          schoolName: schoolThemeConfig.schoolName,
+          fullSchoolName: schoolThemeConfig.fullSchoolName,
           primaryColor: schoolThemeConfig.primaryColor,
           secondaryColor: schoolThemeConfig.secondaryColor,
-          logoUrl: schoolThemeConfig.logoUrl,
+          fontFamily: schoolThemeConfig.fontFamily,
+          logoAssetPath: schoolThemeConfig.logoAssetPath,
         ),
       ],
     );

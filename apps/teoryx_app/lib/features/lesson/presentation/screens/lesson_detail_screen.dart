@@ -5,6 +5,8 @@ import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../features/tutor/presentation/widgets/tutor_chat_panel.dart';
+import '../../../../shared/widgets/app_shell.dart';
+import '../../data/repositories/mock_course_repository.dart';
 import '../../data/repositories/mock_lesson_repository.dart';
 import '../widgets/guided_lesson_step_card.dart';
 import '../widgets/learning_details_section.dart';
@@ -20,15 +22,30 @@ class LessonDetailScreen extends StatelessWidget {
   final String lessonId;
 
   static const _lessonRepository = MockLessonRepository();
+  static const _courseRepository = MockCourseRepository();
 
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
     final lesson = _lessonRepository.getLessonById(lessonId, languageCode);
+    final course = _courseRepository.getCourseById(courseId, languageCode);
     final steps = [...lesson.steps]..sort((a, b) => a.order.compareTo(b.order));
 
     return AppScaffold(
-      title: lesson.title,
+      breadcrumbs: [
+        AppBreadcrumb(
+          label: context.l10n.dashboardTitle,
+          onTap: () => context.goNamed(RouteNames.studentDashboard),
+        ),
+        AppBreadcrumb(
+          label: course.title,
+          onTap: () => context.goNamed(
+            RouteNames.lessonList,
+            pathParameters: {'courseId': courseId},
+          ),
+        ),
+        AppBreadcrumb(label: lesson.title),
+      ],
       leading: IconButton(
         tooltip: context.l10n.backToLessons,
         onPressed: () => context.goNamed(
@@ -37,6 +54,13 @@ class LessonDetailScreen extends StatelessWidget {
         ),
         icon: const Icon(Icons.arrow_back),
       ),
+      actions: [
+        IconButton(
+          tooltip: context.l10n.dashboardTitle,
+          onPressed: () => context.goNamed(RouteNames.studentDashboard),
+          icon: const Icon(Icons.home_outlined),
+        ),
+      ],
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showTutorPanel(context, lesson.id),
         icon: const Icon(Icons.chat_bubble_outline),

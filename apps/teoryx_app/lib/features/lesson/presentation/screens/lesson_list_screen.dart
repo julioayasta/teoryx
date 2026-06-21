@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../shared/widgets/app_shell.dart';
+import '../../data/repositories/mock_course_repository.dart';
 import '../../data/repositories/mock_lesson_repository.dart';
 
 class LessonListScreen extends StatelessWidget {
@@ -12,6 +14,7 @@ class LessonListScreen extends StatelessWidget {
   final String courseId;
 
   static const _lessonRepository = MockLessonRepository();
+  static const _courseRepository = MockCourseRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +23,16 @@ class LessonListScreen extends StatelessWidget {
       courseId,
       languageCode,
     );
+    final course = _courseRepository.getCourseById(courseId, languageCode);
 
     return AppScaffold(
-      title: context.l10n.lessonListTitle,
+      breadcrumbs: [
+        AppBreadcrumb(
+          label: context.l10n.dashboardTitle,
+          onTap: () => context.goNamed(RouteNames.studentDashboard),
+        ),
+        AppBreadcrumb(label: course.title),
+      ],
       leading: IconButton(
         tooltip: context.l10n.backToCourses,
         onPressed: () {
@@ -36,6 +46,13 @@ class LessonListScreen extends StatelessWidget {
         },
         icon: const Icon(Icons.arrow_back),
       ),
+      actions: [
+        IconButton(
+          tooltip: context.l10n.dashboardTitle,
+          onPressed: () => context.goNamed(RouteNames.studentDashboard),
+          icon: const Icon(Icons.home_outlined),
+        ),
+      ],
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

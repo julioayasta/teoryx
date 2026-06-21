@@ -5,6 +5,7 @@ import '../../../../core/routing/route_names.dart';
 import '../../../../features/lesson/data/repositories/mock_course_repository.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
+import '../../../../shared/widgets/app_shell.dart';
 import '../../data/repositories/mock_student_repository.dart';
 
 class StudentDashboardScreen extends StatelessWidget {
@@ -20,7 +21,7 @@ class StudentDashboardScreen extends StatelessWidget {
     final enrolledCourses = _courseRepository.getEnrolledCourses(languageCode);
 
     return AppScaffold(
-      title: context.l10n.dashboardTitle,
+      breadcrumbs: [AppBreadcrumb(label: context.l10n.dashboardTitle)],
       leading: IconButton(
         tooltip: context.l10n.backToLogin,
         onPressed: () => context.goNamed(RouteNames.mockLogin),
@@ -34,23 +35,19 @@ class StudentDashboardScreen extends StatelessWidget {
             style: context.textTheme.headlineSmall,
           ),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              Chip(
-                avatar: const Icon(Icons.grade_outlined),
-                label: Text(student.gradeLevelName),
-              ),
-              Chip(
-                avatar: const Icon(Icons.calculate_outlined),
-                label: Text(student.subjectName),
-              ),
-            ],
+          DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border.all(color: context.colorScheme.outlineVariant),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(context.l10n.studentMetadataPlaceholder),
+            ),
           ),
           const SizedBox(height: 28),
           Text(
-            context.l10n.continueLearningTitle,
+            context.l10n.continueStudyingTitle,
             style: context.textTheme.titleLarge,
           ),
           const SizedBox(height: 12),
@@ -96,8 +93,11 @@ class StudentDashboardScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       FilledButton.icon(
                         onPressed: () => context.goNamed(
-                          RouteNames.lessonList,
-                          pathParameters: {'courseId': course.id},
+                          RouteNames.lessonDetail,
+                          pathParameters: {
+                            'courseId': course.id,
+                            'lessonId': 'comparing-fractions',
+                          },
                         ),
                         icon: const Icon(Icons.arrow_forward),
                         label: Text(context.l10n.continueLearningAction),
@@ -106,6 +106,13 @@ class StudentDashboardScreen extends StatelessWidget {
                   ),
                 ),
               ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            key: const Key('choose-new-course-button'),
+            onPressed: () => context.goNamed(RouteNames.gradeSelection),
+            icon: const Icon(Icons.school_outlined),
+            label: Text(context.l10n.newCourseFromCatalog),
+          ),
           const SizedBox(height: 28),
           Text(
             context.l10n.studentMetricsTitle,
@@ -137,20 +144,6 @@ class StudentDashboardScreen extends StatelessWidget {
                 icon: Icons.task_alt_outlined,
               ),
             ],
-          ),
-          const SizedBox(height: 28),
-          Text(
-            context.l10n.courseCatalogTitle,
-            style: context.textTheme.titleLarge,
-          ),
-          const SizedBox(height: 12),
-          Text(context.l10n.chooseCourseFromDashboard),
-          const SizedBox(height: 12),
-          FilledButton.icon(
-            key: const Key('choose-new-course-button'),
-            onPressed: () => context.goNamed(RouteNames.gradeSelection),
-            icon: const Icon(Icons.school_outlined),
-            label: Text(context.l10n.chooseNewCourse),
           ),
         ],
       ),
