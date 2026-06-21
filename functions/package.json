@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test \"lib/test/**/*.test.js\"",
-    "seed:emulator": "node lib/src/content-engine/seed/seed-emulator.js"
+    "seed:emulator": "node lib/src/content-engine/seed/seed-emulator.js",
+    "smoke:real-ai-lesson": "npm run build && node lib/src/content-engine/smoke/real-ai-lesson-smoke.js"
   },
   "dependencies": {
     "firebase-admin": "^12.7.0"
