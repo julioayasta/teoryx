@@ -62,6 +62,10 @@ export interface CourseMap {
   schoolId: string;
   courseId: string;
   language: string;
+  curriculumVersionId?: string;
+  gradeLevelId?: string;
+  subjectId?: string;
+  title?: string;
   status: 'draft' | 'in_review' | 'approved' | 'active' | 'archived' | 'superseded';
 }
 
@@ -101,6 +105,24 @@ export interface LessonSpecification {
   masteryDefinitionIds: string[];
   assessmentBlueprintIds: string[];
   lessonBlueprintIds: string[];
+  targetSkills?: string[];
+  vocabularyTargets?: string[];
+  prerequisiteLessonIds?: string[];
+}
+
+export interface ContentGenerationJob {
+  id: string;
+  requestId: string;
+  schoolId: string;
+  jobType: string;
+  stage: string;
+  status: 'queued' | 'locked' | 'processing' | 'completed' | 'failed' | 'retry_scheduled' | 'dead_lettered' | 'cancelled';
+  attempt: number;
+  maxAttempts: number;
+  payload: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
 }
 
 export interface PublishedLessonContent {
@@ -194,6 +216,7 @@ export interface ContentEngineStore {
   lessonSpecifications: Map<string, LessonSpecification>;
   publishedLessonContent: Map<string, PublishedLessonContent>;
   generationRequests: Map<string, ContentGenerationRequest>;
+  generationJobs?: Map<string, ContentGenerationJob>;
   lessonArtifacts: Map<string, LessonArtifact>;
   presentationArtifacts: Map<string, PresentationArtifact>;
   validationArtifacts: Map<string, ValidationArtifact>;

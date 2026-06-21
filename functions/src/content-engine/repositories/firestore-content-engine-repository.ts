@@ -1,6 +1,7 @@
 import type {
   AuditRecord,
   ContentGenerationRequest,
+  ContentGenerationJob,
   CourseMap,
   CourseOffering,
   LessonArtifact,
@@ -107,6 +108,17 @@ export class FirestoreContentEngineRepository implements ContentEngineRepository
 
   async countGenerationRequests(): Promise<number> {
     return (await this.list<ContentGenerationRequest>(collections.contentGenerationRequests)).length;
+  }
+
+  async saveContentGenerationJob(job: ContentGenerationJob): Promise<void> {
+    await this.set(collections.contentGenerationJobs, job.id, job);
+  }
+
+  async listContentGenerationJobs(input?: { requestId?: string; schoolId?: string }): Promise<ContentGenerationJob[]> {
+    return (await this.list<ContentGenerationJob>(collections.contentGenerationJobs)).filter((job) =>
+      (!input?.requestId || job.requestId === input.requestId) &&
+      (!input?.schoolId || job.schoolId === input.schoolId)
+    );
   }
 
   async getLessonArtifact(id: string): Promise<LessonArtifact | undefined> {

@@ -1,6 +1,7 @@
 import type {
   AuditRecord,
   ContentGenerationRequest,
+  ContentGenerationJob,
   CourseMap,
   CourseOffering,
   LessonArtifact,
@@ -37,6 +38,8 @@ export interface ContentEngineRepository {
   getGenerationRequest(id: string): Promise<ContentGenerationRequest | undefined>;
   saveGenerationRequest(request: ContentGenerationRequest): Promise<void>;
   countGenerationRequests(): Promise<number>;
+  saveContentGenerationJob(job: ContentGenerationJob): Promise<void>;
+  listContentGenerationJobs(input?: { requestId?: string; schoolId?: string }): Promise<ContentGenerationJob[]>;
 
   getLessonArtifact(id: string): Promise<LessonArtifact | undefined>;
   saveLessonArtifact(artifact: LessonArtifact): Promise<void>;

@@ -11,6 +11,7 @@ import type {
   PublishedLessonContent,
   VersionHistoryRecord,
 } from './contracts.js';
+import { runFakeCoursePlanWorker } from './course-plan/fake-course-plan-worker.js';
 import { canAccessSchool, canCall } from './permissions.js';
 import { statusResponseForCaller } from './status.js';
 import type { ContentEngineRepository } from './repositories/content-engine-repository.js';
@@ -39,15 +40,52 @@ async function requestCoursePlanGeneration(repo: ContentEngineRepository, reques
     const courseId = requiredString(request, 'courseId');
     const language = requiredString(request, 'language');
     const curriculumVersionId = requiredString(request, 'curriculumVersionId');
+    const gradeLevelId = optionalString(request, 'gradeLevelId');
+    const subjectId = optionalString(request, 'subjectId');
+    const idempotencyKey = `school:${schoolId}:course-plan:${courseId}:${curriculumVersionId}:${language}`;
     const generationRequest = await createOrReusePendingRequest(repo, caller, {
       schoolId,
       courseId,
-      idempotencyKey: `school:${schoolId}:course-plan:${courseId}:${curriculumVersionId}:${language}`,
+      idempotencyKey,
       source: caller.role === 'super_admin' ? 'super_admin' : 'school_admin_portal',
       intent: 'create_new',
       publicationMode: 'require_review',
     });
-    return { status: 'pending', requestId: generationRequest.id, courseMapId: null, message: 'Course plan generation has started.' };
+    const output = await runFakeCoursePlanWorker(repo, {
+      requestId: generationRequest.id,
+      schoolId,
+      courseId,
+      curriculumVersionId,
+      language,
+      gradeLevelId,
+      subjectId,
+    });
+    const existingOffering = await repo.findCourseOffering({ schoolId, courseId, language });
+    await repo.saveCourseOffering({
+      id: existingOffering?.id ?? `offering-${schoolId}-${courseId}-${language}`,
+      schoolId,
+      courseId,
+      courseMapId: output.courseMap.id,
+      language,
+      status: existingOffering?.status === 'enabled' ? 'enabled' : 'draft',
+      enabledForStudents: existingOffering?.enabledForStudents ?? false,
+    });
+    await writeRepositoryAudit(repo, caller, {
+      schoolId,
+      eventType: 'course_plan_generated',
+      targetType: 'courseMap',
+      targetId: output.courseMap.id,
+      sourceIds: [generationRequest.id, output.job.id, ...output.unitPlans.map((unit) => unit.id), ...output.lessonSpecifications.map((lesson) => lesson.id)],
+      versionChangeType: 'generated',
+    });
+    return {
+      status: 'ready',
+      requestId: generationRequest.id,
+      courseMapId: output.courseMap.id,
+      unitPlanCount: output.unitPlans.length,
+      lessonSpecificationCount: output.lessonSpecifications.length,
+      message: 'Course plan generation completed with fake deterministic output.',
+    };
   } catch (error) {
     return failure(error);
   }
@@ -80,13 +118,16 @@ async function publishCourseOffering(repo: ContentEngineRepository, request: Cal
     const courseOfferingId = requiredString(request, 'courseOfferingId');
     const offering = await repo.getCourseOffering(courseOfferingId);
     if (!offering || offering.schoolId !== schoolId) return failed('course_not_available', 'Course offering was not found.');
-    const availability = await resolveAvailability(repo, {
+    const availability = await resolvePlanForPublication(repo, {
       schoolId,
       courseId: offering.courseId,
-      courseOfferingId,
+      courseMapId: offering.courseMapId,
       language: offering.language,
     });
     if (!availability.available) return failed(availability.reason ?? 'course_not_available', 'Course is not ready for students.');
+    if (!offering.enabledForStudents || offering.status !== 'enabled') {
+      await repo.saveCourseOffering({ ...offering, status: 'enabled', enabledForStudents: true });
+    }
     await writeRepositoryAudit(repo, caller, {
       schoolId,
       eventType: 'course_offering_published',
@@ -322,6 +363,19 @@ async function resolveAvailability(repo: ContentEngineRepository, input: { schoo
   if (offering.schoolId !== input.schoolId || offering.courseId !== input.courseId || offering.language !== input.language) return unavailable('course_not_available');
   if (!offering.enabledForStudents || offering.status !== 'enabled') return unavailable('course_not_available');
   const courseMap = await repo.getCourseMap(offering.courseMapId);
+  if (!courseMap || courseMap.schoolId !== input.schoolId || courseMap.courseId !== input.courseId) return unavailable('course_plan_not_found');
+  if (courseMap.status !== 'active' && courseMap.status !== 'approved') return unavailable('course_plan_not_found');
+  const unitPlans = (await repo.listUnitPlans({ schoolId: input.schoolId, courseId: input.courseId, courseMapId: courseMap.id }))
+    .filter((unit) => unit.status === 'active' || unit.status === 'approved');
+  if (unitPlans.length === 0) return unavailable('unit_plans_not_found');
+  const lessons = (await repo.listLessonSpecifications({ schoolId: input.schoolId, courseId: input.courseId, courseMapId: courseMap.id, language: input.language }))
+    .filter((lesson) => lesson.status === 'active' || lesson.status === 'approved');
+  if (lessons.length === 0) return unavailable('lesson_specification_not_found');
+  return { available: true, lessonSpecifications: lessons };
+}
+
+async function resolvePlanForPublication(repo: ContentEngineRepository, input: { schoolId: string; courseId: string; courseMapId: string; language: string }): Promise<Availability> {
+  const courseMap = await repo.getCourseMap(input.courseMapId);
   if (!courseMap || courseMap.schoolId !== input.schoolId || courseMap.courseId !== input.courseId) return unavailable('course_plan_not_found');
   if (courseMap.status !== 'active' && courseMap.status !== 'approved') return unavailable('course_plan_not_found');
   const unitPlans = (await repo.listUnitPlans({ schoolId: input.schoolId, courseId: input.courseId, courseMapId: courseMap.id }))
