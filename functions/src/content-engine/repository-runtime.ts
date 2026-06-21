@@ -13,6 +13,7 @@ import type {
 } from './contracts.js';
 import type { AIProvider } from './ai/types.js';
 import { createAIProviderRuntime, type AIProviderEnvironment } from './ai/provider-factory.js';
+import { AnalysisBackedCoursePlanError, runAnalysisBackedCoursePlanWorker } from './course-plan/analysis-backed-course-plan-worker.js';
 import { runFakeCoursePlanWorker } from './course-plan/fake-course-plan-worker.js';
 import { CurriculumImportSchemaError } from './curriculum/curriculum-import-schema.js';
 import { CurriculumImportService } from './curriculum/curriculum-import-service.js';
@@ -58,6 +59,7 @@ async function requestCoursePlanGeneration(repo: ContentEngineRepository, reques
     const courseId = requiredString(request, 'courseId');
     const language = requiredString(request, 'language');
     const curriculumVersionId = requiredString(request, 'curriculumVersionId');
+    const curriculumSourceId = optionalString(request, 'curriculumSourceId');
     const gradeLevelId = optionalString(request, 'gradeLevelId');
     const subjectId = optionalString(request, 'subjectId');
     const idempotencyKey = `school:${schoolId}:course-plan:${courseId}:${curriculumVersionId}:${language}`;
@@ -69,15 +71,28 @@ async function requestCoursePlanGeneration(repo: ContentEngineRepository, reques
       intent: 'create_new',
       publicationMode: 'require_review',
     });
-    const output = await runFakeCoursePlanWorker(repo, {
-      requestId: generationRequest.id,
-      schoolId,
-      courseId,
-      curriculumVersionId,
-      language,
-      gradeLevelId,
-      subjectId,
-    });
+    let output: Awaited<ReturnType<typeof runCoursePlanWorker>>;
+    try {
+      output = await runCoursePlanWorker(repo, generationRequest.id, {
+        schoolId,
+        courseId,
+        curriculumSourceId,
+        curriculumVersionId,
+        language,
+        gradeLevelId,
+        subjectId,
+      });
+    } catch (error) {
+      if (error instanceof AnalysisBackedCoursePlanError) {
+        await repo.saveGenerationRequest({
+          ...generationRequest,
+          status: 'failed',
+          studentVisibleStatus: 'failed',
+          schoolPortalVisibleStatus: 'failed',
+        });
+      }
+      throw error;
+    }
     const existingOffering = await repo.findCourseOffering({ schoolId, courseId, language });
     await repo.saveCourseOffering({
       id: existingOffering?.id ?? `offering-${schoolId}-${courseId}-${language}`,
@@ -105,8 +120,82 @@ async function requestCoursePlanGeneration(repo: ContentEngineRepository, reques
       message: 'Course plan generation completed with fake deterministic output.',
     };
   } catch (error) {
+    if (error instanceof AnalysisBackedCoursePlanError) {
+      return failed(error.code, error.message);
+    }
     return failure(error);
   }
+}
+
+async function runCoursePlanWorker(
+  repo: ContentEngineRepository,
+  requestId: string,
+  input: {
+    schoolId: string;
+    courseId: string;
+    curriculumSourceId?: string;
+    curriculumVersionId: string;
+    language: string;
+    gradeLevelId?: string;
+    subjectId?: string;
+  },
+) {
+  const hasCurriculumFilters = Boolean(
+    input.curriculumSourceId &&
+    input.curriculumVersionId &&
+    input.gradeLevelId &&
+    input.subjectId,
+  );
+
+  if (hasCurriculumFilters) {
+    const standards = await repo.listCurriculumStandards({
+      curriculumSourceId: input.curriculumSourceId,
+      curriculumVersionId: input.curriculumVersionId,
+      gradeLevelId: input.gradeLevelId,
+      subjectId: input.subjectId,
+    });
+
+    if (standards.length > 0) {
+      const analyses = [];
+      for (const standard of standards) {
+        const analysis = await repo.findPedagogicalAnalysis({
+          standardId: standard.id,
+          curriculumVersionId: standard.curriculumVersionId,
+          language: input.language,
+        });
+        if (!analysis || analysis.status !== 'ready' || analysis.validationStatus !== 'valid') {
+          throw new AnalysisBackedCoursePlanError(
+            `PedagogicalAnalysis is missing for standard ${standard.id}.`,
+            'pedagogical_analysis_missing',
+          );
+        }
+        analyses.push(analysis);
+      }
+
+      return runAnalysisBackedCoursePlanWorker(repo, {
+        requestId,
+        schoolId: input.schoolId,
+        courseId: input.courseId,
+        curriculumSourceId: input.curriculumSourceId!,
+        curriculumVersionId: input.curriculumVersionId,
+        language: input.language,
+        gradeLevelId: input.gradeLevelId!,
+        subjectId: input.subjectId!,
+        standards,
+        analyses,
+      });
+    }
+  }
+
+  return runFakeCoursePlanWorker(repo, {
+    requestId,
+    schoolId: input.schoolId,
+    courseId: input.courseId,
+    curriculumVersionId: input.curriculumVersionId,
+    language: input.language,
+    gradeLevelId: input.gradeLevelId,
+    subjectId: input.subjectId,
+  });
 }
 
 async function importCurriculumSource(repo: ContentEngineRepository, request: CallableRequest, caller: CallerContext) {

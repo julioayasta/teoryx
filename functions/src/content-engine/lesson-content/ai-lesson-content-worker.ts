@@ -1,7 +1,9 @@
 import type {
   ContentGenerationJob,
+  CurriculumStandard,
   LessonArtifact,
   LessonSpecification,
+  PedagogicalAnalysis,
   PresentationArtifact,
   PublishedLessonContent,
   PublishedLessonStep,
@@ -53,6 +55,7 @@ export async function runAILessonContentWorker(
     throw new AILessonContentGenerationError('Published content already exists.', 'published_content_exists');
   }
 
+  const generationContext = await resolveLessonGenerationContext(repo, input);
   const execution = await ai.execute({
     schoolId: input.schoolId,
     requestId: input.requestId,
@@ -62,13 +65,44 @@ export async function runAILessonContentWorker(
     intent: 'fill_missing',
     language: input.language,
     variables: {
-      lessonSpecificationId: input.lesson.id,
-      lessonId: input.lesson.lessonId,
-      courseId: input.courseId,
-      title: input.lesson.title,
-      standardIds: input.lesson.standardIds,
-      targetSkills: input.lesson.targetSkills ?? [],
-      vocabularyTargets: input.lesson.vocabularyTargets ?? [],
+      lessonSpecification: {
+        lessonSpecificationId: input.lesson.id,
+        lessonId: input.lesson.lessonId,
+        courseId: input.courseId,
+        title: input.lesson.title,
+        order: input.lesson.order,
+        estimatedDuration: input.lesson.estimatedDuration,
+        difficultyLevel: input.lesson.difficultyLevel,
+        prerequisiteLessonIds: input.lesson.prerequisiteLessonIds ?? [],
+      },
+      standards: generationContext.standards.map((standard) => ({
+        standardId: standard.id,
+        code: standard.code,
+        title: standard.title,
+        description: standard.description,
+        curriculumSourceId: standard.curriculumSourceId,
+        curriculumVersionId: standard.curriculumVersionId,
+        gradeLevelId: standard.gradeLevelId,
+        subjectId: standard.subjectId,
+      })),
+      pedagogicalAnalyses: generationContext.analyses.map((analysis) => ({
+        pedagogicalAnalysisId: analysis.pedagogicalAnalysisId,
+        standardId: analysis.standardId,
+        prerequisites: analysis.prerequisites,
+        targetSkills: analysis.targetSkills,
+        vocabularyTerms: analysis.vocabularyTerms,
+        misconceptions: analysis.misconceptions,
+        assessmentEvidence: analysis.assessmentEvidence,
+        languageProfile: analysis.languageProfile,
+      })),
+      generationTargets: {
+        targetSkills: generationContext.targetSkills,
+        vocabularyTargets: generationContext.vocabularyTargets,
+        misconceptionTargets: generationContext.misconceptionTargets,
+      },
+      gradeLevelId: generationContext.gradeLevelId,
+      subjectId: generationContext.subjectId,
+      language: input.language,
       requiredStepTypes: [
         'story',
         'imagePlaceholder',
@@ -104,7 +138,7 @@ export async function runAILessonContentWorker(
   }));
   const presentationArtifact = buildPresentationArtifact(input, steps, publishedContentId(input.lesson.id));
   const validationArtifact = buildValidationArtifact(input, lessonArtifact.id, presentationArtifact.id);
-  const publishedContent = buildPublishedContent(input, contract, steps, presentationArtifact.publishedContentId ?? publishedContentId(input.lesson.id));
+  const publishedContent = buildPublishedContent(input, generationContext, contract, steps, presentationArtifact.publishedContentId ?? publishedContentId(input.lesson.id));
 
   await repo.saveLessonArtifact(lessonArtifact);
   await repo.saveValidationArtifact(validationArtifact);
@@ -134,6 +168,59 @@ export async function runAILessonContentWorker(
     },
     validationArtifact,
     publishedContent,
+  };
+}
+
+interface LessonGenerationContext {
+  standards: CurriculumStandard[];
+  analyses: PedagogicalAnalysis[];
+  targetSkills: string[];
+  vocabularyTargets: string[];
+  misconceptionTargets: string[];
+  gradeLevelId: string;
+  subjectId: string;
+}
+
+async function resolveLessonGenerationContext(
+  repo: ContentEngineRepository,
+  input: AILessonContentInput,
+): Promise<LessonGenerationContext> {
+  const standards: CurriculumStandard[] = [];
+  for (const standardId of input.lesson.standardIds) {
+    const standard = await repo.getCurriculumStandard(standardId);
+    if (!standard) {
+      throw new AILessonContentGenerationError(`CurriculumStandard is missing for ${standardId}.`, 'curriculum_standard_missing');
+    }
+    standards.push(standard);
+  }
+
+  const analyses: PedagogicalAnalysis[] = [];
+  for (const analysisId of input.lesson.pedagogicalAnalysisIds) {
+    const analysis = await repo.getPedagogicalAnalysis(analysisId);
+    if (!analysis || analysis.status !== 'ready' || analysis.validationStatus !== 'valid') {
+      throw new AILessonContentGenerationError(`PedagogicalAnalysis is missing for ${analysisId}.`, 'pedagogical_analysis_missing');
+    }
+    analyses.push(analysis);
+  }
+
+  const firstStandard = standards[0];
+  return {
+    standards,
+    analyses,
+    targetSkills: uniqueStrings([
+      ...(input.lesson.targetSkills ?? []),
+      ...analyses.flatMap((analysis) => analysis.targetSkills),
+    ]),
+    vocabularyTargets: uniqueStrings([
+      ...(input.lesson.vocabularyTargets ?? []),
+      ...analyses.flatMap((analysis) => analysis.vocabularyTerms),
+    ]),
+    misconceptionTargets: uniqueStrings([
+      ...(input.lesson.misconceptionTargets ?? []),
+      ...analyses.flatMap((analysis) => analysis.misconceptions),
+    ]),
+    gradeLevelId: firstStandard?.gradeLevelId ?? gradeLevelFromCourse(input.courseId),
+    subjectId: firstStandard?.subjectId ?? subjectFromCourse(input.courseId),
   };
 }
 
@@ -177,11 +264,13 @@ function buildValidationArtifact(input: AILessonContentInput, lessonArtifactId: 
 
 function buildPublishedContent(
   input: AILessonContentInput,
+  context: LessonGenerationContext,
   contract: LessonContentContract,
   steps: PublishedLessonStep[],
   contentId: string,
 ): PublishedLessonContent {
-  const standardId = input.lesson.standardIds[0] ?? `standard-${input.lesson.id}`;
+  const standard = context.standards[0];
+  const standardId = standard?.id ?? input.lesson.standardIds[0] ?? `standard-${input.lesson.id}`;
   const now = new Date().toISOString();
   return {
     id: contentId,
@@ -189,11 +278,11 @@ function buildPublishedContent(
     schoolId: input.schoolId,
     courseId: input.courseId,
     lessonSpecificationId: input.lesson.id,
-    curriculumId: `curriculum-${input.courseId}`,
-    gradeLevelId: gradeLevelFromCourse(input.courseId),
-    subjectId: subjectFromCourse(input.courseId),
+    curriculumId: standard?.curriculumSourceId ?? `curriculum-${input.courseId}`,
+    gradeLevelId: context.gradeLevelId,
+    subjectId: context.subjectId,
     standardId,
-    standardCode: standardId.toUpperCase(),
+    standardCode: standard?.code ?? standardId.toUpperCase(),
     language: input.language,
     status: 'published',
     title: contract.title,
@@ -210,6 +299,10 @@ function buildPublishedContent(
     createdAt: now,
     updatedAt: now,
   };
+}
+
+function uniqueStrings(values: string[]): string[] {
+  return [...new Set(values.filter((value) => value.length > 0))];
 }
 
 async function saveCompletedJob(repo: ContentEngineRepository, input: AILessonContentInput, contentId: string): Promise<ContentGenerationJob> {

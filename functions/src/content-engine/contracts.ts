@@ -110,6 +110,7 @@ export interface LessonSpecification {
   lessonBlueprintIds: string[];
   targetSkills?: string[];
   vocabularyTargets?: string[];
+  misconceptionTargets?: string[];
   prerequisiteLessonIds?: string[];
 }
 
