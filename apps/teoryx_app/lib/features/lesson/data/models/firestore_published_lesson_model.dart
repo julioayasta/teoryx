@@ -5,6 +5,7 @@ import '../../domain/entities/lesson_step.dart';
 class FirestorePublishedLessonModel {
   const FirestorePublishedLessonModel({
     required this.id,
+    required this.courseId,
     required this.schoolId,
     required this.curriculumId,
     required this.gradeLevelId,
@@ -21,9 +22,12 @@ class FirestorePublishedLessonModel {
     required this.independentPractice,
     required this.summary,
     required this.steps,
+    required this.status,
+    required this.hasUnsupportedSteps,
   });
 
   final String id;
+  final String courseId;
   final String schoolId;
   final String curriculumId;
   final String gradeLevelId;
@@ -40,6 +44,30 @@ class FirestorePublishedLessonModel {
   final String independentPractice;
   final String summary;
   final List<LessonStep> steps;
+  final String status;
+  final bool hasUnsupportedSteps;
+
+  bool get isValid {
+    return id.isNotEmpty &&
+        courseId.isNotEmpty &&
+        curriculumId.isNotEmpty &&
+        gradeLevelId.isNotEmpty &&
+        subjectId.isNotEmpty &&
+        standardId.isNotEmpty &&
+        standardCode.isNotEmpty &&
+        language.isNotEmpty &&
+        title.isNotEmpty &&
+        bigIdea.isNotEmpty &&
+        essentialQuestion.isNotEmpty &&
+        learningObjective.statement.isNotEmpty &&
+        lessonContent.isNotEmpty &&
+        guidedPractice.isNotEmpty &&
+        independentPractice.isNotEmpty &&
+        summary.isNotEmpty &&
+        steps.isNotEmpty &&
+        !hasUnsupportedSteps &&
+        (status == 'active' || status == 'published');
+  }
 
   Lesson toEntity() {
     return Lesson(
@@ -67,8 +95,11 @@ class FirestorePublishedLessonModel {
     required String id,
     required Map<String, dynamic> data,
   }) {
+    final stepsResult = _stepsFromFirestore(id, data['steps']);
+
     return FirestorePublishedLessonModel(
-      id: id,
+      id: data['publishedContentId'] as String? ?? id,
+      courseId: data['courseId'] as String? ?? '',
       schoolId: data['schoolId'] as String? ?? '',
       curriculumId: data['curriculumId'] as String? ?? '',
       gradeLevelId: data['gradeLevelId'] as String? ?? '',
@@ -87,33 +118,60 @@ class FirestorePublishedLessonModel {
       guidedPractice: data['guidedPractice'] as String? ?? '',
       independentPractice: data['independentPractice'] as String? ?? '',
       summary: data['summary'] as String? ?? '',
-      steps: _stepsFromFirestore(id, data['steps']),
+      steps: stepsResult.steps,
+      status: data['status'] as String? ?? '',
+      hasUnsupportedSteps: stepsResult.hasUnsupportedSteps,
     );
   }
 
-  static List<LessonStep> _stepsFromFirestore(String lessonId, Object? value) {
+  static _LessonStepsParseResult _stepsFromFirestore(
+    String lessonId,
+    Object? value,
+  ) {
     if (value is! List) {
-      return const [];
+      return const _LessonStepsParseResult(
+        steps: [],
+        hasUnsupportedSteps: false,
+      );
     }
 
-    return value
-        .whereType<Map<String, dynamic>>()
-        .map((stepData) => _stepFromFirestore(lessonId, stepData))
-        .toList()
-      ..sort((a, b) => a.order.compareTo(b.order));
+    var hasUnsupportedSteps = false;
+    final steps = <LessonStep>[];
+
+    for (final stepData in value.whereType<Map<String, dynamic>>()) {
+      final step = _stepFromFirestore(lessonId, stepData);
+
+      if (step == null) {
+        hasUnsupportedSteps = true;
+      } else {
+        steps.add(step);
+      }
+    }
+
+    steps.sort((a, b) => a.order.compareTo(b.order));
+
+    return _LessonStepsParseResult(
+      steps: steps,
+      hasUnsupportedSteps: hasUnsupportedSteps,
+    );
   }
 
-  static LessonStep _stepFromFirestore(
+  static LessonStep? _stepFromFirestore(
     String lessonId,
     Map<String, dynamic> data,
   ) {
     final order = data['order'];
+    final type = _stepTypeFromFirestore(data['type'] as String?);
+
+    if (type == null) {
+      return null;
+    }
 
     return LessonStep(
       id: data['id'] as String? ?? '$lessonId-step-${order ?? 0}',
       lessonId: data['lessonId'] as String? ?? lessonId,
       order: order is int ? order : 0,
-      type: _stepTypeFromFirestore(data['type'] as String?),
+      type: type,
       title: data['title'] as String? ?? '',
       body: data['body'] as String? ?? '',
       prompt: data['prompt'] as String?,
@@ -122,14 +180,25 @@ class FirestorePublishedLessonModel {
     );
   }
 
-  static LessonStepType _stepTypeFromFirestore(String? value) {
+  static LessonStepType? _stepTypeFromFirestore(String? value) {
     return switch (value) {
       'imagePlaceholder' => LessonStepType.imagePlaceholder,
       'explanation' => LessonStepType.explanation,
       'question' => LessonStepType.question,
       'practice' => LessonStepType.practice,
       'summary' => LessonStepType.summary,
-      'story' || _ => LessonStepType.story,
+      'story' => LessonStepType.story,
+      _ => null,
     };
   }
+}
+
+class _LessonStepsParseResult {
+  const _LessonStepsParseResult({
+    required this.steps,
+    required this.hasUnsupportedSteps,
+  });
+
+  final List<LessonStep> steps;
+  final bool hasUnsupportedSteps;
 }

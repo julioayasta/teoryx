@@ -5,23 +5,20 @@ import '../../../../core/routing/route_names.dart';
 import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../shared/widgets/app_shell.dart';
-import '../../data/repositories/mock_lesson_repository.dart';
 import '../controllers/course_repository_scope.dart';
+import '../controllers/lesson_repository_scope.dart';
 
 class LessonListScreen extends StatelessWidget {
   const LessonListScreen({required this.courseId, super.key});
 
   final String courseId;
 
-  static const _lessonRepository = MockLessonRepository();
-
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
-    final lessons = _lessonRepository.getLessonsForCourse(
-      courseId,
-      languageCode,
-    );
+    final lessons = LessonRepositoryScope.of(
+      context,
+    ).getLessonsForCourse(courseId, languageCode);
     final course = CourseRepositoryScope.of(
       context,
     ).getCourseById(courseId, languageCode);

@@ -10,69 +10,90 @@ class FirestorePublishedLessonRepository implements LessonRepository {
   FirestorePublishedLessonRepository({
     FirebaseFirestore? firestore,
     LessonRepository? fallbackRepository,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+  }) : _firestore = firestore,
        _fallbackRepository = fallbackRepository ?? const MockLessonRepository();
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
   final LessonRepository _fallbackRepository;
+  List<Lesson>? _cachedLessons;
 
   @override
   List<Lesson> getAvailableLessons([String languageCode = 'en']) {
-    return _fallbackRepository.getAvailableLessons(languageCode);
+    return _lessonsOrFallback(languageCode);
   }
 
   @override
   List<Lesson> getLessonsForCourse(String courseId, String languageCode) {
-    return _fallbackRepository.getLessonsForCourse(courseId, languageCode);
+    return _lessonsOrFallback(
+      languageCode,
+    ).where((lesson) => lesson.courseMatches(courseId)).toList();
   }
 
   @override
   Lesson getLessonById(String lessonId, String languageCode) {
-    return _fallbackRepository.getLessonById(lessonId, languageCode);
+    return _lessonsOrFallback(languageCode).firstWhere(
+      (lesson) => lesson.id == lessonId,
+      orElse: () => _fallbackRepository.getLessonById(lessonId, languageCode),
+    );
   }
 
-  Future<List<Lesson>> getPublishedLessonsForCourseFromFirestore({
-    required String courseId,
-    required String languageCode,
-  }) async {
-    final snapshot = await _firestore
-        .collection(FirestoreCollectionPaths.publishedLessonContent)
-        .where('courseId', isEqualTo: courseId)
-        .where('language', isEqualTo: languageCode)
-        .where('status', isEqualTo: 'published')
-        .get();
+  Future<List<Lesson>> preloadPublishedLessons() async {
+    try {
+      final firestore = _firestore ?? FirebaseFirestore.instance;
+      final snapshot = await firestore
+          .collection(FirestoreCollectionPaths.publishedLessonContent)
+          .get();
 
-    if (snapshot.docs.isEmpty) {
-      return _fallbackRepository.getLessonsForCourse(courseId, languageCode);
+      final models = snapshot.docs
+          .map(
+            (doc) => FirestorePublishedLessonModel.fromFirestore(
+              id: doc.id,
+              data: doc.data(),
+            ),
+          )
+          .toList();
+
+      if (models.isEmpty || models.any((model) => model.hasUnsupportedSteps)) {
+        _cachedLessons = null;
+        return _fallbackRepository.getAvailableLessons();
+      }
+
+      final validModels = models.where((model) => model.isValid).toList();
+
+      if (validModels.isEmpty) {
+        _cachedLessons = null;
+        return _fallbackRepository.getAvailableLessons();
+      }
+
+      _cachedLessons = validModels.map((model) => model.toEntity()).toList();
+      return _cachedLessons!;
+    } on Object {
+      _cachedLessons = null;
+      return _fallbackRepository.getAvailableLessons();
     }
+  }
 
-    return snapshot.docs
-        .map(
-          (doc) => FirestorePublishedLessonModel.fromFirestore(
-            id: doc.id,
-            data: doc.data(),
-          ).toEntity(),
-        )
+  List<Lesson> _lessonsOrFallback(String languageCode) {
+    final lessons = _cachedLessons
+        ?.where((lesson) => lesson.language == languageCode)
         .toList();
-  }
 
-  Future<Lesson> getPublishedLessonByIdFromFirestore({
-    required String lessonId,
-    required String languageCode,
-  }) async {
-    final snapshot = await _firestore
-        .collection(FirestoreCollectionPaths.publishedLessonContent)
-        .doc(lessonId)
-        .get();
-    final data = snapshot.data();
-
-    if (!snapshot.exists || data == null) {
-      return _fallbackRepository.getLessonById(lessonId, languageCode);
+    if (lessons == null || lessons.isEmpty) {
+      return _fallbackRepository.getAvailableLessons(languageCode);
     }
 
-    return FirestorePublishedLessonModel.fromFirestore(
-      id: snapshot.id,
-      data: data,
-    ).toEntity();
+    return lessons;
+  }
+}
+
+extension on Lesson {
+  bool courseMatches(String courseId) {
+    return switch (courseId) {
+      'grade-4-math' => gradeLevelId == 'grade-4' && subjectId == 'math',
+      'grade-4-ela' => gradeLevelId == 'grade-4' && subjectId == 'ela',
+      'grade-5-math' => gradeLevelId == 'grade-5' && subjectId == 'math',
+      'grade-5-ela' => gradeLevelId == 'grade-5' && subjectId == 'ela',
+      _ => false,
+    };
   }
 }

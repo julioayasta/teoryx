@@ -3,6 +3,7 @@ import 'package:teoryx_app/core/data/firestore/firestore_collection_paths.dart';
 import 'package:teoryx_app/features/lesson/data/models/firestore_course_model.dart';
 import 'package:teoryx_app/features/lesson/data/models/firestore_published_lesson_model.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/firestore_course_repository.dart';
+import 'package:teoryx_app/features/lesson/data/repositories/firestore_published_lesson_repository.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/mock_course_repository.dart';
 import 'package:teoryx_app/features/lesson/data/repositories/mock_lesson_repository.dart';
 import 'package:teoryx_app/features/lesson/domain/repositories/course_repository.dart';
@@ -114,6 +115,7 @@ void main() {
       data: const {
         'schoolId': 'school-demo',
         'courseId': 'grade-4-math',
+        'publishedContentId': 'fractions-whole',
         'curriculumId': 'ca-common-core',
         'gradeLevelId': 'grade-4',
         'subjectId': 'math',
@@ -129,6 +131,9 @@ void main() {
         'guidedPractice': 'Name one fourth.',
         'independentPractice': 'Draw a fraction.',
         'summary': 'Fractions name equal parts.',
+        'status': 'published',
+        'version': 1,
+        'presentationContract': {'template': 'guidedLesson'},
         'steps': [
           {
             'id': 'step-1',
@@ -163,6 +168,7 @@ void main() {
     expect(course.title, 'Grade 4 Math');
     expect(schoolTheme.schoolName, 'Demo School');
     expect(schoolTheme.logoAssetPath, 'assets/schools/k2s/k2s_logo.png');
+    expect(lesson.id, 'fractions-whole');
     expect(lesson.learningObjective.id, 'lo-fractions-whole');
     expect(lesson.steps.single.title, 'A whole pizza');
     expect(progress.isValid, isTrue);
@@ -204,6 +210,78 @@ void main() {
     expect(inactiveCourse.isValid, isFalse);
     expect(missingTitle.isValid, isFalse);
   });
+
+  test(
+    'Firestore published lesson mapper rejects unpublished or unsafe steps',
+    () {
+      final unpublishedLesson = FirestorePublishedLessonModel.fromFirestore(
+        id: 'fractions-whole',
+        data: const {
+          'publishedContentId': 'fractions-whole',
+          'courseId': 'grade-4-math',
+          'curriculumId': 'ca-common-core',
+          'gradeLevelId': 'grade-4',
+          'subjectId': 'math',
+          'standardId': 'ccss-math-4-nf-a-1',
+          'standardCode': 'CCSS.MATH.4.NF.A.1',
+          'language': 'en',
+          'title': 'Fractions',
+          'bigIdea': 'Fractions describe equal parts.',
+          'essentialQuestion': 'How do fractions describe a whole?',
+          'learningObjective': 'Understand fractions.',
+          'lessonContent': 'Content',
+          'guidedPractice': 'Guided',
+          'independentPractice': 'Practice',
+          'summary': 'Summary',
+          'status': 'draft',
+          'steps': [
+            {
+              'id': 'step-1',
+              'order': 1,
+              'type': 'story',
+              'title': 'Story',
+              'body': 'Body',
+            },
+          ],
+        },
+      );
+      final unsafeLesson = FirestorePublishedLessonModel.fromFirestore(
+        id: 'fractions-whole',
+        data: const {
+          'publishedContentId': 'fractions-whole',
+          'courseId': 'grade-4-math',
+          'curriculumId': 'ca-common-core',
+          'gradeLevelId': 'grade-4',
+          'subjectId': 'math',
+          'standardId': 'ccss-math-4-nf-a-1',
+          'standardCode': 'CCSS.MATH.4.NF.A.1',
+          'language': 'en',
+          'title': 'Fractions',
+          'bigIdea': 'Fractions describe equal parts.',
+          'essentialQuestion': 'How do fractions describe a whole?',
+          'learningObjective': 'Understand fractions.',
+          'lessonContent': 'Content',
+          'guidedPractice': 'Guided',
+          'independentPractice': 'Practice',
+          'summary': 'Summary',
+          'status': 'published',
+          'steps': [
+            {
+              'id': 'step-1',
+              'order': 1,
+              'type': 'interactiveSimulation',
+              'title': 'Unsupported',
+              'body': 'Body',
+            },
+          ],
+        },
+      );
+
+      expect(unpublishedLesson.isValid, isFalse);
+      expect(unsafeLesson.hasUnsupportedSteps, isTrue);
+      expect(unsafeLesson.isValid, isFalse);
+    },
+  );
 
   test('Firestore student mapper rejects missing or inactive profiles', () {
     final missingFirstName = FirestoreStudentProfileModel.fromFirestore(
@@ -291,6 +369,21 @@ void main() {
       'Grade 4 Math',
     );
   });
+
+  test(
+    'Firestore published lesson repository exposes mock fallback by default',
+    () {
+      final repository = FirestorePublishedLessonRepository(
+        fallbackRepository: const MockLessonRepository(),
+      );
+
+      expect(repository.getLessonsForCourse('grade-4-math', 'en'), isNotEmpty);
+      expect(
+        repository.getLessonById('comparing-fractions', 'en').title,
+        'Comparing Fractions',
+      );
+    },
+  );
 
   test('Firestore progress repository exposes mock fallback by default', () {
     final repository = FirestoreProgressRepository(

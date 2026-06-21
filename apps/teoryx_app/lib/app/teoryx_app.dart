@@ -11,7 +11,9 @@ import '../features/auth/domain/repositories/auth_repository.dart';
 import '../features/auth/presentation/controllers/auth_controller.dart';
 import '../features/auth/presentation/controllers/auth_scope.dart';
 import '../features/lesson/domain/repositories/course_repository.dart';
+import '../features/lesson/domain/repositories/lesson_repository.dart';
 import '../features/lesson/presentation/controllers/course_repository_scope.dart';
+import '../features/lesson/presentation/controllers/lesson_repository_scope.dart';
 import '../features/progress/domain/repositories/progress_repository.dart';
 import '../features/progress/presentation/controllers/progress_repository_scope.dart';
 import '../features/student/domain/repositories/student_repository.dart';
@@ -23,6 +25,7 @@ class TeoryXApp extends StatelessWidget {
     required this.firebaseStatus,
     required this.studentRepository,
     required this.courseRepository,
+    required this.lessonRepository,
     required this.progressRepository,
     required this.localeController,
     required this.schoolThemeConfig,
@@ -33,6 +36,7 @@ class TeoryXApp extends StatelessWidget {
   final FirebaseBootstrapStatus firebaseStatus;
   final StudentRepository studentRepository;
   final CourseRepository courseRepository;
+  final LessonRepository lessonRepository;
   final ProgressRepository progressRepository;
   final AuthController authController;
   final AppLocaleController localeController;
@@ -53,22 +57,25 @@ class TeoryXApp extends StatelessWidget {
                 repository: courseRepository,
                 child: ProgressRepositoryScope(
                   repository: progressRepository,
-                  child: MaterialApp.router(
-                    title: 'TeoryX',
-                    debugShowCheckedModeBanner: false,
-                    locale: locale,
-                    theme: AppTheme.light(schoolThemeConfig),
-                    darkTheme: AppTheme.dark(schoolThemeConfig),
-                    localizationsDelegates:
-                        AppLocalizations.localizationsDelegates,
-                    supportedLocales: SupportedLocales.values,
-                    routerConfig: AppRouter.router,
-                    builder: (context, child) {
-                      return _FirebaseStatusBanner(
-                        firebaseStatus: firebaseStatus,
-                        child: child ?? const SizedBox.shrink(),
-                      );
-                    },
+                  child: LessonRepositoryScope(
+                    repository: lessonRepository,
+                    child: MaterialApp.router(
+                      title: 'TeoryX',
+                      debugShowCheckedModeBanner: false,
+                      locale: locale,
+                      theme: AppTheme.light(schoolThemeConfig),
+                      darkTheme: AppTheme.dark(schoolThemeConfig),
+                      localizationsDelegates:
+                          AppLocalizations.localizationsDelegates,
+                      supportedLocales: SupportedLocales.values,
+                      routerConfig: AppRouter.router,
+                      builder: (context, child) {
+                        return _FirebaseStatusBanner(
+                          firebaseStatus: firebaseStatus,
+                          child: child ?? const SizedBox.shrink(),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

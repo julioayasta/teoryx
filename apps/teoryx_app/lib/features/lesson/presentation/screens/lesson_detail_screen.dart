@@ -6,8 +6,8 @@ import '../../../../shared/extensions/context_extensions.dart';
 import '../../../../shared/widgets/app_scaffold.dart';
 import '../../../../features/tutor/presentation/widgets/tutor_chat_panel.dart';
 import '../../../../shared/widgets/app_shell.dart';
-import '../../data/repositories/mock_lesson_repository.dart';
 import '../controllers/course_repository_scope.dart';
+import '../controllers/lesson_repository_scope.dart';
 import '../widgets/guided_lesson_step_card.dart';
 import '../widgets/learning_details_section.dart';
 
@@ -21,12 +21,12 @@ class LessonDetailScreen extends StatelessWidget {
   final String courseId;
   final String lessonId;
 
-  static const _lessonRepository = MockLessonRepository();
-
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
-    final lesson = _lessonRepository.getLessonById(lessonId, languageCode);
+    final lesson = LessonRepositoryScope.of(
+      context,
+    ).getLessonById(lessonId, languageCode);
     final course = CourseRepositoryScope.of(
       context,
     ).getCourseById(courseId, languageCode);

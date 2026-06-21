@@ -21,6 +21,10 @@ void main() {
         hasLength(4),
       );
       expect(
+        dependencies.lessonRepository.getLessonsForCourse('grade-4-math', 'en'),
+        isNotEmpty,
+      );
+      expect(
         dependencies.progressRepository
             .getStudentProgress('student-001', 'en')
             .currentLessonId,
@@ -37,6 +41,10 @@ void main() {
       expect(
         dependencies.courseRepository.getAvailableCourses('en'),
         hasLength(4),
+      );
+      expect(
+        dependencies.lessonRepository.getLessonsForCourse('grade-4-math', 'en'),
+        isNotEmpty,
       );
       expect(
         dependencies.progressRepository
