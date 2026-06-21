@@ -1,10 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class LearningObjective extends Equatable {
-  const LearningObjective({
-    required this.id,
-    required this.statement,
-  });
+  const LearningObjective({required this.id, required this.statement});
 
   final String id;
   final String statement;

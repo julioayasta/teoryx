@@ -1,6 +1,1 @@
-enum UserRole {
-  superAdmin,
-  schoolAdmin,
-  parent,
-  student,
-}
+enum UserRole { superAdmin, schoolAdmin, parent, student }

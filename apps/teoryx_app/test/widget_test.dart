@@ -20,11 +20,14 @@ void main() {
 
     await tester.tap(find.text('Fractions as Parts of a Whole'));
     await tester.pumpAndSettle();
+    expect(find.text('You Missed The Pizza Lesson'), findsOneWidget);
+    expect(find.text('Big Idea'), findsNothing);
+
+    await tester.scrollUntilVisible(find.text('Learning details'), 300);
+    expect(find.text('Learning details'), findsOneWidget);
+    await tester.tap(find.text('Learning details'));
+    await tester.pumpAndSettle();
     expect(find.text('Big Idea'), findsOneWidget);
-    expect(find.text('Learning Objective'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Guided Lesson'), 300);
-    expect(find.text('Guided Lesson'), findsOneWidget);
-    expect(find.text('A Pizza For The Study Group'), findsOneWidget);
 
     await tester.scrollUntilVisible(find.text('Ask Tutor'), 300);
     await tester.tap(find.text('Ask Tutor'));

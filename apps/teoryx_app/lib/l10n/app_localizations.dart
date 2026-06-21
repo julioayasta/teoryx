@@ -236,6 +236,18 @@ abstract class AppLocalizations {
   /// **'Guided Lesson'**
   String get guidedLessonTitle;
 
+  /// No description provided for @guidedLessonIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s catch you up step by step. Read the story, pause at the questions, and use the tutor whenever you want help without leaving the lesson.'**
+  String get guidedLessonIntro;
+
+  /// No description provided for @learningDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning details'**
+  String get learningDetailsTitle;
+
   /// No description provided for @lessonStepTypeStory.
   ///
   /// In en, this message translates to:

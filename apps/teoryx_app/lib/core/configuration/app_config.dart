@@ -7,8 +7,8 @@ class AppConfig {
   });
 
   const AppConfig.development()
-      : environment = Environment.development,
-        supportsK12Architecture = true;
+    : environment = Environment.development,
+      supportsK12Architecture = true;
 
   final Environment environment;
   final bool supportsK12Architecture;

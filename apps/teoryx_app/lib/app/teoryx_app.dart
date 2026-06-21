@@ -7,10 +7,7 @@ import '../core/theme/app_theme.dart';
 import '../core/theme/school_theme_config.dart';
 
 class TeoryXApp extends StatelessWidget {
-  const TeoryXApp({
-    required this.schoolThemeConfig,
-    super.key,
-  });
+  const TeoryXApp({required this.schoolThemeConfig, super.key});
 
   final SchoolThemeConfig schoolThemeConfig;
 

@@ -5,10 +5,7 @@ import '../../data/repositories/mock_tutor_repository.dart';
 import '../../domain/entities/tutor_message.dart';
 
 class TutorChatPanel extends StatelessWidget {
-  const TutorChatPanel({
-    required this.lessonId,
-    super.key,
-  });
+  const TutorChatPanel({required this.lessonId, super.key});
 
   final String lessonId;
 
@@ -54,7 +51,8 @@ class TutorChatPanel extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return _TutorMessageBubble(message: messages[index]);
                 },
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 12),
                 itemCount: messages.length,
               ),
             ),

@@ -28,6 +28,8 @@
   "closeTutorChat": "Close tutor chat",
   "mockTutorInputHint": "Mock tutor input disabled",
   "guidedLessonTitle": "Guided Lesson",
+  "guidedLessonIntro": "Let's catch you up step by step. Read the story, pause at the questions, and use the tutor whenever you want help without leaving the lesson.",
+  "learningDetailsTitle": "Learning details",
   "lessonStepTypeStory": "Story",
   "lessonStepTypeImagePlaceholder": "Image Placeholder",
   "lessonStepTypeExplanation": "Explanation",

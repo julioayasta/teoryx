@@ -1,9 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum TutorMessageAuthor {
-  student,
-  tutor,
-}
+enum TutorMessageAuthor { student, tutor }
 
 class TutorMessage extends Equatable {
   const TutorMessage({

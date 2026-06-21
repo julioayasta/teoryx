@@ -40,7 +40,8 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   FilledButton.icon(
-                    onPressed: () => context.goNamed(RouteNames.studentDashboard),
+                    onPressed: () =>
+                        context.goNamed(RouteNames.studentDashboard),
                     icon: const Icon(Icons.arrow_forward),
                     label: Text(context.l10n.continueAsStudent),
                   ),

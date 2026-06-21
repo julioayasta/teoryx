@@ -82,6 +82,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get guidedLessonTitle => 'Leccion guiada';
 
   @override
+  String get guidedLessonIntro =>
+      'Pongamonos al dia paso a paso. Lee la historia, pausa en las preguntas y usa el tutor cuando quieras ayuda sin salir de la leccion.';
+
+  @override
+  String get learningDetailsTitle => 'Detalles de aprendizaje';
+
+  @override
   String get lessonStepTypeStory => 'Historia';
 
   @override

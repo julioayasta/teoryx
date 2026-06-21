@@ -18,10 +18,12 @@ class MockLessonRepository {
         language: 'en',
         title: 'Fractions as Parts of a Whole',
         bigIdea: 'Fractions describe equal parts of one whole.',
-        essentialQuestion: 'How can a fraction help us describe part of a whole?',
+        essentialQuestion:
+            'How can a fraction help us describe part of a whole?',
         learningObjective: LearningObjective(
           id: 'lo-fractions-whole',
-          statement: 'Understand that a fraction represents equal parts of a whole.',
+          statement:
+              'Understand that a fraction represents equal parts of a whole.',
         ),
         lessonContent:
             'A whole can be divided into equal parts. The denominator tells how many equal parts make the whole, and the numerator tells how many parts are being described.',
@@ -37,82 +39,105 @@ class MockLessonRepository {
             lessonId: 'fractions-whole',
             order: 1,
             type: LessonStepType.story,
-            title: 'A Pizza For The Study Group',
+            title: 'You Missed The Pizza Lesson',
             body:
-                'Sofia and three classmates stay after school to work on their math project. Their teacher brings one large pizza as a snack. The pizza is not four separate pizzas. It is one whole pizza that everyone will share. Before anyone takes a slice, Sofia says, "If we want this to be fair, each person should get the same amount." The group agrees to cut the pizza into equal pieces so that each student can describe their share clearly.',
+                'Imagine you were absent when your class learned fractions today. No problem. Let us replay the lesson slowly. Your teacher brought one large pizza to the front table and said, "This pizza is our whole." That word matters: whole means the complete object before we cut or share anything. Four students came up to share it: Sofia, Mateo, Lena, and Amir. Sofia asked, "How can we make sure everyone gets a fair share?" The class decided that fair sharing means cutting the pizza into equal parts. If one slice is much bigger than another, the pieces are not equal and the fraction would not describe the share clearly. So before we write any numbers, we ask two questions: What is the whole? Are the parts equal?',
           ),
           LessonStep(
             id: 'fractions-whole-step-2',
             lessonId: 'fractions-whole',
             order: 2,
             type: LessonStepType.imagePlaceholder,
-            title: 'Visual Model Placeholder',
+            title: 'Picture The Whole Before It Is Shared',
             body:
-                'Future generated image: one round pizza divided into 4 equal slices, with 1 slice highlighted for Sofia and the remaining 3 slices unshaded for her classmates.',
+                'Future generated image: one whole pizza on a classroom table before it is cut, with a label that says "1 whole."',
             imageDescription:
-                'A top-down classroom table with one pizza cut into four equal slices. One slice is highlighted to show one fourth.',
+                'A top-down classroom table showing one complete pizza. No slices are removed. A simple label points to the pizza and says "the whole."',
           ),
           LessonStep(
             id: 'fractions-whole-step-3',
             lessonId: 'fractions-whole',
             order: 3,
             type: LessonStepType.explanation,
-            title: 'What The Denominator Tells Us',
+            title: 'First, Name The Equal Parts',
             body:
-                'The denominator is the bottom number in a fraction. It tells how many equal parts make one whole. In this story, the whole is the entire pizza. The group cuts the pizza into 4 equal parts, so the denominator is 4. The denominator does not count how many slices Sofia ate. It describes how the whole pizza was partitioned. If the pieces were not equal, the group could not use one simple fraction to describe a fair share.',
+                'The teacher cuts the pizza into 4 equal slices. Now the class can describe the pizza with fractions. The denominator is the bottom number in a fraction. It tells how many equal parts make the whole. Since this pizza was cut into 4 equal parts, the denominator is 4. Notice something important: the denominator is not the number of slices Sofia eats. It is the number of equal parts in the whole pizza. If the pizza were cut into 6 equal parts, the denominator would be 6. If it were cut into 8 equal parts, the denominator would be 8. The denominator is about how the whole is divided.',
           ),
           LessonStep(
             id: 'fractions-whole-step-4',
             lessonId: 'fractions-whole',
             order: 4,
-            type: LessonStepType.explanation,
-            title: 'What The Numerator Tells Us',
+            type: LessonStepType.imagePlaceholder,
+            title: 'Visual Model: Four Equal Slices',
             body:
-                'The numerator is the top number in a fraction. It tells how many of the equal parts we are talking about. Sofia receives 1 of the 4 equal slices. Her share is written as 1/4. We read this as one fourth. If two classmates put their slices together, they would have 2 of the 4 equal parts, or 2/4 of the pizza. The numerator changes when the number of selected parts changes.',
+                'Future generated image: the same pizza divided into four equal slices, with light guide lines showing that every slice is the same size.',
+            imageDescription:
+                'A round pizza divided into four equal slices. Each slice is labeled as one of four equal parts.',
           ),
           LessonStep(
             id: 'fractions-whole-step-5',
             lessonId: 'fractions-whole',
             order: 5,
-            type: LessonStepType.question,
-            title: 'Check Your Understanding',
+            type: LessonStepType.explanation,
+            title: 'Then, Count The Parts We Are Talking About',
             body:
-                'Think about the pizza as one whole. The whole was divided into 4 equal slices, and Sofia received 1 slice.',
-            prompt: 'What fraction of the pizza did Sofia receive? Explain what the 1 and the 4 mean.',
-            expectedAnswer:
-                'Sofia received 1/4 of the pizza. The 1 means she received one equal slice, and the 4 means the whole pizza was divided into four equal slices.',
+                'Now Sofia takes 1 slice. The numerator is the top number in a fraction. It tells how many of the equal parts we are talking about. Sofia has 1 of the 4 equal slices, so her share is 1/4. Read that as one fourth. If Sofia and Mateo put their slices together, they would have 2 of the 4 equal slices, or 2/4 of the pizza. If three students put their slices together, they would have 3/4. The denominator stays 4 because the whole was still divided into 4 equal parts. The numerator changes because the number of selected parts changes.',
           ),
           LessonStep(
             id: 'fractions-whole-step-6',
             lessonId: 'fractions-whole',
             order: 6,
-            type: LessonStepType.practice,
-            title: 'Guided Practice: Sharing Cake',
+            type: LessonStepType.question,
+            title: 'Pause And Say It Back',
             body:
-                'Now imagine a birthday cake instead of a pizza. The cake is cut into 8 equal pieces. Mateo takes 3 pieces for his table group. First, identify the whole. Next, identify how many equal parts make the whole. Then identify how many parts Mateo has. Use those ideas to write the fraction. Read your fraction aloud and explain why the denominator is 8, not 3.',
-            prompt: 'Write the fraction for Mateo\'s share of the cake.',
+                'Before moving on, pause for a moment. Imagine you are explaining this to a classmate who also missed school. Use the words whole, equal parts, numerator, and denominator if you can.',
+            prompt:
+                'What fraction of the pizza did Sofia receive? Explain what the 1 and the 4 mean.',
             expectedAnswer:
-                'Mateo has 3/8 of the cake because he has 3 of the 8 equal pieces.',
+                'Sofia received 1/4 of the pizza. The 1 means she received one equal slice, and the 4 means the whole pizza was divided into four equal slices.',
           ),
           LessonStep(
             id: 'fractions-whole-step-7',
             lessonId: 'fractions-whole',
             order: 7,
             type: LessonStepType.practice,
-            title: 'Independent Practice: Create A Fair Share',
+            title: 'Guided Practice: Sharing Cake',
             body:
-                'Draw one whole object that could be shared, such as a sandwich, a pan of brownies, a sheet cake, or a garden plot. Divide it into equal parts. Shade some of the parts. Then write the fraction that represents the shaded amount. Your drawing must make the equal parts clear, because fractions depend on equal-sized parts.',
-            prompt:
-                'Create your own fraction model and label the numerator, denominator, and whole.',
+                'Let us try a new example together. A birthday cake is the whole. The cake is cut into 8 equal pieces. Mateo takes 3 pieces for his table group. We do not start by guessing the fraction. We follow the same routine every time. First, identify the whole: one birthday cake. Next, count the equal parts in the whole: 8 pieces. That gives us the denominator. Then count how many parts Mateo has: 3 pieces. That gives us the numerator. So Mateo has 3/8 of the cake.',
+            prompt: 'Write the fraction for Mateo\'s share of the cake.',
+            expectedAnswer:
+                'Mateo has 3/8 of the cake because he has 3 of the 8 equal pieces.',
           ),
           LessonStep(
             id: 'fractions-whole-step-8',
             lessonId: 'fractions-whole',
             order: 8,
-            type: LessonStepType.summary,
-            title: 'Lesson Summary',
+            type: LessonStepType.imagePlaceholder,
+            title: 'Visual Model: Three Eighths Of A Cake',
             body:
-                'A fraction describes part of a whole when the whole is divided into equal parts. The denominator names the number of equal parts in the whole. The numerator names how many of those parts we are describing. In the pizza story, 1/4 means one of four equal slices. In the cake story, 3/8 means three of eight equal pieces. Always ask: What is the whole? Are the parts equal? How many equal parts are selected?',
+                'Future generated image: a rectangular sheet cake divided into eight equal pieces, with three pieces shaded.',
+            imageDescription:
+                'A sheet cake cut into 8 equal rectangles. Three rectangles are shaded and labeled as 3/8.',
+          ),
+          LessonStep(
+            id: 'fractions-whole-step-9',
+            lessonId: 'fractions-whole',
+            order: 9,
+            type: LessonStepType.practice,
+            title: 'Independent Practice: Create A Fair Share',
+            body:
+                'Now you try. Draw one whole object that could be shared, such as a sandwich, a pan of brownies, a sheet cake, or a garden plot. Divide it into equal parts. Shade some of the parts. Then write the fraction that represents the shaded amount. Check your work by asking: Did I show one whole? Are all parts equal? Does the denominator match the total number of equal parts? Does the numerator match the number of shaded parts?',
+            prompt:
+                'Create your own fraction model and label the numerator, denominator, and whole.',
+          ),
+          LessonStep(
+            id: 'fractions-whole-step-10',
+            lessonId: 'fractions-whole',
+            order: 10,
+            type: LessonStepType.summary,
+            title: 'What You Should Remember',
+            body:
+                'A fraction describes part of a whole when the whole is divided into equal parts. The denominator names the number of equal parts in the whole. The numerator names how many of those parts we are describing. In the pizza story, 1/4 means one of four equal slices. In the cake story, 3/8 means three of eight equal pieces. When you feel stuck, return to the same three questions: What is the whole? How many equal parts make the whole? How many parts are selected?',
           ),
         ],
       ),
@@ -130,7 +155,8 @@ class MockLessonRepository {
         essentialQuestion: 'How do we know which fraction is greater?',
         learningObjective: LearningObjective(
           id: 'lo-comparing-fractions',
-          statement: 'Compare two fractions using visual models and number sense.',
+          statement:
+              'Compare two fractions using visual models and number sense.',
         ),
         lessonContent:
             'When fractions refer to the same whole, we can compare them using models, common denominators, or benchmarks like one half.',

@@ -28,6 +28,8 @@
   "closeTutorChat": "Cerrar chat con tutor",
   "mockTutorInputHint": "Entrada del tutor mock desactivada",
   "guidedLessonTitle": "Leccion guiada",
+  "guidedLessonIntro": "Pongamonos al dia paso a paso. Lee la historia, pausa en las preguntas y usa el tutor cuando quieras ayuda sin salir de la leccion.",
+  "learningDetailsTitle": "Detalles de aprendizaje",
   "lessonStepTypeStory": "Historia",
   "lessonStepTypeImagePlaceholder": "Marcador de imagen",
   "lessonStepTypeExplanation": "Explicacion",

@@ -34,14 +34,14 @@ class LessonStep extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        lessonId,
-        order,
-        type,
-        title,
-        body,
-        prompt,
-        expectedAnswer,
-        imageDescription,
-      ];
+    id,
+    lessonId,
+    order,
+    type,
+    title,
+    body,
+    prompt,
+    expectedAnswer,
+    imageDescription,
+  ];
 }

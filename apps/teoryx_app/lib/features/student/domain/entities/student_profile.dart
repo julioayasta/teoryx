@@ -19,11 +19,11 @@ class StudentProfile extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        schoolId,
-        firstName,
-        gradeLevelName,
-        subjectName,
-        preferredLanguage,
-      ];
+    id,
+    schoolId,
+    firstName,
+    gradeLevelName,
+    subjectName,
+    preferredLanguage,
+  ];
 }
