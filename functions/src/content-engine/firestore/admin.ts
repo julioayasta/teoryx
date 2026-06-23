@@ -46,6 +46,16 @@ export class FirestoreAdminDocumentStore implements DocumentStore {
       'provenanceRecords',
       'versionHistories',
       'artifactPublicationRecords',
+      'promptTemplateVersions',
+      'promptExecutionRecords',
+      'costTrackingRecords',
+      'curriculumSources',
+      'curriculumStandards',
+      'curriculumImportBatches',
+      'pedagogicalAnalyses',
+      'schools/school-demo/courses',
+      'schools/school-demo/students',
+      'schools/school-demo/studentProgress',
     ];
     for (const name of names) {
       const snapshot = await this.db.collection(name).get();

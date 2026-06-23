@@ -1,460 +1,332 @@
 # TeoryX Project State v0.3
 
-Date: 2026-06-21
+Date: 2026-06-23
 
-This document is the current handoff state for TeoryX after Sprint 05.3. It summarizes product direction, architecture status, repository boundaries, Firebase fallback behavior, Firestore structure, completed work, and remaining roadmap.
+This document is the current handoff state for TeoryX after Student App Sprint 05 and Content Engine CE-17A automated validation.
 
-## Vision
-
-TeoryX is a multi-tenant educational platform for K-12 schools.
-
-The platform combines:
-
-- Curriculum-based learning
-- AI-generated lessons
-- AI tutoring
-- Assessments
-- Progress tracking
-- Parent and school visibility
-
-The product principle remains:
+## Product Principle
 
 ```text
 Curriculum First
 AI Second
 ```
 
-AI must never be the source of truth for curriculum. Official academic standards drive lessons, assessments, tutor prompts, and progress tracking.
+Official curriculum standards are the source of truth. AI may generate lessons, tutor guidance, assessment drafts, and supporting material only from approved curriculum-aligned inputs.
 
 ## MVP Scope
 
-The MVP seed/content scope remains:
+Seed/content scope:
 
-- Grade 3
-- Grade 4
-- Grade 5
-- Math
-- ELA
-- English
-- Spanish
+- Grades 3-5
+- Math and ELA
+- English and Spanish
 - California Common Core Standards
 - California, USA
 
-Important distinction:
-
-The architecture must support K-12 from the beginning. Grades 3-5 are seed/content scope only, not a system limitation.
+The architecture must continue to support K-12, additional subjects, additional jurisdictions, and multiple schools.
 
 ## Current Architecture Status
 
 Frontend:
 
-- Flutter
-
-Backend target:
-
-- Firebase
-- Firestore
-- Firebase Auth
-- Firebase Storage
-- Google Cloud Platform
-
-Current implementation:
-
-- Flutter Student App prototype
-- Mock mode remains the default runtime path
-- Firebase Auth foundation exists behind repository boundaries
-- Firestore repository foundation exists behind repository boundaries
-- School theme can be loaded from Firestore when Firebase is enabled, configured, and available
-- No Content Engine implementation yet
-- No real AI lesson generation yet
-- No learning flow has been switched wholesale to Firestore
-
-Frontend architecture:
-
+- Flutter Student App
 - Clean Architecture
-- Feature-first structure
-- Domain / Data / Presentation layers per feature
-- Centralized routing
-- Centralized theme system
-- Centralized localization
-- Repository boundaries for Auth, Student, School Theme, Course Catalog, and Lessons
-- Mock repositories remain the default source for screens
-- K2S local branding remains the default/fallback theme
+- Feature-first modules
+- Domain / Data / Presentation separation
+- Central app bootstrap and dependency wiring
+- Firebase and Firestore isolated outside presentation widgets
+- Mock mode remains the default runtime path
 
-Key app paths:
+Backend:
 
-```text
-apps/teoryx_app/
-  lib/app/
-  lib/core/
-  lib/shared/
-  lib/features/
-  lib/l10n/
-```
+- Firebase Functions workspace exists under `functions/`
+- Firestore-backed Content Engine repository exists
+- Firebase Emulator-first backend tests exist
+- Content Engine callable skeleton and runtime handlers exist
+- Safe fake AI provider remains the default
+- Real OpenAI provider path exists behind explicit feature flags
+- No production deployment has been performed from this runtime
 
-Feature modules currently include:
+Firebase:
 
-- student
-- lesson
-- tutor
-- auth
-- parent
-- assessment
-- progress
-- school
-- admin
+- Firebase Auth, Firestore, Cloud Functions, and emulator support are wired for dev validation
+- Firebase mode remains opt-in through dart defines
+- Missing FlutterFire configuration falls back safely to mock mode
+- Student App can connect to local emulators when explicitly enabled
 
-## Non-Negotiable Architectural Decisions
+## Non-Negotiable Architecture Rules
 
-1. Multi-tenant architecture is mandatory.
+1. Multi-tenant modeling is mandatory.
 
-Every school-owned entity must include `schoolId` when persisted or modeled for persistence.
+School-owned entities must carry or resolve `schoolId`.
 
 2. Curriculum-first design is mandatory.
 
-Lessons, assessments, and tutor interactions must trace back to:
+Generated instructional content must trace back to official curriculum standards and versions.
 
-- `curriculumId`
-- `gradeLevelId`
-- `subjectId`
-- `standardId`
+3. Backward Design / UbD remains the target instructional flow.
 
-3. Backward Design / UbD pipeline is mandatory.
-
-The required generation order is:
+Target generation order:
 
 ```text
 Curriculum Standard
+-> Pedagogical Analysis
 -> Learning Objective
 -> Assessment Blueprint
+-> Lesson Blueprint
 -> Lesson Content
--> Tutor Prompt
+-> Tutor Guidance
 -> Progress Tracking
 ```
 
-4. AI must be abstracted.
+4. AI must stay abstracted.
 
-Future AI services must use interfaces such as lesson/tutor/assessment generators. UI and domain logic must not couple directly to Gemini, OpenAI, Claude, or any provider.
+Provider-specific logic belongs behind the AI provider and AI execution service boundaries.
 
-5. Firebase must be isolated.
+5. Firebase must stay isolated.
 
-Presentation must never call Firebase directly. Firebase SDK usage belongs behind data sources/repositories.
+Presentation files must not import `firebase_core`, `firebase_auth`, `cloud_firestore`, or `cloud_functions`.
 
-6. Internationalization is required from day one.
+6. Mock mode must remain the default.
 
-No hardcoded student-facing strings in UI. English and Spanish are currently supported.
+Firebase, Firestore, Cloud Functions, and real AI are opt-in for dev/runtime validation.
 
-7. School branding must be configurable.
+7. Student App is read/request only for Content Engine.
 
-Branding must flow through `SchoolThemeConfig` or equivalent theme configuration, not hardcoded screen colors.
+The Student App may read published content, read lesson specifications, request missing content, and see pending/ready/failed status. It cannot edit, approve, publish, change curriculum, or call AI directly.
 
-8. Student-facing lesson rendering is driven by `LessonStep`.
-
-The guided lesson sequence is the primary student experience. UbD metadata is preserved but secondary/collapsed.
-
-## Completed Sprints
+## Completed Student App Sprints
 
 ### Sprint 01 - Foundation
 
-Completed:
-
-- Flutter project foundation
-- Clean Architecture folder structure
-- Feature-first modules
-- Localization foundation
-- Theme foundation
-- Routing foundation
-- Minimal approved dependencies
-- Smoke widget test
+Completed Flutter project foundation, clean architecture structure, feature modules, localization, theme, routing, minimal dependencies, and smoke widget testing.
 
 ### Sprint 02 - Student Experience
 
-Completed:
-
-- Student App mock login screen
-- Student dashboard
-- Continue Studying section
-- Mock enrolled course: Grade 4 Math
-- Course catalog flow
-- Grade selection: K through Grade 12
-- Course selection by grade
-- Lesson list
-- Lesson detail
-- Guided narrative lesson rendering using `LessonStep`
-- Tutor overlay attached to Lesson Detail
-- Mock tutor responses in English and Spanish
-- Language switcher in app shell
-- English/Spanish UI and mock lesson content
-- Breadcrumb navigation
-- K2S mock school branding
+Completed mock login, dashboard, continue studying, course catalog, grade/course selection, lesson list/detail, guided lesson rendering, tutor overlay, language switcher, breadcrumbs, and K2S branding.
 
 ### Sprint 02.1 - Test Stability
 
-Completed:
-
-- Stabilized widget tests
-- Preserved main student journey coverage
-- Kept Material splash behavior compatible with local test/runtime tooling
+Stabilized widget tests and preserved the main student journey coverage.
 
 ### Sprint 03 - Assessment + Results + Progress
 
-Completed:
-
-- Assessment domain model
-- Mock assessment flow
-- Assessment question/answer entities
-- Results screen
-- Auto-graded score display
-- Pending review state
-- Progress state updates after assessment completion
+Completed assessment domain model, mock assessment flow, results screen, score display, pending review, and progress updates.
 
 ### Sprint 04 - Progress Dashboard + Recommendations
 
-Completed:
-
-- Progress dashboard screen
-- Course progress model
-- Lesson progress model
-- Mastery summary
-- Latest assessment summary
-- Progress recommendation model
-- Recommendation display in dashboard/progress flows
+Completed progress dashboard, course/lesson progress models, mastery summary, latest assessment summary, and recommendations.
 
 ### Sprint 05.1 - Firebase Auth Foundation
 
-Completed:
-
-- Added Firebase package foundation
-- Added auth domain entity and repository contract
-- Added mock auth repository as default
-- Added Firebase Auth repository behind the auth repository boundary
-- Added Firestore user profile lookup for authenticated users
-- Added auth controller and auth scope
-- Login now goes through auth controller instead of direct navigation
-- Mock login behavior remains the default for prototype/testing
-- Firebase initialization is gated by dart defines
-- Firebase unavailable/config missing path falls back gracefully to mock auth
+Added Firebase packages, auth repository boundary, mock default, Firebase Auth repository, Firestore user lookup, auth controller/scope, gated initialization, and graceful fallback.
 
 ### Sprint 05.2 - Firestore Repository Foundation
 
-Completed:
+Added Firestore paths, repository contracts and mappers for student profile, school theme, course catalog, and published lesson read models. Published lessons are read-only from the Student App.
 
-- Added Firestore collection path helper
-- Added repository interfaces for:
-  - Student profile
-  - School theme/branding
-  - Course catalog
-  - Published lesson read model
-- Existing mock repositories now implement repository contracts
-- Added Firestore mappers for:
-  - Student profile
-  - School theme
-  - Course
-  - Published lesson content
-- Added Firestore repository implementations in data layer only
-- Published lesson content is read-only from the Student App perspective
-- Main student UX remains on mock repositories
-- Added tests for repository boundaries, mappers, collection paths, and presentation-layer Firebase import safety
-- Added Firestore structure documentation
+### Sprint 05.3 - School Theme From Firestore
 
-### Sprint 05.3 - School Theme from Firestore with Mock Fallback
+Connected school theme/branding through `SchoolThemeRepository` with K2S fallback.
 
-Completed:
+### Sprint 05.4 - Student Profile From Firestore
 
-- Connected one low-risk Firestore read path for school theme/branding
-- App bootstrap now resolves `SchoolThemeConfig` before building `TeoryXApp`
-- Conservative temporary tenant id remains `school-demo`
-- When Firebase is enabled, configured, and initialized, the app attempts to read:
+Connected student profile through `StudentRepository` with mock fallback.
 
-```text
-schools/{schoolId}
-```
+### Sprint 05.5 - Course Catalog From Firestore
 
-- Firestore school theme fields currently supported:
-  - `name`
-  - `fullName`
-  - `primaryColor`
-  - `secondaryColor`
-  - `fontFamily`
-  - `status`
-  - `logoAssetPath` only for bundled local assets
-- `logoUrl` is intentionally not used yet; remote image loading was not added
-- If Firestore is unavailable, missing, inactive, or throws, the app falls back to `SchoolThemeConfig.k2s()`
-- Courses, lessons, progress, and assessments remain on mock repositories
-- Theme editing was not added; it remains future School Admin Portal responsibility
-- Presentation-layer Firebase import guard remains in place
+Connected course catalog through `CourseRepository` with preload/cache and mock fallback.
+
+### Sprint 05.6 - Student Progress From Firestore
+
+Connected progress through `ProgressRepository` with read-only Firestore access and mock fallback.
+
+### Sprint 05.7 - Published Lessons Read Path
+
+Connected published lesson content through `LessonRepository`, using read-only Firestore access and mock fallback.
 
 ## Content Engine Status
 
-Content Engine work is currently documentation/design only. No Content Engine runtime implementation, AI generation, Firestore write workflow, Student App change, or School Admin Portal change has been implemented from these CE design sprints.
+Architecture:
 
-Completed:
+```text
+COMPLETE
+```
+
+Execution Design:
+
+```text
+COMPLETE
+```
+
+API Contracts:
+
+```text
+COMPLETE
+```
+
+Contract Validation Design:
+
+```text
+COMPLETE
+```
+
+Implementation Status:
+
+```text
+MVP BACKEND RUNTIME IN PROGRESS
+```
+
+### Completed Content Engine Milestones
 
 - CE-01 Content Engine Architecture
 - CE-02A Curriculum Source Registry
-- CE-02B Pedagogical Analysis Engine
+- CE-02B Pedagogical Analysis Engine + Knowledge Source Library + Prompt Registry
 - CE-02C Instructional Blueprint Engine
 - CE-02D Generation Artifact Contracts
 - CE-02E Course Planning and Lesson Specification
+- CE-02F Architecture Gap Review
 - CE-03A Content Engine MVP Execution Pipeline
 - CE-03B API and Cloud Function Contracts
 - CE-03C Emulator-First Contract Tests
+- CE-04 Emulator Contract Harness and Minimal Function Skeleton
+- CE-05 Firestore-Backed Fake Runtime
+- CE-06 Minimal Course Plan Generation Runtime
+- CE-07 Minimal Lesson Content Generation Runtime
+- CE-08 Student App Content Engine Callable Integration
+- CE-09 AI Provider Abstraction Layer
+- CE-10 First Real AI Lesson Generation Path Behind Feature Flags
+- CE-11 Real AI Smoke Test Script and Documentation
+- CE-12 Curriculum Ingestion MVP
+- CE-13 Pedagogical Analysis Generation MVP
+- CE-14 Course Planning From Pedagogical Analysis
+- CE-15 Lesson Generation From Pedagogical Analysis
+- CE-16 Flutter Real AI E2E Dev Test Path
 
-Content Engine Architecture Status:
+### Content Engine Runtime Capabilities
 
-- Curriculum Intelligence complete
-- Pedagogical Intelligence complete
-- Instructional Intelligence complete
-- Artifact Contract design complete
-- Course Planning design complete
-- Execution Pipeline design complete
-- API Contract design complete
-- Contract Validation design complete
+Current backend supports:
 
-Content Engine:
+- Curriculum source/version/standard import from normalized JSON
+- Super Admin-only curriculum import callable behavior in handler tests
+- Pedagogical analysis generation from imported standards
+- Prompt resolver and prompt template version references
+- AI execution service with prompt/cost records
+- Safe fake AI provider by default
+- Real OpenAI provider behind explicit environment flags
+- Deterministic course plan generation
+- Analysis-backed CourseMap, UnitPlan, and LessonSpecification generation
+- Student-safe `requestLessonContent`
+- Published lesson generation from LessonSpecification, CurriculumStandard, and PedagogicalAnalysis context
+- Publication into `publishedLessonContent`
+- Audit, provenance, version, prompt execution, and cost tracking records
 
-```text
-Architecture: COMPLETE
-Execution Design: COMPLETE
-API Contracts: COMPLETE
-Contract Validation Design: COMPLETE
-Implementation Status: NOT STARTED
-```
+### Content Engine Callable Exposure
 
-Document references:
+Runtime handlers exist for the CE API surface. Firebase callable exports currently expose the Student App path:
 
-- `docs/sprints/sprint-ce-01-content-engine-architecture.md`
-- `docs/sprints/sprint-ce-02a-curriculum-source-registry.md`
-- `docs/sprints/sprint-ce-02b-pedagogical-analysis-engine.md`
-- `docs/sprints/sprint-ce-02c-instructional-blueprint-engine.md`
-- `docs/sprints/sprint-ce-02d-generation-artifact-contracts.md`
-- `docs/sprints/sprint-ce-02e-course-planning-and-lesson-specification.md`
-- `docs/sprints/sprint-ce-02f-architecture-gap-review.md`
-- `docs/sprints/sprint-ce-03a-execution-pipeline.md`
-- `docs/sprints/sprint-ce-03b-api-cloud-function-contracts.md`
-- `docs/sprints/sprint-ce-03c-emulator-first-contract-tests.md`
+- `requestLessonContent`
+- `getContentGenerationStatus`
 
-Next recommended milestone:
-
-```text
-CE-04 Emulator Contract Harness and Minimal Function Skeleton
-```
+Other CE API handlers are available in the backend runtime/tests but are not yet all exported as Firebase callables.
 
 ## Current Repository Boundaries
 
-Auth:
+Flutter Student App:
 
 ```text
 AuthRepository
   MockAuthRepository
   FirebaseAuthRepository
-```
 
-Student:
-
-```text
 StudentRepository
   MockStudentRepository
   FirestoreStudentRepository
-```
 
-School Theme:
-
-```text
 SchoolThemeRepository
   FirestoreSchoolThemeRepository
-```
 
-Course Catalog:
-
-```text
 CourseRepository
   MockCourseRepository
   FirestoreCourseRepository
-```
 
-Lessons:
-
-```text
 LessonRepository
   MockLessonRepository
   FirestorePublishedLessonRepository
+
+LessonSpecificationRepository
+  MockLessonSpecificationRepository
+  FirestoreLessonSpecificationRepository
+
+ContentGenerationRepository
+  MockContentGenerationRepository
+  FirebaseContentGenerationRepository
+
+ProgressRepository
+  MockProgressRepository
+  FirestoreProgressRepository
 ```
 
-Rules:
+Content Engine backend:
 
-- UI must not import `firebase_core`, `firebase_auth`, or `cloud_firestore`.
-- Firebase and Firestore SDK usage must remain in data/infrastructure code.
-- Mock repositories remain default unless Firebase is explicitly enabled, configured, and successfully initialized.
-- Firestore repositories are infrastructure-only at this stage.
-- No screen has been redesigned to depend directly on Firestore.
-- School theme is the only Firestore read path currently connected to app bootstrap.
-- Theme reads are read-only from the Student App.
+```text
+ContentEngineRepository
+  FirestoreContentEngineRepository
 
-## Firebase Fallback Behavior
+DocumentStore
+  MemoryDocumentStore
+  FirestoreAdminDocumentStore
 
-Mock mode is default.
+AIProvider
+  SafeFakeAIProvider
+  RealOpenAIProvider
 
-Default mode:
+AIExecutionService
+PromptResolver
+ModelRoutingPolicy
+```
+
+## Firebase And Emulator Status
+
+Mock mode:
 
 ```text
 flutter run
 ```
 
-uses mock repositories.
-
-Firebase mode is requested with:
+Firebase mode:
 
 ```text
-flutter run --dart-define=TEORYX_FIREBASE_ENABLED=true
+flutter run \
+  --dart-define=TEORYX_FIREBASE_ENABLED=true \
+  --dart-define=TEORYX_FIREBASE_CONFIGURED=true
 ```
 
-If FlutterFire configuration is not marked present, the app does not call Firebase platform channels. It falls back to mock auth and logs a clear explanation.
-
-Real Firebase initialization requires both:
+Firebase emulator mode:
 
 ```text
---dart-define=TEORYX_FIREBASE_ENABLED=true
---dart-define=TEORYX_FIREBASE_CONFIGURED=true
+flutter run \
+  --dart-define=TEORYX_FIREBASE_ENABLED=true \
+  --dart-define=TEORYX_FIREBASE_CONFIGURED=true \
+  --dart-define=TEORYX_USE_FIREBASE_EMULATORS=true \
+  --dart-define=TEORYX_FIREBASE_EMULATOR_HOST=localhost
 ```
 
-If initialization fails or times out, the app falls back to mock auth instead of crashing.
+Configured emulator ports:
 
-School theme fallback behavior:
+- Firestore: `8080`
+- Functions: `5001`
+- Auth: `9099`
+- Emulator UI: `4000`
 
-- Mock mode uses `SchoolThemeConfig.k2s()`
-- Firebase unavailable/config missing uses `SchoolThemeConfig.k2s()`
-- Firebase available attempts to load `schools/school-demo`
-- Missing, inactive, or failing school theme documents fall back to `SchoolThemeConfig.k2s()`
-- Remote `logoUrl` is ignored for now; local K2S logo asset remains the fallback
+Known configuration note:
 
-Current known Firebase configuration status:
+- Firebase mode still depends on valid FlutterFire/platform configuration.
+- If configuration is missing or initialization fails, the app falls back to mock repositories and logs a clear message.
 
-- `lib/firebase_options.dart` is not present
-- Linux Firebase plugin registration was not configured in the inspected project state
-- FlutterFire configuration is still required before Firebase mode should be considered fully active
+## Current Firestore Collections
 
-Required setup command:
-
-```text
-flutterfire configure
-```
-
-Expected generated/updated files include:
-
-- `apps/teoryx_app/lib/firebase_options.dart`
-- platform Firebase configuration for selected targets
-- generated platform plugin registration files
-
-See:
-
-```text
-docs/firebase/flutterfire-configuration.md
-```
-
-## Firestore Collection Structure
-
-Current proposed structure:
+Student App collections:
 
 ```text
 schools/{schoolId}
@@ -462,305 +334,167 @@ schools/{schoolId}/students/{studentId}
 schools/{schoolId}/courses/{courseId}
 schools/{schoolId}/studentProgress/{studentId}
 publishedLessonContent/{publishedContentId}
+lessonSpecifications/{lessonSpecificationId}
 ```
 
-### schools/{schoolId}
-
-Tenant branding and configuration:
+Content Engine collections:
 
 ```text
-name
-fullName
-logoUrl
-logoAssetPath
-primaryColor
-secondaryColor
-fontFamily
-status
-createdAt
-updatedAt
+curriculumSources/{sourceId}
+curriculumSources/{sourceId}/versions/{versionId}
+curriculumStandards/{standardId}
+curriculumImportBatches/{batchId}
+pedagogicalAnalyses/{analysisId}
+contentGenerationRequests/{requestId}
+contentGenerationJobs/{jobId}
+courseOfferings/{offeringId}
+courseMaps/{courseMapId}
+unitPlans/{unitPlanId}
+lessonSpecifications/{lessonSpecificationId}
+lessonArtifacts/{artifactId}
+presentationArtifacts/{artifactId}
+validationArtifacts/{artifactId}
+publishedLessonContent/{publishedContentId}
+generationAuditEntries/{auditId}
+provenanceRecords/{provenanceId}
+versionHistory/{versionId}
+promptTemplateVersions/{promptTemplateVersionId}
+promptExecutionRecords/{recordId}
+costTrackingRecords/{recordId}
 ```
 
-### schools/{schoolId}/students/{studentId}
+## Current End-to-End Flow
 
-Tenant-owned student profile:
+Designed CE-16 dev flow:
 
 ```text
-firstName
-lastName
-gradeLevelId
-gradeLevelName
-subjectName
-preferredLanguage
-status
-createdAt
-updatedAt
+Flutter Student App
+-> Firestore lessonSpecifications
+-> missing publishedContentId
+-> requestLessonContent callable
+-> Content Engine runtime
+-> AIExecutionService
+-> SafeFakeAIProvider or opt-in RealOpenAIProvider
+-> LessonArtifact
+-> PresentationArtifact
+-> ValidationArtifact
+-> publishedLessonContent
+-> Flutter lesson render
 ```
 
-### schools/{schoolId}/courses/{courseId}
+## Real AI Flags
 
-Tenant-visible course catalog entries:
+Real AI is disabled by default.
+
+Required for real OpenAI path:
 
 ```text
-curriculumId
-gradeLevelId
-gradeLevelName
-subjectId
-subjectName
-title
-status
-order
-createdAt
-updatedAt
+CONTENT_ENGINE_ENABLE_REAL_AI=true
+CONTENT_ENGINE_AI_PROVIDER=openai
+OPENAI_API_KEY=...
 ```
 
-### schools/{schoolId}/studentProgress/{studentId}
-
-Tenant-owned student progress summary:
+Optional:
 
 ```text
-studentId
-currentCourseId
-currentLessonId
-masteryLevel
-completionPercentage
-lastActivityAt
-updatedAt
+CONTENT_ENGINE_OPENAI_MODEL=gpt-4.1-mini
+CONTENT_ENGINE_OPENAI_ENDPOINT=...
+CONTENT_ENGINE_AI_FALLBACK_TO_FAKE=true
 ```
 
-### publishedLessonContent/{publishedContentId}
+Rules:
 
-Read-only published lesson content for the Student App:
+- Do not commit `.env` files or API keys.
+- Do not log `OPENAI_API_KEY`.
+- Automated tests must not call real AI.
+- Missing API key must not crash the backend.
 
-```text
-schoolId
-courseId
-curriculumId
-gradeLevelId
-subjectId
-standardId
-standardCode
-language
-title
-bigIdea
-essentialQuestion
-learningObjectiveId
-learningObjective
-lessonContent
-guidedPractice
-independentPractice
-summary
-steps
-status
-version
-createdAt
-updatedAt
-```
+## Known Gaps
 
-Each `steps` item uses:
-
-```text
-id
-lessonId
-order
-type
-title
-body
-prompt
-expectedAnswer
-imageDescription
-```
-
-See:
-
-```text
-docs/firebase/firestore-structure.md
-```
-
-## Current Student Flow
-
-Current working app flow:
-
-```text
-Welcome to TeoryX
--> Sign In
--> Dashboard
--> Continue Studying
--> Comparing Fractions lesson
--> Tutor overlay
-```
-
-Course discovery flow:
-
-```text
-Dashboard
--> New Course from Catalog
--> Grade Selection
--> Course Selection
--> Lesson List
--> Lesson Detail
--> Tutor Overlay
-```
-
-Assessment/progress flow:
-
-```text
-Lesson Detail
--> Assessment
--> Results
--> Dashboard recommendation
--> Progress Dashboard
-```
-
-## Current Mock Data
-
-Current mock student:
-
-- Sofia
-
-Current enrolled course:
-
-- Grade 4 Math
-
-Current lessons:
-
-- Fractions as Parts of a Whole
-- Comparing Fractions
-- Equivalent Fractions
-
-Current assessment/progress state:
-
-- Auto-graded score example
-- Pending review example
-- Mastery and recommendation examples
-
-English and Spanish mock lesson data exist locally in the mock lesson repository.
+- CE-17A hardening and real E2E validation is still in progress.
+- Project has a CE-16 manual E2E path, but real Flutter emulator validation must be executed and documented.
+- Not all designed CE API handlers are exported as Firebase callable functions.
+- Firestore security rules and callable permission behavior need emulator-level validation.
+- Audit/provenance/version records exist, but append-only governance, complete trace coverage, and collision-resistant identifiers need hardening.
+- Cost tracking currently records estimates; real provider cost computation remains placeholder-level.
+- CourseOffering and Student App school course catalog data must remain synchronized by seed/admin workflow.
+- Instructional Blueprint runtime models from CE-02C are designed but not implemented.
+- Assessment generation is not implemented.
+- Asset Registry and Media Planning are not implemented.
+- School Portal authoring/review workflow is not implemented.
+- Production deployment readiness has not been validated.
 
 ## Current Verification Status
 
-Latest verification after Sprint 05.3:
+CE-17A automated verification passed on 2026-06-23.
 
 ```text
+cd functions
+npm run build
+npm test
+
+cd ../apps/teoryx_app
 flutter analyze
-PASS
-
 flutter test
-PASS
 ```
 
-Additional tests include:
-
-- Repository boundary checks
-- Firestore mapper checks
-- Firestore path checks
-- Presentation-layer Firebase import guard
-- Firebase fallback bootstrap behavior
-- School theme bootstrap fallback behavior
-- Firestore school theme mapper behavior, including local logo fallback
-
-## Known Environment Notes
-
-Linux desktop run could not be verified in the current Windows/WSL environment because Flutter exposed only:
-
-- Windows
-- Chrome
-- Edge
-
-WSL resolved Flutter to the Windows SDK path:
+Results:
 
 ```text
-/mnt/c/flutter/bin/flutter
+npm run build: PASS
+npm test: PASS
+Node tests: 79 passed
+flutter analyze: PASS
+flutter test: PASS
+Flutter tests: 15 passed
 ```
 
-This is an environment/toolchain limitation, not an intentional app limitation.
+Environment note:
 
-There is also a Windows `Zone.Identifier` metadata artifact beside the K2S logo that can make `git status` noisy.
+- The validation machine uses Windows Flutter/npm against a WSL workspace.
+- Raw `\\wsl$` working directories can cause `cmd.exe` to fall back to a Windows default directory.
+- Passing validation used a temporary mapped drive with `subst`.
 
-## Remaining Roadmap
+Manual E2E verification:
 
-Recommended next work:
+```text
+firebase emulators:start
+cd functions
+npm run seed:flutter-real-ai-e2e
+cd ../apps/teoryx_app
+flutter run -d linux \
+  --dart-define=TEORYX_FIREBASE_ENABLED=true \
+  --dart-define=TEORYX_FIREBASE_CONFIGURED=true \
+  --dart-define=TEORYX_USE_FIREBASE_EMULATORS=true \
+  --dart-define=TEORYX_FIREBASE_EMULATOR_HOST=localhost
+```
 
-### Sprint 05.4 - Firebase Configuration Completion
+## Next Recommended Milestone
 
-- Run `flutterfire configure`
-- Generate `lib/firebase_options.dart`
-- Verify selected platform support
-- Verify Firebase mode on supported targets
-- Add minimal Firebase emulator or integration test guidance if appropriate
+```text
+CE-17B Real Emulator Smoke Closure
+```
 
-### Sprint 06 - Auth Session + Tenant Resolution
+After CE-17B, recommended next step:
 
-- Resolve current user profile from Firebase Auth + Firestore
-- Resolve active `schoolId`
-- Keep role and tenant checks behind auth/session boundaries
-- Do not route users to role-specific products until session behavior is stable
+```text
+CE-18 Instructional Blueprint Runtime MVP
+```
 
-### Sprint 07 - Firestore Read Integration Pilot
+Rationale:
 
-- Continue with one additional low-risk read path using repository-driven Firestore with mock fallback
-- Suggested next candidates:
-  - student profile
-  - course catalog
-- Do not switch published lessons until content quality/versioning rules are ready
+- Automated validation is green.
+- The remaining hardening gap is live emulator/manual real AI smoke execution, not new feature design.
+- Instructional Blueprint runtime should follow only after the runtime path is proven end to end in a local emulator environment.
 
-### Sprint 08 - Progress Persistence
+## Guardrails For Future Sessions
 
-- Persist assessment attempts
-- Persist progress summaries
-- Maintain tenant filtering by `schoolId`
-- Keep progress based on assessment/mastery/lesson completion, not time spent
-
-### Future - Content Engine
-
-- Implement curriculum import/governance
-- Implement standard -> objective -> assessment -> lesson -> tutor prompt pipeline
-- Add human review/publish workflow
-- Keep AI provider abstracted
-- Keep generated content versioned and reviewable
-
-### Future - Parent and School Visibility
-
-- Parent progress visibility
-- School admin aggregated mastery views
-- School configuration and branding management
-- Super admin tenant/curriculum governance
-
-## Important Files For New Sessions
-
-Read these before changing architecture:
-
-- `README.md`
-- `PROJECT_STATE_v0.3.md`
-- `docs/vision/teoryx_mvp_vision.md`
-- `docs/decisions/ADR-001-multi-tenant-architecture.md`
-- `docs/decisions/ADR-002-ai-content-generation-architecture.md`
-- `docs/decisions/ADR-003-curriculum-strategy.md`
-- `docs/decisions/ADR-004-curriculum-domain-architecture.md`
-- `docs/decisions/ADR-005-bounded-context-architecture.md`
-- `docs/decisions/ADR-006-firestore-domain-architecture.md`
-- `architecture/domain/domain-model-v0.1.md`
-- `docs/requirements/mvp-backlog-v0.1.md`
-- `docs/firebase/flutterfire-configuration.md`
-- `docs/firebase/firestore-structure.md`
-- `prompts/codex/flutter-firebase-development-rules.md`
-- `prompts/codex/ubd-implementation-guide.md`
-- `prompts/codex/ddd-implementation-guide.md`
-- `prompts/codex/master-development-prompt.md`
-
-## Guardrails For Future Codex Sessions
-
-- Do not hardcode Grades 3-5 as a platform limitation.
-- Do not bypass `SchoolThemeConfig` for school branding.
-- Do not put Firebase logic in presentation widgets.
+- Do not add new pedagogical features during CE-17A.
+- Do not add Asset Registry, Media Generation, Assessment Generation, or School Portal workflow expansion during CE-17A.
+- Do not bypass repository boundaries.
 - Do not import Firebase SDK packages in presentation files.
-- Do not make AI the source of truth for standards.
-- Do not remove English/Spanish localization.
-- Do not remove widget test coverage.
-- Do not switch all mock repositories to Firestore at once.
-- Do not let missing Firebase/Firestore config crash mock mode.
-- Run both before handoff:
-
-```text
-flutter analyze
-flutter test
-```
+- Do not make Student App capable of editing, approving, publishing, changing curriculum, or calling AI directly.
+- Do not run real AI from automated tests.
+- Do not log or commit API keys.
+- Keep mock mode as the default.
+- Run backend and Flutter verification before handoff.

@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
 
@@ -56,6 +59,8 @@ class AppDependencies {
   final ProgressRepository progressRepository;
 }
 
+bool _firebaseEmulatorsConfigured = false;
+
 Future<AppDependencies> initializeAppDependencies() async {
   const schoolId = 'school-demo';
   const studentId = 'student-001';
@@ -89,6 +94,7 @@ Future<AppDependencies> initializeAppDependencies() async {
       await Firebase.initializeApp().timeout(
         FirebaseAppConfig.initializationTimeout,
       );
+      _configureFirebaseEmulatorsIfRequested();
       debugPrint('TeoryX Firebase: initialized successfully.');
       final schoolThemeConfig = await _resolveSchoolThemeConfig(
         schoolId: schoolId,
@@ -166,6 +172,30 @@ Future<AppDependencies> initializeAppDependencies() async {
     lessonSpecificationRepository: const MockLessonSpecificationRepository(),
     contentGenerationRepository: const MockContentGenerationRepository(),
     progressRepository: const MockProgressRepository(),
+  );
+}
+
+void _configureFirebaseEmulatorsIfRequested() {
+  if (!FirebaseAppConfig.useEmulators || _firebaseEmulatorsConfigured) {
+    return;
+  }
+
+  FirebaseFirestore.instance.useFirestoreEmulator(
+    FirebaseAppConfig.emulatorHost,
+    FirebaseAppConfig.firestoreEmulatorPort,
+  );
+  FirebaseFunctions.instance.useFunctionsEmulator(
+    FirebaseAppConfig.emulatorHost,
+    FirebaseAppConfig.functionsEmulatorPort,
+  );
+  FirebaseAuth.instance.useAuthEmulator(
+    FirebaseAppConfig.emulatorHost,
+    FirebaseAppConfig.authEmulatorPort,
+  );
+  _firebaseEmulatorsConfigured = true;
+  debugPrint(
+    'TeoryX Firebase: using local emulators at '
+    '${FirebaseAppConfig.emulatorHost}.',
   );
 }
 

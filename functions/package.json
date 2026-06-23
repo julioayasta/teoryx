@@ -11,10 +11,13 @@
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test \"lib/test/**/*.test.js\"",
     "seed:emulator": "node lib/src/content-engine/seed/seed-emulator.js",
+    "seed:flutter-real-ai-e2e": "npm run build && node lib/src/content-engine/seed/seed-flutter-real-ai-e2e.js",
+    "seed:verify:flutter-real-ai-e2e": "npm run build && node --test \"lib/test/content-engine/flutter-real-ai-e2e-seed.test.js\"",
     "smoke:real-ai-lesson": "npm run build && node lib/src/content-engine/smoke/real-ai-lesson-smoke.js"
   },
   "dependencies": {
-    "firebase-admin": "^12.7.0"
+    "firebase-admin": "^12.7.0",
+    "firebase-functions": "^7.2.5"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

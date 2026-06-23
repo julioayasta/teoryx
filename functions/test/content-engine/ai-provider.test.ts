@@ -25,7 +25,12 @@ test('SafeFakeAIProvider returns deterministic output', async () => {
   const request = {
     schoolId: 'school-demo',
     taskType: 'lesson_content_generation',
-    variables: { title: 'Fractions' },
+    variables: {
+      lessonSpecification: {
+        lessonId: 'lesson-fractions',
+        title: 'Fractions',
+      },
+    },
     prompt: 'Generate {{title}}',
     promptTemplateVersionId: 'prompt-template-lesson-content-v1',
   };
@@ -35,7 +40,15 @@ test('SafeFakeAIProvider returns deterministic output', async () => {
 
   assert.equal(first.content, second.content);
   assert.equal(first.estimatedCostUsd, 0);
-  assert.ok(first.content.includes('SAFE_FAKE_OUTPUT:lesson_content_generation'));
+  const parsed = JSON.parse(first.content) as {
+    title: string;
+    steps: Array<{ type: string }>;
+  };
+  assert.equal(parsed.title, 'Fractions');
+  assert.deepEqual(
+    parsed.steps.map((step) => step.type),
+    ['story', 'imagePlaceholder', 'explanation', 'question', 'practice', 'summary'],
+  );
 });
 
 test('PromptResolver selects the expected active prompt template version', async () => {
